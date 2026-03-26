@@ -436,7 +436,7 @@ try {
             academyId: ACADEMY_ID,
             name: String(fd.get("studentName") || ""),
             contactName: String(fd.get("parentName") || ""),
-            phone: String(fd.get("phone") || ""),
+            phone: String(fd.get("phone") || "").replace(/[\s\-\(\)]/g, ""),
             email: String(fd.get("email") || ""),
             programInterest: String(fd.get("program") || ""),
             message: String(fd.get("message") || ""),

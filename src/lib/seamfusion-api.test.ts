@@ -18,8 +18,10 @@ describe('fetchAcademyData', () => {
     const mockData = { content: { hero: 'Welcome' } };
 
     globalThis.fetch = mock.fn(async (url: string) => {
-      assert.ok(url.includes('https://api.example.com/getPublicAcademyData'));
-      assert.ok(url.includes('academyId=test-academy-id'));
+      const parsedUrl = new URL(url);
+      assert.strictEqual(parsedUrl.origin, 'https://api.example.com');
+      assert.strictEqual(parsedUrl.pathname, '/getPublicAcademyData');
+      assert.strictEqual(parsedUrl.searchParams.get('academyId'), 'test-academy-id');
 
       return {
         ok: true,
@@ -75,7 +77,8 @@ describe('fetchAcademyData', () => {
 
   test('correctly passes sections as query parameters', async () => {
     globalThis.fetch = mock.fn(async (url: string) => {
-      assert.ok(url.includes('sections=coaches%2Cprograms'));
+      const parsedUrl = new URL(url);
+      assert.strictEqual(parsedUrl.searchParams.get('sections'), 'coaches,programs');
       return {
         ok: true,
         json: async () => ({}),

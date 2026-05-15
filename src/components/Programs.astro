@@ -2,8 +2,17 @@
 // Merged service cards with all details where applicable
 import { programs } from "../data/programs";
 
-const newBatches = programs.filter(p => p.newBatch);
-const regularPrograms = programs.filter(p => !p.newBatch);
+const { newBatches, regularPrograms } = programs.reduce(
+  (acc, p) => {
+    if (p.newBatch) {
+      acc.newBatches.push(p);
+    } else {
+      acc.regularPrograms.push(p);
+    }
+    return acc;
+  },
+  { newBatches: [] as typeof programs, regularPrograms: [] as typeof programs }
+);
 ---
 
 <!-- Section 1: New Batches (Featured Container) -->

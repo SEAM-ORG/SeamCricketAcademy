@@ -9,8 +9,25 @@
  *   PUBLIC_API_URL    — Cloud Functions base URL
  */
 
-const API_URL = import.meta.env.PUBLIC_API_URL || '';
-const ACADEMY_ID = import.meta.env.PUBLIC_ACADEMY_ID || '';
+/**
+ * Helper to safely get environment variables in both browser and Node.js.
+ * Uses literal access for Vite static replacement.
+ */
+function getApiUrl(): string {
+  try {
+    return import.meta.env.PUBLIC_API_URL || '';
+  } catch {
+    return (globalThis as any).process?.env?.PUBLIC_API_URL || '';
+  }
+}
+
+function getAcademyId(): string {
+  try {
+    return import.meta.env.PUBLIC_ACADEMY_ID || '';
+  } catch {
+    return (globalThis as any).process?.env?.PUBLIC_ACADEMY_ID || '';
+  }
+}
 
 type Section = 'coaches' | 'programs' | 'branding' | 'gallery' | 'content';
 
@@ -29,16 +46,19 @@ export interface AcademyData {
 export async function fetchAcademyData(
   sections?: Section[]
 ): Promise<AcademyData | null> {
-  if (!API_URL || !ACADEMY_ID) return null;
+  const apiUrl = getApiUrl();
+  const academyId = getAcademyId();
+
+  if (!apiUrl || !academyId) return null;
 
   try {
-    const params = new URLSearchParams({ academyId: ACADEMY_ID });
+    const params = new URLSearchParams({ academyId });
     if (sections?.length) {
       params.set('sections', sections.join(','));
     }
 
     const res = await fetch(
-      `${API_URL}/getPublicAcademyData?${params}`,
+      `${apiUrl}/getPublicAcademyData?${params}`,
       { signal: AbortSignal.timeout(10_000) }
     );
 

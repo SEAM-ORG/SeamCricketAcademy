@@ -20,5 +20,8 @@
   "devDependencies": {
     "husky": "^9.1.7",
     "jimp": "^1.6.1"
+  },
+  "overrides": {
+    "rollup": "4.58.0"
   }
 }

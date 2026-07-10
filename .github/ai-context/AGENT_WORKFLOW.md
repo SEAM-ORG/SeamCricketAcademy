@@ -44,7 +44,8 @@ Integrations: SeamFusion is build-time; mock vs live depends on `PUBLIC_*` env.
 - `main` = release-only (deploys GitHub Pages via `.github/workflows/deploy.yml`)
 - Product branches: `feat|fix|perf|security|release/<issue>-<slug>`
 - Internal: `chore|ops|ci|docs|refactor|test|build/<slug>`
-- Path: branch → commit → push → PR → squash merge
+- Path: branch → commit → push → PR → checkout main → squash merge
+- Session end: if work is pushed to a PR, always `git checkout main` to leave a clean slate
 - No stash; no force-push protected; no history rewrite without approval
 - Prefer `gh` for issues/PRs/checks
 

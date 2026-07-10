@@ -13,7 +13,7 @@ Procedures for this repo. Source: Architect↔Agent OS gist.
 ## Session start
 
 1. `git status --short --branch` · `git log --oneline -5`
-2. If on `main` → `git checkout -b <type>/<slug>` before edits
+2. If resuming work, check out existing branch. If starting new from `main` → `git checkout -b <type>/<slug>` before edits
 3. Read `AGENTS.md` + knowledge graph for the objective
 4. Product docs as needed: `README.md`, `PROJECT_CONTEXT.md`, `DESIGN_SYSTEM.md`
 5. Execute next safe step same turn

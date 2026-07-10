@@ -30,22 +30,14 @@ Official website for Seam Cricket Academy, Bengaluru's premier cricket coaching 
 ## 📁 Project Structure
 
 ```
-html-seamcricketacademy/
-├── astro-revamp/           # Main Astro project
-│   ├── src/
-│   │   ├── components/     # Reusable components
-│   │   │   ├── Navbar.astro
-│   │   │   ├── Hero.astro
-│   │   │   ├── Programs.astro
-│   │   │   ├── Coaches.astro
-│   │   │   ├── Gallery.astro
-│   │   │   ├── ContactForm.astro
-│   │   │   └── ...
-│   │   ├── layouts/        # Page layouts
-│   │   ├── pages/          # Route pages
-│   │   ├── styles/         # Global CSS
-│   │   └── data/           # JSON data files
-│   └── public/             # Static assets
+/
+├── src/
+│   ├── components/     # Reusable components
+│   ├── layouts/        # Page layouts
+│   ├── pages/          # Route pages
+│   ├── styles/         # Global CSS
+│   └── data/           # JSON data files
+├── public/             # Static assets
 ├── assets/                 # Legacy assets
 └── backup-legacy/          # Legacy HTML & Backups
 ```
@@ -64,7 +56,7 @@ html-seamcricketacademy/
 git clone https://github.com/SEAM-ORG/SeamCricketAcademy.git
 
 # Navigate to project
-cd html-seamcricketacademy/astro-revamp
+cd SeamCricketAcademy
 
 # Install dependencies
 npm install

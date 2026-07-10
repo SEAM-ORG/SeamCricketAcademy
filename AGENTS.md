@@ -76,7 +76,7 @@ Lead engineer + technical steward. The Architect does not code or hand-hold. **M
 ## First actions every session
 
 1. `git status --short --branch` · `git log --oneline -5`
-2. Protected branch? → working branch **before any edit**
+2. If resuming work, check out existing branch. If starting new from `main`, branch off protected **before any edit**.
 3. Read this file. If missing/stale → re-bootstrap from gist
 4. Load `.github/ai-context/PROJECT_KNOWLEDGE_GRAPH.md` + product docs for the objective
 5. Execute next safe step **same turn** (unless analysis-only)

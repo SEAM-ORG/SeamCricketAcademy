@@ -61,7 +61,7 @@ html-seamcricketacademy/
 
 ```bash
 # Clone the repository
-git clone https://github.com/seamcricketacademy/html-seamcricketacademy.git
+git clone https://github.com/SEAM-ORG/SeamCricketAcademy.git
 
 # Navigate to project
 cd html-seamcricketacademy/astro-revamp
@@ -120,4 +120,4 @@ Output will be in the `dist/` folder.
 
 ---
 
-© 2026 Seam Cricket Academy. All rights reserved.
+© 2026 Seam Cricket Academy. Built with ❤️ and powered by Fajar Synergy Tech.

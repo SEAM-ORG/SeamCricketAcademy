@@ -159,7 +159,7 @@ Trigger: Architect says install/init Agent OS, or you find no usable `AGENTS.md`
 4. **Branch:** `git checkout -b chore/agent-os-init`
 5. **Environment setup:** Run **Environment Discovery** (below).
 6. **Wire development infrastructure:**
-   - Create appropriate **local CI** via git hooks (pre-commit: lint+format; pre-push: test+build). Quality gates run on the developer machine — not as GitHub Actions PR checks.
+   - Create appropriate **local CI** via tracked **`.githooks/`** + **`scripts/install-githooks.sh`** (pre-commit: lint+format; pre-push: test+build). Quality gates run on the developer machine — not as GitHub Actions PR checks. **Default framework: `.githooks` (not husky/lefthook)** unless the repo already has a working non-default setup you must preserve briefly while migrating.
    - Create a **deploy/release** pipeline only if the deploy target is known (tag push, environment deploy, manual dispatch). Do **not** create GitHub workflows that duplicate local lint/test/build.
    - Assume GitHub-side hygiene (Dependabot, Jules, etc.) may already cover dependency and review essentials — do not re-implement those as Actions CI.
 7. **Materialize Agent OS surfaces:** (same as Brownfield step 3 below)
@@ -184,7 +184,7 @@ Trigger: Architect says install/init Agent OS, or you find no usable `AGENTS.md`
 4. **Environment Discovery:** Run the protocol below.
 5. **Fill This Project** from evidence: stack, commands, code map, deploy target, hooks (local CI), GitHub deploy workflows, external services, invariants, product doc paths.
 6. **Gap analysis — Hooks, Workflows, Guardrails:**
-   - Scan for existing git hooks (`.git/hooks/`, `.husky/`, `lefthook.yml`, `lint-staged` config). Note what they check — these are **local CI**.
+   - Scan for existing git hooks (`.githooks/`, `.git/hooks/`, legacy `.husky/` / `lefthook.yml`). Note what they check — these are **local CI**. Prefer migrating legacy husky/lefthook → `.githooks` + install script.
    - Scan for existing GitHub workflows (`.github/workflows/`). Keep **deploy/release/environment** workflows. Do **not** add or reinstate PR lint/test/build Actions that duplicate hooks.
    - Identify **gaps**: missing pre-commit/pre-push hooks? Missing deploy/release workflow when deploy target is known? Fill them per Hooks, Workflows & Guardrails below.
    - If a repo has both local hooks and redundant GitHub PR CI for the same gates, prefer local hooks and remove or avoid the duplicate Actions (cost + drift).
@@ -285,13 +285,15 @@ Three layers of enforcement. The agent **discovers, creates, and maintains** all
 
 Automated scripts that the system runs to block bad actions before they land. **This is the project's CI.**
 
-- **Discovery:** At bootstrap, scan `.git/hooks/`, `.husky/`, `lefthook.yml`, `lint-staged` config, and `package.json` scripts for existing hooks.
-- **Creation (if missing):** Create appropriate hooks for the detected stack:
-  - `pre-commit`: lint + format (e.g., `eslint`, `prettier`, `dart format`, `ruff`)
-  - `pre-push`: test + build (e.g., `npm test`, `flutter test`, `cargo test`)
-  - Use the hook framework already in the project (husky, lefthook, simple shell scripts). If none exists, prefer the simplest approach that fits the stack.
+- **Discovery:** At bootstrap, scan `.githooks/`, `scripts/install-githooks.sh`, `.git/hooks/`, and legacy `.husky/` / `lefthook.yml`.
+- **Default framework:** Tracked **`.githooks/`** + **`scripts/install-githooks.sh`** (copy or `core.hooksPath`). Stack-agnostic; no npm-only dependency for git hygiene.
+  - `pre-commit`: lint + format (or project build if that is the quality gate)
+  - `pre-push`: test + build as stack-appropriate
+  - Optional: `commit-msg` when the project enforces conventional commits
+- **Migration:** If the repo uses husky/lefthook, migrate to `.githooks` + install script and remove the old framework (unless Architect asks to keep it).
+- **Creation (if missing):** Add `.githooks/pre-commit`, `.githooks/pre-push`, and `scripts/install-githooks.sh`; run the install script; document under **This Project** + install/README.
 - **Maintenance:** If a hook fails during agent work → fix the root cause. **Never** use `--no-verify` or skip flags.
-- **Project-agnostic rule:** The specific hooks and tools vary per project. What is constant: pre-commit must check code quality, pre-push must check correctness.
+- **Project-agnostic rule:** Commands vary per stack; framework defaults to `.githooks`. pre-commit = quality; pre-push = correctness.
 
 #### Local CI (hooks — primary quality gate)
 
@@ -459,7 +461,7 @@ Judgement: `.github/ai-context/AGENT_PRINCIPLES.md` · Procedures: `.github/ai-c
   - Lint: none dedicated (build + tests are gates)
   - Deploy: push/merge to `main` or `workflow_dispatch` / `repository_dispatch` (rebuild-site)
 - **Code map:** `src/pages/index.astro` · `src/components/*` · `src/layouts/Layout.astro` · `src/lib/seamfusion-api.ts` · `src/lib/validation.ts` · `src/styles/`
-- **Hooks (local CI):** husky · pre-commit: `npm run build` · pre-push: `npm test && npm run build`
+- **Hooks (local CI):** `.githooks/` via `bash scripts/install-githooks.sh` · pre-commit: `npm run build` · pre-push: `npm test && npm run build`
 - **GitHub:** `.github/workflows/deploy.yml` (Pages deploy/release only) · no PR lint/test Actions · Dependabot present
 - **External services:** SeamFusion Cloud Functions API (`PUBLIC_API_URL`, `PUBLIC_ACADEMY_ID`) · Web3Forms (contact) · WhatsApp deep links
 - **Invariants:** dark glassmorphism + neon design system (`DESIGN_SYSTEM.md`) · do not edit `backup-legacy/` · do not commit video >90MB · validate dynamic email/WhatsApp links · deploy workflow runs from **repo root** (not a nested astro folder)

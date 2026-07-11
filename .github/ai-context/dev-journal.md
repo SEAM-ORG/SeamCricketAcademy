@@ -33,3 +33,7 @@ Standardized on Grok Build + Antigravity. OpenSpec init with `--tools antigravit
 ### 2026-07-11: OpenSpec autonomy
 
 Agents must drive OpenSpec for non-trivial work without Architect slash commands. `/opsx` is optional UX only.
+
+### 2026-07-11: Superpowers replaces OpenSpec
+
+Removed OpenSpec layer. Durable work lives in docs/superpowers/{specs,plans}. Superpowers skills agent-owned on Grok + agy.

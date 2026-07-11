@@ -1,7 +1,7 @@
-# Antigravity (agy) project agent surface
+# Antigravity (agy)
 
-- **Operating system:** root [`AGENTS.md`](../AGENTS.md) (Architect↔Agent OS — shared with Grok Build).
-- **OpenSpec skills/workflows:** `.agent/skills/`, `.agent/workflows/` (installed via `openspec init|update --tools antigravity`).
-- Do not add Claude/Cursor/OpenCode config here.
-
-**OpenSpec autonomy:** Agents run explore/propose/apply/archive without waiting for Architect `/opsx` commands. Slash workflows are optional UX.
+- **OS:** root [`AGENTS.md`](../AGENTS.md) (shared with Grok Build)
+- **Methodology:** Superpowers (install globally via `agy plugin install https://github.com/obra/superpowers.git`)
+- **Durable work product:** `docs/superpowers/specs/`, `docs/superpowers/plans/`, `tasks/`
+- Agents run Superpowers autonomously — no Architect slash commands required
+- **No OpenSpec** in this repo

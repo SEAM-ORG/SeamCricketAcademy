@@ -125,7 +125,7 @@ You are an autonomous entity, not a simple autocomplete. You must leverage your 
    - `git status --short --branch` · `git log --oneline -5`
    - Note **all** dirty/untracked/staged work, other agents' leftovers, half-finished WIP, and branch divergence from `main`/remote
    - Skim `tasks/todo.md` / open PR/issue state if relevant
-   - If `openspec/` exists: list active changes (`openspec list` or `openspec/changes/`) and continue the right change when the objective matches
+   - List open work under `docs/superpowers/plans/` and `docs/superpowers/specs/`; continue incomplete plans before net-new work
 3. If resuming work, check out the existing branch. If starting new from `main`, branch off protected **before any edit**.
 4. Review `tasks/lessons.md` if it exists — avoid repeating past mistakes.
 5. Load knowledge graph + product docs for the objective; map how the objective sits in the **whole product**, not only the file the Architect named.
@@ -449,7 +449,7 @@ Taste + function · stack-fit modern tools · root cause · security · a11y bas
 
 ### Forbidden
 
-Blind edits · session-diff tunnel vision (ignoring whole-repo status) · waiting for Architect slash commands to run OpenSpec/local CI · silent deferral · hook bypass (`--no-verify`) · AI language in public git · empty catch on money/user paths · committing secrets · forking always-on instruction files · moving/deleting release tags.
+Blind edits · session-diff tunnel vision (ignoring whole-repo status) · waiting for Architect slash commands to run Superpowers/local CI · silent deferral · hook bypass (`--no-verify`) · AI language in public git · empty catch on money/user paths · committing secrets · forking always-on instruction files · moving/deleting release tags.
 
 ### Instruction surfaces
 
@@ -469,12 +469,12 @@ Blind edits · session-diff tunnel vision (ignoring whole-repo status) · waitin
 
 ---
 
-**Lazy-load:** `.github/ai-context/` · **Skills:** `.agents/skills/` (Grok) · `.agent/` (agy/OpenSpec) · **Tasks:** `tasks/` · **OpenSpec:** `openspec/`
+**Lazy-load:** `.github/ai-context/` · **Skills:** Superpowers (global Grok/agy plugin) + `.agents/skills/` · **Tasks:** `tasks/` · **Durable work:** `docs/superpowers/`
 
 Judgement: `.github/ai-context/AGENT_PRINCIPLES.md` · Procedures: `.github/ai-context/AGENT_WORKFLOW.md` · Map: `.github/ai-context/PROJECT_KNOWLEDGE_GRAPH.md`
 
 **Harnesses:** Grok Build + Antigravity (`agy`) only.  
-**OpenSpec:** agent-owned for non-trivial work — do **not** wait for Architect `/opsx` commands.
+**Methodology:** Superpowers agent-owned for non-trivial work (persist under `docs/superpowers/`). **No OpenSpec.**
 
 # This Project
 
@@ -497,8 +497,8 @@ Judgement: `.github/ai-context/AGENT_PRINCIPLES.md` · Procedures: `.github/ai-c
 - **Hooks (local CI):** `.githooks/` + `scripts/install-githooks.sh` · **gold standard** · pre-commit → prettier check on staged · pre-push → `npm test && npm run build`
 - **GitHub:** `.github/workflows/deploy.yml` (Pages deploy/release only) · no PR lint/test Actions · Dependabot present
 - **External services:** SeamFusion Cloud Functions API (`PUBLIC_API_URL`, `PUBLIC_ACADEMY_ID`) · Web3Forms (contact) · WhatsApp deep links
-- **Harnesses:** Grok Build + Antigravity (`agy`) only — no OpenCode/Claude/Cursor config
-- **OpenSpec:** `openspec/` · **agent-owned** for non-trivial work (explore→propose→apply→archive via files/CLI; Architect slash commands optional UX only — never wait for them)
+- **Harnesses:** Grok Build + Antigravity (`agy`) only — Superpowers global plugin; no OpenCode/Claude/Cursor/OpenSpec
+- **Superpowers / durable docs:** agent-owned for non-trivial work → `docs/superpowers/specs/`, `docs/superpowers/plans/` (no OpenSpec; no Architect slash required)
 - **Invariants:** dark glassmorphism + neon design system (`DESIGN_SYSTEM.md`) · do not edit `backup-legacy/` · do not commit video >90MB · validate dynamic email/WhatsApp links · deploy workflow runs from **repo root** (not a nested astro folder)
 
 ---
@@ -547,61 +547,81 @@ This OS is **harness-scoped** so setup stays lean:
 | **Grok Build** (`grok` CLI / Grok Build TUI) | Primary agent runtime |
 | **Antigravity** (`agy` IDE + `agy` CLI) | IDE + alternate CLI |
 
-**Do not** install, maintain, or generate configs for OpenCode, Claude Code, Cursor, Copilot agent, Windsurf, Codex, etc. Prefer one instruction surface: root **`AGENTS.md`**. Optional Antigravity OpenSpec skills live under `.agent/` only when OpenSpec is initialized with `--tools antigravity`.
+**Do not** install, maintain, or generate configs for OpenCode, Claude Code, Cursor, Copilot agent, Windsurf, Codex, etc. Prefer one instruction surface: root **`AGENTS.md`**.
 
-If you find foreign harness files (`opencode.json`, `.cursor/`, Claude-only trees, multi-tool OpenSpec dumps), remove or ignore them rather than repairing them — unless the Architect explicitly revives that harness.
+Superpowers installs **globally** (Grok plugins marketplace + `agy plugin install https://github.com/obra/superpowers.git`). Project **durable memory** is files under the repo (`docs/superpowers/`, `tasks/`, product docs) — not chat history.
 
-# OpenSpec (change artifacts) — agent-owned, not Architect slash-commands
+If you find foreign harness files (`opencode.json`, `.cursor/`, Claude-only trees, `openspec/` trees), remove or ignore them unless the Architect explicitly revives that harness.
 
-**OpenSpec is the durable change layer for non-trivial product work.** Agents run it **autonomously**. The Architect states intent only; they are **not** required to type `/opsx:*` or remember OpenSpec steps.
+# Superpowers + durable project memory (agent-owned)
+
+**Default methodology** for non-trivial product work: **Superpowers** (not OpenSpec).  
+Architect states intent only. Agents run the workflow **autonomously** — no required slash commands.
 
 | Layer | Owns |
 |-------|------|
-| Agent OS (`AGENTS.md`) | How the agent behaves (ownership, GitOps, local CI, continuity) |
-| OpenSpec (`openspec/`) | What change is agreed (proposal, specs, design, tasks) |
-| Local CI (`.githooks/`) | Quality/correctness gates |
+| Agent OS (`AGENTS.md`) | Always-on contract (ownership, GitOps, local CI, continuity, harness) |
+| Superpowers skills | brainstorm → plan → TDD/implement → verify → finish branch |
+| Durable project docs | Specs/plans/lessons that survive sessions and update as agents work |
+| Local CI (`.githooks/`) | Quality / correctness gates |
+| Chrome DevTools (optional plugin) | Browser UI/perf/a11y proof when relevant |
 
 ## Autonomy rule (enforced)
 
-- **Slash commands are optional UX**, not a gate. `/opsx:propose` etc. help Antigravity; they do **not** mean "wait for Architect to invoke OpenSpec."
-- If the objective is non-trivial and `openspec/` exists (or should exist), the agent **starts or continues** the OpenSpec flow **in the same session** without being asked.
-- **Never** skip OpenSpec because: "Architect didn't say OpenSpec", "no slash command used", "I'll just code it", or "out of scope for this chat."
-- **Never** dump OpenSpec chores on the Architect ("please run /opsx:propose"). Create/update artifacts yourself via files + `openspec` CLI.
-- Grok Build and agy both follow the **same artifact flow** under `openspec/changes/<change-name>/`.
+- Superpowers skills/hooks load per harness; agents **invoke them without being asked**.
+- **Never** wait for Architect `/opsx`, `/brainstorm`, or "please use Superpowers."
+- Missing skill names in the prompt is **not** permission to skip design/plan/verify for non-trivial work.
+- Slash commands are optional UX only.
+
+## Durable sources of truth (per project)
+
+| Path | Purpose |
+|------|---------|
+| `AGENTS.md` → **This Project** | Stack, commands, hooks, invariants — update when reality changes |
+| `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` | Design/spec (brainstorming skill) |
+| `docs/superpowers/plans/YYYY-MM-DD-<feature>.md` | Implementation plan with checkboxes (writing-plans) |
+| `docs/superpowers/archive/` | Finished specs/plans |
+| `tasks/todo.md` | Active mid-flight checklist when useful |
+| `tasks/lessons.md` | Corrections; review at session start |
+| Product docs (`PRD.md`, `docs/*`, …) | Product truth |
+| `.github/ai-context/*` | Knowledge graph, journal, workflow |
+
+**Session start:** git status + lessons + open files under `docs/superpowers/{plans,specs}/` — **continue incomplete work** before net-new.
+
+**While working:** update plan checkboxes, fix docs when behavior changes, append lessons after corrections.
+
+**When done:** archive finished plan/spec; refresh **This Project** / product docs if user-visible.
 
 ## Default agent flow (autonomous)
 
 ```
 Architect intent
-  → agent: whole-repo status + lessons + existing openspec/changes
-  → if non-trivial:
-       explore (read code, options) if approach unclear
-       propose/create change folder: proposal.md, specs/, design.md, tasks.md
-       (present structured choices only for Architect-owned product decisions)
-       apply tasks incrementally; verify with local CI
-       archive when done; sync specs if needed
-  → if trivial: implement under Agent OS only (no OpenSpec ceremony)
+  → whole-repo status + lessons + open superpowers plans/specs
+  → non-trivial?
+       design (brainstorming) → docs/superpowers/specs/
+       plan (writing-plans) → docs/superpowers/plans/
+       implement (TDD / subagents as skills direct)
+       verification-before-completion + local CI
+       update durable docs; archive when shipped
+  → trivial? implement under Agent OS; note skip in closeout
 ```
 
-CLI helpers (agent runs these; Architect does not need to): `openspec list`, `openspec status`, `openspec validate`, `openspec archive`, file edits under `openspec/`.
+## When full Superpowers flow is mandatory
 
-## When OpenSpec is mandatory (agent must use it)
+Multi-step features, new user-visible behavior, architecture/API shifts, cross-cutting refactors, multi-session handoff needs.
 
-- Multi-step features, new user-visible behavior, architecture/API shifts
-- Cross-cutting refactors, multi-file product work with uncertain design
-- Anything that should survive session handoff with a written trail
-- Work that needs Architect product/taste approval of approach before large implementation
+## When it may be skipped
 
-## When OpenSpec may be skipped (still agent-judged)
+One-line/docs/chore with no design ambiguity. Closeout: "trivial — no new superpowers spec/plan."
 
-- Single-file typo/docs, pure chore (hooks/OS sync), obvious one-line fix with no design ambiguity
-- If skipped, say so briefly in closeout ("trivial — no OpenSpec change")
+## Install
 
-## Install (project)
+| Harness | Superpowers |
+|---------|-------------|
+| Grok Build | Official plugins marketplace |
+| Antigravity | `agy plugin install https://github.com/obra/superpowers.git` |
 
-`openspec init --tools antigravity` (agy skills) or `--tools none` (folder only). **Never** `--tools all`.  
-Refresh: re-run init/update for antigravity only. Global CLI: `npm i -g @fission-ai/openspec`.
-
+**Do not reintroduce OpenSpec** as a parallel change layer.
 
 # Portable install (Architect one-liner)
 

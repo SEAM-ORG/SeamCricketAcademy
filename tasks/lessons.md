@@ -18,3 +18,6 @@ Do not limit awareness to staged files or this session's edits. Status-check the
 
 ### 2026-07-11: OpenSpec autonomy
 Non-trivial work → agent creates/continues `openspec/changes/*` without being told. Missing Architect slash command ≠ skip OpenSpec.
+
+### 2026-07-11: Superpowers not OpenSpec
+Non-trivial work uses Superpowers + docs/superpowers/* for durability. Do not wait for slash commands. Do not reintroduce OpenSpec.

@@ -7,7 +7,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "prepare": "husky",
+    "prepare": "bash scripts/install-githooks.sh",
     "test": "node --experimental-strip-types --test src/**/*.test.ts"
   },
   "dependencies": {
@@ -19,7 +19,6 @@
     "typescript": "^6.0.3"
   },
   "devDependencies": {
-    "husky": "^9.1.7",
     "jimp": "^1.6.1"
   },
   "overrides": {

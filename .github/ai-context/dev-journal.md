@@ -13,3 +13,7 @@ Gist updated: quality gates = local git hooks only. GitHub Actions reserved for 
 ### 2026-07-11: Gist OS sync (scope + local CI)
 
 Synced always-on OS from gist `saadev0/5828479245f786c80993b67a6f669aee`: local CI policy, non-project chat scope, default multi-repo OS install/sync. Preserved This Project + knowledge graph.
+
+### 2026-07-11: Migrate local CI to .githooks
+
+Default local CI is tracked `.githooks/` + `scripts/install-githooks.sh`. Removed husky where present.

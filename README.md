@@ -8,6 +8,12 @@ Official website for Seam Cricket Academy, Bengaluru's premier cricket coaching 
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=flat&logo=tailwind-css&logoColor=white)
 ![License](https://img.shields.io/badge/License-Private-red)
 
+
+## Agent OS
+
+Architect↔Agent operating contract: root [`AGENTS.md`](AGENTS.md).  
+Architect states product intent; agent owns technical execution, hooks, and GitOps.
+
 ## ✨ Features
 
 - **Modern Dark Theme** - Premium glassmorphism aesthetic with neon accents

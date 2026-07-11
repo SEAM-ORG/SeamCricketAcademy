@@ -125,6 +125,7 @@ You are an autonomous entity, not a simple autocomplete. You must leverage your 
    - `git status --short --branch` · `git log --oneline -5`
    - Note **all** dirty/untracked/staged work, other agents' leftovers, half-finished WIP, and branch divergence from `main`/remote
    - Skim `tasks/todo.md` / open PR/issue state if relevant
+   - If `openspec/` exists: list active changes (`openspec list` or `openspec/changes/`) and continue the right change when the objective matches
 3. If resuming work, check out the existing branch. If starting new from `main`, branch off protected **before any edit**.
 4. Review `tasks/lessons.md` if it exists — avoid repeating past mistakes.
 5. Load knowledge graph + product docs for the objective; map how the objective sits in the **whole product**, not only the file the Architect named.
@@ -448,7 +449,7 @@ Taste + function · stack-fit modern tools · root cause · security · a11y bas
 
 ### Forbidden
 
-Blind edits · session-diff tunnel vision (ignoring whole-repo status) · silent deferral · hook bypass (`--no-verify`) · AI language in public git · empty catch on money/user paths · committing secrets · forking always-on instruction files · moving/deleting release tags.
+Blind edits · session-diff tunnel vision (ignoring whole-repo status) · waiting for Architect slash commands to run OpenSpec/local CI · silent deferral · hook bypass (`--no-verify`) · AI language in public git · empty catch on money/user paths · committing secrets · forking always-on instruction files · moving/deleting release tags.
 
 ### Instruction surfaces
 
@@ -472,7 +473,8 @@ Blind edits · session-diff tunnel vision (ignoring whole-repo status) · silent
 
 Judgement: `.github/ai-context/AGENT_PRINCIPLES.md` · Procedures: `.github/ai-context/AGENT_WORKFLOW.md` · Map: `.github/ai-context/PROJECT_KNOWLEDGE_GRAPH.md`
 
-**Harnesses:** Grok Build + Antigravity (`agy`) only.
+**Harnesses:** Grok Build + Antigravity (`agy`) only.  
+**OpenSpec:** agent-owned for non-trivial work — do **not** wait for Architect `/opsx` commands.
 
 # This Project
 
@@ -496,7 +498,7 @@ Judgement: `.github/ai-context/AGENT_PRINCIPLES.md` · Procedures: `.github/ai-c
 - **GitHub:** `.github/workflows/deploy.yml` (Pages deploy/release only) · no PR lint/test Actions · Dependabot present
 - **External services:** SeamFusion Cloud Functions API (`PUBLIC_API_URL`, `PUBLIC_ACADEMY_ID`) · Web3Forms (contact) · WhatsApp deep links
 - **Harnesses:** Grok Build + Antigravity (`agy`) only — no OpenCode/Claude/Cursor config
-- **OpenSpec:** `openspec/` · non-trivial changes via explore/propose/apply/archive · agy skills in `.agent/`
+- **OpenSpec:** `openspec/` · **agent-owned** for non-trivial work (explore→propose→apply→archive via files/CLI; Architect slash commands optional UX only — never wait for them)
 - **Invariants:** dark glassmorphism + neon design system (`DESIGN_SYSTEM.md`) · do not edit `backup-legacy/` · do not commit video >90MB · validate dynamic email/WhatsApp links · deploy workflow runs from **repo root** (not a nested astro folder)
 
 ---
@@ -549,9 +551,9 @@ This OS is **harness-scoped** so setup stays lean:
 
 If you find foreign harness files (`opencode.json`, `.cursor/`, Claude-only trees, multi-tool OpenSpec dumps), remove or ignore them rather than repairing them — unless the Architect explicitly revives that harness.
 
-# OpenSpec (change artifacts)
+# OpenSpec (change artifacts) — agent-owned, not Architect slash-commands
 
-**OpenSpec** is the preferred durable layer for non-trivial product work (proposal → specs/design/tasks → apply → archive). It complements Agent OS:
+**OpenSpec is the durable change layer for non-trivial product work.** Agents run it **autonomously**. The Architect states intent only; they are **not** required to type `/opsx:*` or remember OpenSpec steps.
 
 | Layer | Owns |
 |-------|------|
@@ -559,19 +561,46 @@ If you find foreign harness files (`opencode.json`, `.cursor/`, Claude-only tree
 | OpenSpec (`openspec/`) | What change is agreed (proposal, specs, design, tasks) |
 | Local CI (`.githooks/`) | Quality/correctness gates |
 
-**When to use OpenSpec**
+## Autonomy rule (enforced)
 
-- Multi-step features, architecture shifts, cross-cutting refactors, anything needing Architect review of approach before code.
-- Commands (when Antigravity skills installed): `/opsx:explore` → `/opsx:propose` → `/opsx:apply` → `/opsx:archive` (or `openspec` CLI equivalents).
-- Grok Build: follow the same artifact flow by reading/writing `openspec/changes/<name>/` even without `/opsx` slash commands.
+- **Slash commands are optional UX**, not a gate. `/opsx:propose` etc. help Antigravity; they do **not** mean "wait for Architect to invoke OpenSpec."
+- If the objective is non-trivial and `openspec/` exists (or should exist), the agent **starts or continues** the OpenSpec flow **in the same session** without being asked.
+- **Never** skip OpenSpec because: "Architect didn't say OpenSpec", "no slash command used", "I'll just code it", or "out of scope for this chat."
+- **Never** dump OpenSpec chores on the Architect ("please run /opsx:propose"). Create/update artifacts yourself via files + `openspec` CLI.
+- Grok Build and agy both follow the **same artifact flow** under `openspec/changes/<change-name>/`.
 
-**When not to**
+## Default agent flow (autonomous)
 
-- Tiny one-file fixes, typo/docs-only, pure chore hook tweaks — intent + Agent OS is enough.
+```
+Architect intent
+  → agent: whole-repo status + lessons + existing openspec/changes
+  → if non-trivial:
+       explore (read code, options) if approach unclear
+       propose/create change folder: proposal.md, specs/, design.md, tasks.md
+       (present structured choices only for Architect-owned product decisions)
+       apply tasks incrementally; verify with local CI
+       archive when done; sync specs if needed
+  → if trivial: implement under Agent OS only (no OpenSpec ceremony)
+```
 
-**Install (project):** `openspec init --tools antigravity` (agy skills only) or `openspec init --tools none` (folder only). Never `openspec init --tools all`. Refresh: `openspec update --tools antigravity`.
+CLI helpers (agent runs these; Architect does not need to): `openspec list`, `openspec status`, `openspec validate`, `openspec archive`, file edits under `openspec/`.
 
-**Global:** OpenSpec CLI (`npm i -g @fission-ai/openspec`); do not scatter per-harness instruction forks.
+## When OpenSpec is mandatory (agent must use it)
+
+- Multi-step features, new user-visible behavior, architecture/API shifts
+- Cross-cutting refactors, multi-file product work with uncertain design
+- Anything that should survive session handoff with a written trail
+- Work that needs Architect product/taste approval of approach before large implementation
+
+## When OpenSpec may be skipped (still agent-judged)
+
+- Single-file typo/docs, pure chore (hooks/OS sync), obvious one-line fix with no design ambiguity
+- If skipped, say so briefly in closeout ("trivial — no OpenSpec change")
+
+## Install (project)
+
+`openspec init --tools antigravity` (agy skills) or `--tools none` (folder only). **Never** `--tools all`.  
+Refresh: re-run init/update for antigravity only. Global CLI: `npm i -g @fission-ai/openspec`.
 
 
 # Portable install (Architect one-liner)

@@ -52,6 +52,7 @@ Reproduce → Localize → Reduce to minimal case → Fix at root cause → Add 
 | Subagent orchestration & parallel work | Defining the core business logic / requirements |
 | Relentless debugging & error recovery | Approving major architectural pivots |
 | Local hooks (CI) + deploy-workflow maintenance | N/A |
+| OpenSpec change lifecycle (propose/apply/archive) for non-trivial work | Product/taste approval of approach when required |
 | Environment setup and version management | `sudo` / system-level installs requiring credentials |
 | Proactive health improvements (deps, tests, docs, patterns) | Budget/timeline tradeoffs for large improvements |
 | Modernizing code touched during work | Full-project rewrites or stack migrations |
@@ -70,7 +71,16 @@ pre-commit = quality · pre-push = test+build · `.githooks/` + install script.
 
 ### Continuity
 
-Whole-repo status before plan/implement. OpenSpec for non-trivial changes.
+Whole-repo status before plan/implement.
+
+### OpenSpec autonomy (enforced)
+
+For non-trivial product work, the agent runs OpenSpec without Architect `/opsx` commands:
+1. Check `openspec/changes/` / `openspec list`
+2. Create or continue a change (proposal, specs, design, tasks)
+3. Apply tasks; verify with local CI
+4. Archive when done
+Never skip because the Architect did not name OpenSpec. Trivial one-liners may skip with closeout note.
 
 ### Harness
 

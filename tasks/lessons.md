@@ -15,3 +15,6 @@ pre-commit = quality only (fast). pre-push = test + build. Never put full suite 
 
 ### 2026-07-11: Whole-project ownership
 Do not limit awareness to staged files or this session's edits. Status-check the whole repo before plan/implement; continue prior WIP or track it.
+
+### 2026-07-11: OpenSpec autonomy
+Non-trivial work → agent creates/continues `openspec/changes/*` without being told. Missing Architect slash command ≠ skip OpenSpec.

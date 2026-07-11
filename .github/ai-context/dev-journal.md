@@ -25,3 +25,7 @@ Adopted gold standard: pre-commit = quality (fast lint/format/analyze); pre-push
 ### 2026-07-11: Whole-project ownership & continuity
 
 Agents own the repo's real state, not only staged files or one session's diff. Re-check status before plan/implement; bridge sessions/agents without disconnection.
+
+### 2026-07-11: Harness scope Grok+agy + OpenSpec
+
+Standardized on Grok Build + Antigravity. OpenSpec init with `--tools antigravity` only. Removed OpenCode/CLAUDE forks.

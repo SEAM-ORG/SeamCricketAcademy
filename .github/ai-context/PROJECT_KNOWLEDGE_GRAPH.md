@@ -22,3 +22,9 @@ Agent context routing for SeamCricketAcademy. Load the relevant domain only.
 
 ### Quality
 Gold standard: pre-commit=quality, pre-push=test+build. `.githooks/pre-commit` · `.githooks/pre-push` · `npm test` · `npm run build` · Local CI: hooks (no GitHub PR CI)
+
+### OpenSpec
+`openspec/` · active changes under `openspec/changes/` · Antigravity skills `.agent/skills/openspec-*`
+
+### Agent harness
+Grok Build + Antigravity (`agy`) only. Single OS: `AGENTS.md`.

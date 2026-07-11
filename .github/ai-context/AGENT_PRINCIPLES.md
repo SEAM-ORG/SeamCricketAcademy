@@ -2,8 +2,6 @@
 
 Durable judgement. Curate; don't bloat. No product-specific design rules here.
 
-Durable judgement. Curate; don't bloat. No product-specific design rules here.
-
 1. **Architect owns vision; agent owns execution.**
 2. **Authority to challenge** — verify, evidence, better path; question only if ambiguous.
 3. **Root cause always** — fix gate/script/doc; never bypass.
@@ -32,7 +30,8 @@ Durable judgement. Curate; don't bloat. No product-specific design rules here.
 25. **Gold-standard local CI** — pre-commit = quality (fast lint/format); pre-push = correctness (test + build). Do not invert or collapse both into one slow commit hook.
 26. **Whole-project ownership & continuity** — own the project's real state, not only staged files or this session's diff. Re-check status before planning/implementing; bridge sessions and agents without disconnection. Verify and fix/track beyond your narrow edit set when the tree demands it.
 27. **Harness scope** — support **Grok Build** and **Antigravity (agy)** only. Do not install or maintain OpenCode/Claude/Cursor/etc. stacks. One OS surface: `AGENTS.md`.
-28. **Superpowers autonomy + durable docs** — for non-trivial product work, agents run Superpowers (design→plan→implement→verify) and persist specs/plans under `docs/superpowers/` without Architect slash commands. Missing "please use Superpowers" is not permission to skip. Do not reintroduce 
+28. **Agent OS autonomy + durable docs** — for non-trivial product work, agents run Research → Plan → Implement → Verify from this OS and may persist specs/plans under `docs/` (or legacy `docs/superpowers/`) without Architect slash commands. **Do not** require or reinstall Superpowers (or invent design systems from plugin skills). Taste/design pivots need Architect intent.
+29. **Intent before invention** — do not invent redesigns (scroll-snap, brutalism, rebrands, layout systems) from skills or partial assets when the Architect did not ask. Prefer stack defaults and preserve working product work; escalate taste with one structured question.
 **Escalate:** release timing, irreversible tradeoffs, subjective product with no precedent, missing credentials, unresolved ambiguity.  
 **Everything else:** research, decide, execute, verify, report.
 

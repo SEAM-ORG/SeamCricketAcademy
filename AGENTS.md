@@ -125,7 +125,7 @@ You are an autonomous entity, not a simple autocomplete. You must leverage your 
    - `git status --short --branch` · `git log --oneline -5`
    - Note **all** dirty/untracked/staged work, other agents' leftovers, half-finished WIP, and branch divergence from `main`/remote
    - Skim `tasks/todo.md` / open PR/issue state if relevant
-   - List open work under `docs/superpowers/plans/` and `docs/superpowers/specs/`; continue incomplete plans before net-new work
+   - List open work under `docs/plans/`, `docs/specs/`, or legacy `docs/superpowers/{plans,specs}/`; continue incomplete plans before net-new work
 3. If resuming work, check out the existing branch. If starting new from `main`, branch off protected **before any edit**.
 4. Review `tasks/lessons.md` if it exists — avoid repeating past mistakes.
 5. Load knowledge graph + product docs for the objective; map how the objective sits in the **whole product**, not only the file the Architect named.
@@ -449,7 +449,7 @@ Taste + function · stack-fit modern tools · root cause · security · a11y bas
 
 ### Forbidden
 
-Blind edits · session-diff tunnel vision (ignoring whole-repo status) · waiting for Architect slash commands to run Superpowers/local CI · silent deferral · hook bypass (`--no-verify`) · AI language in public git · empty catch on money/user paths · committing secrets · forking always-on instruction files · moving/deleting release tags.
+Blind edits · session-diff tunnel vision (ignoring whole-repo status) · waiting for Architect slash commands to run local CI or core work · silent deferral · hook bypass (`--no-verify`) · AI language in public git · empty catch on money/user paths · committing secrets · forking always-on instruction files · moving/deleting release tags.
 
 ### Instruction surfaces
 
@@ -469,12 +469,12 @@ Blind edits · session-diff tunnel vision (ignoring whole-repo status) · waitin
 
 ---
 
-**Lazy-load:** `.github/ai-context/` · **Skills:** Superpowers (global Grok/agy plugin) + `.agents/skills/` · **Tasks:** `tasks/` · **Durable work:** `docs/superpowers/`
+**Lazy-load:** `.github/ai-context/` · **Skills:** `.agents/skills/` (domain, on trigger) · **Tasks:** `tasks/` · **Durable work:** `docs/` (legacy `docs/superpowers/` ok)
 
 Judgement: `.github/ai-context/AGENT_PRINCIPLES.md` · Procedures: `.github/ai-context/AGENT_WORKFLOW.md` · Map: `.github/ai-context/PROJECT_KNOWLEDGE_GRAPH.md`
 
 **Harnesses:** Grok Build + Antigravity (`agy`) only.  
-**Methodology:** Superpowers agent-owned for non-trivial work (persist under `docs/superpowers/`). **No OpenSpec.**
+**Methodology:** Agent OS (Research → Plan → Implement → Verify). Durable docs under `docs/` when multi-session. **No Superpowers. No OpenSpec.**
 
 # This Project
 
@@ -497,8 +497,8 @@ Judgement: `.github/ai-context/AGENT_PRINCIPLES.md` · Procedures: `.github/ai-c
 - **Hooks (local CI):** `.githooks/` + `scripts/install-githooks.sh` · **gold standard** · pre-commit → prettier check on staged · pre-push → `npm test && npm run build`
 - **GitHub:** `.github/workflows/deploy.yml` (Pages deploy/release only) · no PR lint/test Actions · Dependabot present
 - **External services:** SeamFusion Cloud Functions API (`PUBLIC_API_URL`, `PUBLIC_ACADEMY_ID`) · Web3Forms (contact) · WhatsApp deep links
-- **Harnesses:** Grok Build + Antigravity (`agy`) only — Superpowers global plugin; no OpenCode/Claude/Cursor/OpenSpec
-- **Superpowers / durable docs:** agent-owned for non-trivial work → `docs/superpowers/specs/`, `docs/superpowers/plans/` (no OpenSpec; no Architect slash required)
+- **Harnesses:** Grok Build + Antigravity (`agy`) only — Agent OS / Gist; no Superpowers plugin required; no OpenCode/Claude/Cursor/OpenSpec
+- **Durable docs:** optional `docs/specs/`, `docs/plans/` (legacy `docs/superpowers/` ok) for multi-session work; no Superpowers; no OpenSpec
 - **Invariants:** dark glassmorphism + neon design system (`DESIGN_SYSTEM.md`) · do not edit `backup-legacy/` · do not commit video >90MB · validate dynamic email/WhatsApp links · deploy workflow runs from **repo root** (not a nested astro folder)
 
 ---
@@ -549,44 +549,44 @@ This OS is **harness-scoped** so setup stays lean:
 
 **Do not** install, maintain, or generate configs for OpenCode, Claude Code, Cursor, Copilot agent, Windsurf, Codex, etc. Prefer one instruction surface: root **`AGENTS.md`**.
 
-Superpowers installs **globally** (Grok plugins marketplace + `agy plugin install https://github.com/obra/superpowers.git`). Project **durable memory** is files under the repo (`docs/superpowers/`, `tasks/`, product docs) — not chat history.
+**Plugins are optional.** Do **not** install or depend on Superpowers (or any methodology plugin) unless the Architect explicitly asks. Project **durable memory** is files under the repo (`docs/`, `tasks/`, product docs, `.github/ai-context/`) — not chat history and not plugin skills.
 
 If you find foreign harness files (`opencode.json`, `.cursor/`, Claude-only trees, `openspec/` trees), remove or ignore them unless the Architect explicitly revives that harness.
 
-# Superpowers + durable project memory (agent-owned)
+# Durable project memory (Agent OS–owned)
 
-**Default methodology** for non-trivial product work: **Superpowers** (not OpenSpec).  
-Architect states intent only. Agents run the workflow **autonomously** — no required slash commands.
+**Default methodology** for non-trivial product work: **this Agent OS** (Research → Plan → Implement → Verify).  
+Architect states intent only. Agents execute **autonomously** — no required slash commands. **No Superpowers. No OpenSpec.**
 
 | Layer | Owns |
 |-------|------|
 | Agent OS (`AGENTS.md`) | Always-on contract (ownership, GitOps, local CI, continuity, harness) |
-| Superpowers skills | brainstorm → plan → TDD/implement → verify → finish branch |
 | Durable project docs | Specs/plans/lessons that survive sessions and update as agents work |
 | Local CI (`.githooks/`) | Quality / correctness gates |
-| Chrome DevTools (optional plugin) | Browser UI/perf/a11y proof when relevant |
+| Optional plugins (e.g. Chrome DevTools) | Only when installed and relevant; never invent product design from plugin defaults |
 
-## Autonomy rule (enforced)
+## Intent before invention (enforced)
 
-- Superpowers skills/hooks load per harness; agents **invoke them without being asked**.
-- **Never** wait for Architect `/opsx`, `/brainstorm`, or "please use Superpowers."
-- Missing skill names in the prompt is **not** permission to skip design/plan/verify for non-trivial work.
-- Slash commands are optional UX only.
+- **Do not** invent design systems, rebrands, scroll-snap / viewport-locked layouts, or UX chrome from plugin skills when the Architect did not ask.
+- Prefer **stack defaults** and **existing product work** until Architect taste is clear.
+- Missing skill names in the prompt is **not** permission to redesign. Missing "please design" is permission to **preserve**.
+- Taste/design pivots: explicit Architect objective or one structured question (recommended option first).
 
 ## Durable sources of truth (per project)
 
 | Path | Purpose |
 |------|---------|
 | `AGENTS.md` → **This Project** | Stack, commands, hooks, invariants — update when reality changes |
-| `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` | Design/spec (brainstorming skill) |
-| `docs/superpowers/plans/YYYY-MM-DD-<feature>.md` | Implementation plan with checkboxes (writing-plans) |
-| `docs/superpowers/archive/` | Finished specs/plans |
+| `docs/specs/YYYY-MM-DD-<topic>-design.md` | Design/spec when multi-session durability helps |
+| `docs/plans/YYYY-MM-DD-<feature>.md` | Implementation plan with checkboxes when multi-session |
+| `docs/archive/` | Finished specs/plans |
+| `docs/superpowers/*` | **Legacy path only** — same role as `docs/{specs,plans,archive}/` if already present; do not reintroduce Superpowers plugin |
 | `tasks/todo.md` | Active mid-flight checklist when useful |
 | `tasks/lessons.md` | Corrections; review at session start |
 | Product docs (`PRD.md`, `docs/*`, …) | Product truth |
 | `.github/ai-context/*` | Knowledge graph, journal, workflow |
 
-**Session start:** git status + lessons + open files under `docs/superpowers/{plans,specs}/` — **continue incomplete work** before net-new.
+**Session start:** git status + lessons + open plans/specs under `docs/` (including legacy `docs/superpowers/` if present) — **continue incomplete work** before net-new.
 
 **While working:** update plan checkboxes, fix docs when behavior changes, append lessons after corrections.
 
@@ -596,32 +596,28 @@ Architect states intent only. Agents run the workflow **autonomously** — no re
 
 ```
 Architect intent
-  → whole-repo status + lessons + open superpowers plans/specs
+  → whole-repo status + lessons + open plans/specs under docs/
   → non-trivial?
-       design (brainstorming) → docs/superpowers/specs/
-       plan (writing-plans) → docs/superpowers/plans/
-       implement (TDD / subagents as skills direct)
-       verification-before-completion + local CI
+       plan (and short design notes only if architecture/taste is ambiguous) → docs/ when multi-session
+       implement under Agent OS (surgical; preserve working product)
+       verify + local CI
        update durable docs; archive when shipped
   → trivial? implement under Agent OS; note skip in closeout
 ```
 
-## When full Superpowers flow is mandatory
+## When a written plan/spec is mandatory
 
-Multi-step features, new user-visible behavior, architecture/API shifts, cross-cutting refactors, multi-session handoff needs.
+Multi-step features, new user-visible behavior, architecture/API shifts, cross-cutting refactors, multi-session handoff needs — **and only after intent is clear**. Do not write a redesign plan the Architect did not ask for.
 
 ## When it may be skipped
 
-One-line/docs/chore with no design ambiguity. Closeout: "trivial — no new superpowers spec/plan."
+One-line/docs/chore with no design ambiguity. Closeout: "trivial — no new plan/spec."
 
-## Install
+## Forbidden methodology
 
-| Harness | Superpowers |
-|---------|-------------|
-| Grok Build | Official plugins marketplace |
-| Antigravity | `agy plugin install https://github.com/obra/superpowers.git` |
-
-**Do not reintroduce OpenSpec** as a parallel change layer.
+- Reinstalling Superpowers or OpenSpec as the default work layer
+- Treating plugin skills as product requirements
+- Inventing brand/layout systems without Architect intent
 
 # Portable install (Architect one-liner)
 

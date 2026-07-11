@@ -21,3 +21,6 @@ Non-trivial work → agent creates/continues `openspec/changes/*` without being 
 
 ### 2026-07-11: Superpowers not OpenSpec
 Non-trivial work uses Superpowers + docs/superpowers/* for durability. Do not wait for slash commands. Do not reintroduce OpenSpec.
+
+### 2026-07-12: Agent OS only — no Superpowers methodology
+Superpowers is not the default work layer. Agents follow the Gist / root `AGENTS.md` (Research → Plan → Implement → Verify). Do not reinstall Superpowers or invent design systems from plugin skills. Intent before invention.

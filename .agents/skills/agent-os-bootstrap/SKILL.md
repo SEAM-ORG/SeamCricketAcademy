@@ -9,18 +9,18 @@ description: >
 
 ## Harness scope
 
-Grok Build + Antigravity only. Superpowers via global plugins. **No OpenSpec / OpenCode / Claude / Cursor setups.**
+Grok Build + Antigravity only. **No Superpowers methodology. No OpenSpec / OpenCode / Claude / Cursor setups.**
 
 ## Steps
 
 1. Fetch gist: `gh gist view 5828479245f786c80993b67a6f669aee --raw`
 2. Materialize `AGENTS.md` + `.github/ai-context/*` + skills + `tasks/`.
-3. Ensure `docs/superpowers/{specs,plans,archive}/` exists.
+3. Ensure durable docs dirs exist: prefer `docs/{specs,plans,archive}/`; keep legacy `docs/superpowers/*` if present.
 4. Local CI: `.githooks/` + install script (gold standard).
 5. Remove `openspec/`, `opencode.json`, multi-harness forks if present.
-6. Confirm Superpowers available (Grok plugin; `agy plugin list` / install if needed).
+6. Do **not** install Superpowers unless Architect explicitly asks.
 7. Verify checklist; commit; closeout.
 
-## Superpowers autonomy
+## Autonomy
 
-Non-trivial work → agents run Superpowers and write durable specs/plans under `docs/superpowers/` without Architect slash commands.
+Non-trivial work → Research → Plan → Implement → Verify under Agent OS. Persist optional plans/specs under `docs/` for multi-session work. **Intent before invention** — no skill-driven redesigns without Architect objective.

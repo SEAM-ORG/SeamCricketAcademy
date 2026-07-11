@@ -23,8 +23,8 @@ Agent context routing for SeamCricketAcademy. Load the relevant domain only.
 ### Quality
 Gold standard: pre-commit=quality, pre-push=test+build. `.githooks/pre-commit` · `.githooks/pre-push` · `npm test` · `npm run build` · Local CI: hooks (no GitHub PR CI)
 
-### Superpowers durable docs
-`docs/superpowers/specs/` · `docs/superpowers/plans/` · `docs/superpowers/archive/` — agent-owned; no Superpowers docs.
+### Durable docs
+`docs/specs/` · `docs/plans/` · `docs/archive/` (legacy `docs/superpowers/*` ok) — multi-session only; no Superpowers plugin.
 
 ### Agent harness
-Grok Build + Antigravity (`agy`) only. Single OS: `AGENTS.md`.
+Grok Build + Antigravity (`agy`) only. Single OS: `AGENTS.md`. No Superpowers methodology.

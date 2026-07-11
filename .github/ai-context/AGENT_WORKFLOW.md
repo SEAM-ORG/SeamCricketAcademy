@@ -52,7 +52,7 @@ Reproduce → Localize → Reduce to minimal case → Fix at root cause → Add 
 | Subagent orchestration & parallel work | Defining the core business logic / requirements |
 | Relentless debugging & error recovery | Approving major architectural pivots |
 | Local hooks (CI) + deploy-workflow maintenance | N/A |
-| Superpowers design/plan/implement/verify + durable docs under `docs/superpowers/` | Product/taste approval of design when required |
+| Design/plan/implement/verify under Agent OS + optional durable docs under `docs/` | Product/taste approval of design when required |
 | Environment setup and version management | `sudo` / system-level installs requiring credentials |
 | Proactive health improvements (deps, tests, docs, patterns) | Budget/timeline tradeoffs for large improvements |
 | Modernizing code touched during work | Full-project rewrites or stack migrations |
@@ -71,18 +71,22 @@ pre-commit = quality · pre-push = test+build · `.githooks/`.
 
 ### Continuity
 
-Whole-repo status before plan/implement. Continue open `docs/superpowers/plans/*`.
+Whole-repo status before plan/implement. Continue open plans/specs under `docs/` (including legacy `docs/superpowers/` if present).
 
-### Superpowers autonomy (enforced)
+### Agent OS autonomy (enforced)
 
-Non-trivial work — agent runs Superpowers without Architect slash commands:
-1. Design → `docs/superpowers/specs/`
-2. Plan → `docs/superpowers/plans/`
-3. Implement + TDD/verify skills as appropriate
+Non-trivial work — agent runs Research → Plan → Implement → Verify without Architect slash commands:
+1. Confirm Architect intent (do not invent redesigns)
+2. Optional durable plan/spec under `docs/` when multi-session
+3. Implement surgically; preserve working product
 4. Local CI; update durable docs; archive when done
 
-No OpenSpec. Trivial one-liners may skip with closeout note.
+**No Superpowers. No OpenSpec.** Trivial one-liners may skip with closeout note.
+
+### Intent before invention
+
+Do not invent design systems or rebrands from plugins/skills. Prefer stack defaults. Taste needs Architect intent or one structured question.
 
 ### Harness
 
-Grok Build + Antigravity only. Superpowers via global plugins.
+Grok Build + Antigravity only. Plugins optional — never methodology-required.

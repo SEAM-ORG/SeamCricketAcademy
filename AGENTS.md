@@ -159,7 +159,7 @@ Trigger: Architect says install/init Agent OS, or you find no usable `AGENTS.md`
 4. **Branch:** `git checkout -b chore/agent-os-init`
 5. **Environment setup:** Run **Environment Discovery** (below).
 6. **Wire development infrastructure:**
-   - Create appropriate **local CI** via tracked **`.githooks/`** + **`scripts/install-githooks.sh`** (pre-commit: lint+format; pre-push: test+build). Quality gates run on the developer machine — not as GitHub Actions PR checks. **Default framework: `.githooks` (not husky/lefthook)** unless the repo already has a working non-default setup you must preserve briefly while migrating.
+   - Create **local CI** via **`.githooks/`** + **`scripts/install-githooks.sh`** using the **gold standard**: pre-commit = quality (lint/format); pre-push = test+build. Not GitHub PR CI. **Default framework: `.githooks` (not husky)**.
    - Create a **deploy/release** pipeline only if the deploy target is known (tag push, environment deploy, manual dispatch). Do **not** create GitHub workflows that duplicate local lint/test/build.
    - Assume GitHub-side hygiene (Dependabot, Jules, etc.) may already cover dependency and review essentials — do not re-implement those as Actions CI.
 7. **Materialize Agent OS surfaces:** (same as Brownfield step 3 below)
@@ -229,7 +229,8 @@ Run this during Bootstrap and whenever the agent suspects environment drift (e.g
 [ ] Session start commands work (git available)
 [ ] Environment requirements met (correct node/python/flutter/etc. version active)
 [ ] Project build/test commands discovered and noted under This Project
-[ ] Local CI via git hooks is wired (pre-commit and/or pre-push: quality + correctness)
+[ ] Local CI via git hooks is wired to gold standard (pre-commit=quality; pre-push=test+build)
+[ ] Canonical lint/test/build commands named under This Project (gaps documented if a tool is missing)
 [ ] No redundant GitHub PR CI for lint/test/build (Dependabot/Jules/etc. OK; deploy Actions OK)
 [ ] Deploy/release GitHub workflow exists only when deploy target is known
 [ ] tasks/lessons.md exists
@@ -286,22 +287,33 @@ Three layers of enforcement. The agent **discovers, creates, and maintains** all
 Automated scripts that the system runs to block bad actions before they land. **This is the project's CI.**
 
 - **Discovery:** At bootstrap, scan `.githooks/`, `scripts/install-githooks.sh`, `.git/hooks/`, and legacy `.husky/` / `lefthook.yml`.
-- **Default framework:** Tracked **`.githooks/`** + **`scripts/install-githooks.sh`** (copy or `core.hooksPath`). Stack-agnostic; no npm-only dependency for git hygiene.
-  - `pre-commit`: lint + format (or project build if that is the quality gate)
-  - `pre-push`: test + build as stack-appropriate
-  - Optional: `commit-msg` when the project enforces conventional commits
-- **Migration:** If the repo uses husky/lefthook, migrate to `.githooks` + install script and remove the old framework (unless Architect asks to keep it).
-- **Creation (if missing):** Add `.githooks/pre-commit`, `.githooks/pre-push`, and `scripts/install-githooks.sh`; run the install script; document under **This Project** + install/README.
-- **Maintenance:** If a hook fails during agent work → fix the root cause. **Never** use `--no-verify` or skip flags.
-- **Project-agnostic rule:** Commands vary per stack; framework defaults to `.githooks`. pre-commit = quality; pre-push = correctness.
+- **Default framework:** Tracked **`.githooks/`** + **`scripts/install-githooks.sh`**. Stack-agnostic; no npm-only dependency for git hygiene.
+- **Gold-standard gate split (default — always aim for this):**
+  - **`pre-commit` = quality (fast):** lint + format (+ typecheck/analyze if still quick). Target ≤ ~30s. **No** full test suite. **No** full production build unless there is no cheaper quality tool yet (document the gap).
+  - **`pre-push` = correctness:** **test + build** (run `test` when the project has tests; always run `build` when the stack has a build). May take longer.
+  - Optional **`commit-msg`**: conventional commits only when the project already enforces them.
+- **Scripts:** Prefer `scripts/local-ci-pre-commit.sh` and `scripts/local-ci-pre-push.sh` (or stack equivalents) so hooks stay one-liners and **This Project** can name the same commands agents use.
+- **When tools are missing:** If there is no linter yet, pre-commit may be a thin no-op/warning **and** the gap is recorded under **This Project** + `tasks/lessons.md` / journal — then add a real quality tool on the next opportunity. Do **not** put full `test+build` on every commit to compensate.
+- **Migration:** husky/lefthook → `.githooks`. Heavy everything-on-commit → split to gold standard.
+- **Creation (if missing):** Add `.githooks/*`, install script, local-ci scripts; run install; document under **This Project**.
+- **Maintenance:** Hook failure → fix root cause. **Never** `--no-verify`.
+- **Project-agnostic rule:** Commands vary; **split is constant**: commit=quality, push=test+build.
 
 #### Local CI (hooks — primary quality gate)
 
-**Policy:** Quality verification (lint, format, test, build) runs **locally via git hooks**, not as GitHub Actions on every PR. This avoids duplicate compute cost and drift between two CI systems. GitHub already has Dependabot, Jules, and similar for essentials.
+**Policy:** All quality/correctness verification runs **locally via git hooks**, not as GitHub Actions on every PR (cost + drift). Dependabot, Jules, etc. cover GitHub-side essentials.
 
-- Hooks **are** the CI. pre-commit = quality; pre-push = correctness (test + build as stack-appropriate).
-- Map canonical commands (`install`, `dev`, `build`, `test`, `lint`) into the `This Project` section and wire them into hooks.
-- If the Architect asks to "run the full suite," run the project's local scripts/hooks — do not stand up a GitHub PR CI workflow for it.
+**Gold standard (default):**
+
+| Hook | Name | Runs | Intent |
+|------|------|------|--------|
+| `pre-commit` | Quality | lint, format, fast analyze/typecheck | Catch style/type issues every commit; keep fast |
+| `pre-push` | Correctness | **test + build** | Do not share broken behavior or unbuildable code |
+
+- Hooks **are** the CI. Map `install` / `dev` / `build` / `test` / `lint` (and local-ci scripts) into **This Project**.
+- **Do not** run full test+build on every commit by default (slow → bypass temptation).
+- **Do not** skip pre-push tests because pre-commit already analyzed.
+- If the Architect asks to "run the full suite," use local scripts/hooks — not a new GitHub PR CI workflow.
 
 #### GitHub workflows (deploy / release / environment only)
 
@@ -332,8 +344,8 @@ Three stages: Local → GitHub → Release. Each has a clear owner.
 ```
 Local (Agent-owned)
 ├─ Implementation complete
-├─ All local gates pass (build, test, lint)
-├─ Hooks pass (pre-commit, pre-push)
+├─ pre-commit quality passes (lint/format)
+├─ pre-push correctness passes (test + build)
 └─ Ready to push
 
 GitHub (Agent-owned)
@@ -454,14 +466,16 @@ Judgement: `.github/ai-context/AGENT_PRINCIPLES.md` · Procedures: `.github/ai-c
 - **Environment:** Node 22 (CI + local Homebrew) · no `.nvmrc` yet
 - **Product truth:** `PROJECT_CONTEXT.md` · `DESIGN_SYSTEM.md` · `DEPLOYMENT.md` · `src/data/academy.json` · `src/data/programs.ts`
 - **Canonical commands:**
-  - Install: `npm ci`
+  - Install: `npm ci` then `bash scripts/install-githooks.sh`
   - Dev: `npm run dev`
   - Build: `npm run build`
-  - Test: `npm test` (Node test runner on `src/**/*.test.ts`)
-  - Lint: none dedicated (build + tests are gates)
-  - Deploy: push/merge to `main` or `workflow_dispatch` / `repository_dispatch` (rebuild-site)
+  - Test: `npm test`
+  - Lint/format: `npx prettier --check` (via pre-commit quality)
+  - Local CI quality: `npm run local-ci:quality`
+  - Local CI correctness: `npm run local-ci:correctness`
+  - Deploy: push/merge to `main` → `.github/workflows/deploy.yml`
 - **Code map:** `src/pages/index.astro` · `src/components/*` · `src/layouts/Layout.astro` · `src/lib/seamfusion-api.ts` · `src/lib/validation.ts` · `src/styles/`
-- **Hooks (local CI):** `.githooks/` via `bash scripts/install-githooks.sh` · pre-commit: `npm run build` · pre-push: `npm test && npm run build`
+- **Hooks (local CI):** `.githooks/` + `scripts/install-githooks.sh` · **gold standard** · pre-commit → prettier check on staged · pre-push → `npm test && npm run build`
 - **GitHub:** `.github/workflows/deploy.yml` (Pages deploy/release only) · no PR lint/test Actions · Dependabot present
 - **External services:** SeamFusion Cloud Functions API (`PUBLIC_API_URL`, `PUBLIC_ACADEMY_ID`) · Web3Forms (contact) · WhatsApp deep links
 - **Invariants:** dark glassmorphism + neon design system (`DESIGN_SYSTEM.md`) · do not edit `backup-legacy/` · do not commit video >90MB · validate dynamic email/WhatsApp links · deploy workflow runs from **repo root** (not a nested astro folder)

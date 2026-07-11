@@ -17,3 +17,7 @@ Synced always-on OS from gist `saadev0/5828479245f786c80993b67a6f669aee`: local 
 ### 2026-07-11: Migrate local CI to .githooks
 
 Default local CI is tracked `.githooks/` + `scripts/install-githooks.sh`. Removed husky where present.
+
+### 2026-07-11: Gold-standard local CI
+
+Adopted gold standard: pre-commit = quality (fast lint/format/analyze); pre-push = correctness (test + build). Documented tool gaps instead of compensating with full build on every commit.

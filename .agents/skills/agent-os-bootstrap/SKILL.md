@@ -9,19 +9,18 @@ description: >
 
 ## Harness scope
 
-**Supported:** Grok Build, Antigravity (`agy`).  
-**Do not** set up OpenCode, Claude Code, Cursor, Copilot agent, etc.
+Grok Build + Antigravity only. Superpowers via global plugins. **No OpenSpec / OpenCode / Claude / Cursor setups.**
 
 ## Steps
 
 1. Fetch gist: `gh gist view 5828479245f786c80993b67a6f669aee --raw`
-2. Branch `chore/agent-os-sync`; materialize `AGENTS.md` + `.github/ai-context/*` + this skill + `tasks/`.
-3. **No** `CLAUDE.md` / multi-harness instruction forks.
-4. Local CI: `.githooks/` + `scripts/install-githooks.sh` (gold standard).
-5. OpenSpec (product repos): `openspec init --tools antigravity` or `openspec update` + ensure `--tools antigravity` on init — never `--tools all`.
-6. Remove foreign harness files if found (`opencode.json`, etc.).
+2. Materialize `AGENTS.md` + `.github/ai-context/*` + skills + `tasks/`.
+3. Ensure `docs/superpowers/{specs,plans,archive}/` exists.
+4. Local CI: `.githooks/` + install script (gold standard).
+5. Remove `openspec/`, `opencode.json`, multi-harness forks if present.
+6. Confirm Superpowers available (Grok plugin; `agy plugin list` / install if needed).
 7. Verify checklist; commit; closeout.
 
-## OpenSpec autonomy
+## Superpowers autonomy
 
-Document and enforce: agents drive OpenSpec for non-trivial work without Architect slash commands. Init with `--tools antigravity` only (Grok+agy).
+Non-trivial work → agents run Superpowers and write durable specs/plans under `docs/superpowers/` without Architect slash commands.

@@ -52,7 +52,7 @@ Reproduce → Localize → Reduce to minimal case → Fix at root cause → Add 
 | Subagent orchestration & parallel work | Defining the core business logic / requirements |
 | Relentless debugging & error recovery | Approving major architectural pivots |
 | Local hooks (CI) + deploy-workflow maintenance | N/A |
-| OpenSpec change lifecycle (propose/apply/archive) for non-trivial work | Product/taste approval of approach when required |
+| Superpowers design/plan/implement/verify + durable docs under `docs/superpowers/` | Product/taste approval of design when required |
 | Environment setup and version management | `sudo` / system-level installs requiring credentials |
 | Proactive health improvements (deps, tests, docs, patterns) | Budget/timeline tradeoffs for large improvements |
 | Modernizing code touched during work | Full-project rewrites or stack migrations |
@@ -67,21 +67,22 @@ Reproduce → Localize → Reduce to minimal case → Fix at root cause → Add 
 
 ### Local CI gold standard
 
-pre-commit = quality · pre-push = test+build · `.githooks/` + install script.
+pre-commit = quality · pre-push = test+build · `.githooks/`.
 
 ### Continuity
 
-Whole-repo status before plan/implement.
+Whole-repo status before plan/implement. Continue open `docs/superpowers/plans/*`.
 
-### OpenSpec autonomy (enforced)
+### Superpowers autonomy (enforced)
 
-For non-trivial product work, the agent runs OpenSpec without Architect `/opsx` commands:
-1. Check `openspec/changes/` / `openspec list`
-2. Create or continue a change (proposal, specs, design, tasks)
-3. Apply tasks; verify with local CI
-4. Archive when done
-Never skip because the Architect did not name OpenSpec. Trivial one-liners may skip with closeout note.
+Non-trivial work — agent runs Superpowers without Architect slash commands:
+1. Design → `docs/superpowers/specs/`
+2. Plan → `docs/superpowers/plans/`
+3. Implement + TDD/verify skills as appropriate
+4. Local CI; update durable docs; archive when done
+
+No OpenSpec. Trivial one-liners may skip with closeout note.
 
 ### Harness
 
-Grok Build + Antigravity only.
+Grok Build + Antigravity only. Superpowers via global plugins.

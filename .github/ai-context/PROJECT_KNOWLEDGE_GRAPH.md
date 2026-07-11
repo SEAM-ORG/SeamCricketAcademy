@@ -21,4 +21,4 @@ Agent context routing for SeamCricketAcademy. Load the relevant domain only.
 `AGENTS.md` · `.github/ai-context/*` · `.agents/skills/`
 
 ### Quality
-`.husky/pre-commit` · `.husky/pre-push` · `npm test` · `npm run build` · CI: `.github/workflows/ci.yml`
+`.husky/pre-commit` · `.husky/pre-push` · `npm test` · `npm run build` · Local CI: hooks (no GitHub PR CI)

@@ -63,3 +63,12 @@ Reproduce → Localize → Reduce to minimal case → Fix at root cause → Add 
 **Handoff:** Branch/issue/PR · files to read · ledger · in/out scope · STOP · gates · report-back
 
 ---
+
+### Local CI gold standard (all projects)
+
+| Hook | Role | Typical commands |
+|------|------|------------------|
+| pre-commit | Quality (fast) | lint, format, analyze |
+| pre-push | Correctness | test + build |
+
+Do not put full test suites on pre-commit. Record missing lint/test tools under This Project instead of overloading commit hooks.

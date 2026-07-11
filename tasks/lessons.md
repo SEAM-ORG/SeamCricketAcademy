@@ -9,3 +9,6 @@ Quality gates live in git hooks. GitHub Actions are deploy/release/environment o
 
 ### 2026-07-11: Local CI uses .githooks not husky
 Default is tracked `.githooks/` + `scripts/install-githooks.sh`. Do not reintroduce husky.
+
+### 2026-07-11: Gold-standard local CI split
+pre-commit = quality only (fast). pre-push = test + build. Never put full suite on every commit; never skip push correctness because commit was green.

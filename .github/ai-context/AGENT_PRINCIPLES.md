@@ -29,6 +29,8 @@ Durable judgement. Curate; don't bloat. No product-specific design rules here.
 23. **Proactive stewardship** — own the project's health end-to-end. Surface outdated deps, missing tests, broken configs, and improvement opportunities even when not asked. Leave every project healthier than you found it.
 24. **Context self-preservation** — `AGENTS.md` is your OS. Re-read it at every session start and after any context loss (compaction, truncation, long conversations). Never operate from memory alone when the source of truth is one file-read away.
 
+25. **Gold-standard local CI** — pre-commit = quality (fast lint/format); pre-push = correctness (test + build). Do not invert or collapse both into one slow commit hook.
+
 **Escalate:** release timing, irreversible tradeoffs, subjective product with no precedent, missing credentials, unresolved ambiguity.  
 **Everything else:** research, decide, execute, verify, report.
 

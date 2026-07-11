@@ -55,13 +55,21 @@ When the agent needs you, you get a **structured choice** (recommended option fi
 
 ## How to start a session
 
-1. Open the project in your agent IDE.
-2. One sentence objective is enough if `AGENTS.md` is installed.
-3. If the repo has **no** Agent OS yet, say:  
+**Where you open the chat matters:**
+
+| You open chat from… | Meaning |
+|---------------------|---------|
+| **Home / no product folder** | This chat is **not a project**. Do not invent a product repo or treat the home directory as one. Objectives are project-agnostic (Gist OS, machine/agent setup) **or** explicit multi-project work the Architect names. |
+| **Inside a project directory** | This chat **is** that project. Product work stays in that repo unless the Architect also names others (e.g. install OS on all projects). |
+
+1. One sentence objective is enough if `AGENTS.md` is installed in the relevant project(s).
+2. If a repo has **no** Agent OS yet, say:
    **"Install Architect↔Agent OS from gist saadev0/5828479245f786c80993b67a6f669aee and set this project up."**
-4. For a **brand-new project**, say:  
+3. For a **brand-new project**, say:
    **"Create a new [stack/type] project for [purpose]. Install Agent OS and set everything up."**
-5. Review closeout: summary · status · evidence · next step. Approve merge/release when you want work landed/shipped.
+4. For **Gist / machine / all-projects OS** work from a non-project folder: state the objective; the agent may update the Gist and, when the change is the portable OS contract, **sync installed copies into known product repos** (default for OS install/sync — not a mistake).
+5. Review closeout: summary · status · evidence · next step. Approve merge/release when you want product work landed/shipped.
+
 
 ## How to teach standing rules
 
@@ -236,7 +244,11 @@ If any box fails → fix in the same session.
 
 ### Default stance
 
-- Work only in this repo (worktrees only when isolation is required).
+- **Non-project chat ≠ a project.** If cwd is home/machine (not a product folder), do not treat that folder as a product repo. The chat may still be Gist/OS/machine work, or multi-project work the Architect specified.
+- **OS contract changes are portable.** When the Gist OS changes (or Architect asks to install/sync Agent OS), update the Gist and **by default install/sync into the Architect's known product repos** so every project stays on the same OS. That multi-repo fan-out is correct for OS — not overreach.
+- **Product feature work is single-repo by default.** Inside a project folder, stay in that product unless the Architect names more.
+- Work only in in-scope path(s) (worktrees when isolation is required).
+
 - End-to-end completion > smallest local fix with unfinished verify/docs/GitOps.
 - No closure excuses: `pre-existing`, `unrelated`, `out of scope`, `broader dependency` → fix or track.
 - Docs vs code conflict → executable truth wins; fix docs same branch.
@@ -456,7 +468,11 @@ Judgement: `.github/ai-context/AGENT_PRINCIPLES.md` · Procedures: `.github/ai-c
 
 # Gist Sync Protocol
 
-This OS is sourced from a canonical Gist. The agent must maintain parity between repo-local `AGENTS.md` and the Gist, and propose universal improvements back.
+This OS is sourced from a canonical Gist. The Gist is **project-agnostic** (one OS for all products). Repo-local `AGENTS.md` copies the OS and adds a filled **This Project** block only.
+
+- **Gist edits** = project-agnostic contract. A non-project chat is a natural place for this; do not invent a fake product from the home directory.
+- **Repo install/sync** = after a Gist OS change (or on install request), **default to syncing all known product repos** so OS sections stay aligned. Preserve each repo's **This Project** facts. Do not silently fork always-on OS text into product-specific variants.
+- Propose universal improvements back to the Gist; product-only learnings stay in that repo's `tasks/lessons.md`.
 
 ## Classifying learnings
 
@@ -464,7 +480,7 @@ This OS is sourced from a canonical Gist. The agent must maintain parity between
 |-----------|---------------|
 | Project-specific pattern or workaround | `tasks/lessons.md` in this repo |
 | Project-specific config or invariant | `This Project` section of local `AGENTS.md` |
-| Universally applicable improvement (new principle, better bootstrap step, workflow pattern) | **Propose as a Gist update to the Architect** |
+| Universally applicable improvement (new principle, better bootstrap step, workflow pattern) | **Gist update** (project-agnostic), then **sync OS into known product repos** by default |
 
 ## How to propose a Gist update
 

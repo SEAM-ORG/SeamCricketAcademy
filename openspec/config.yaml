@@ -1,0 +1,8 @@
+schema: spec-driven
+
+context: |
+  Stack: Astro + Tailwind + GSAP marketing site for Seam Cricket Academy.
+  Deploy: GitHub Pages via .github/workflows/deploy.yml
+  Agent OS: root AGENTS.md (Grok Build + Antigravity only).
+  Local CI: gold standard — prettier quality, npm test + build on push.
+  Integration: SeamFusion API (PUBLIC_API_URL, PUBLIC_ACADEMY_ID).

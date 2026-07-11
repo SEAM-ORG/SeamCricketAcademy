@@ -64,13 +64,14 @@ Reproduce → Localize → Reduce to minimal case → Fix at root cause → Add 
 
 ---
 
-### Local CI gold standard (all projects)
+### Local CI gold standard
 
-| Hook | Role | Typical commands |
-|------|------|------------------|
-| pre-commit | Quality (fast) | lint, format, analyze |
-| pre-push | Correctness | test + build |
+pre-commit = quality · pre-push = test+build · `.githooks/` + install script.
 
-### Continuity (all projects)
+### Continuity
 
-Re-check whole-repo status before planning/implementing. Own WIP left by prior sessions/agents — fix or track; do not tunnel-vision to staged files only.
+Whole-repo status before plan/implement. OpenSpec for non-trivial changes.
+
+### Harness
+
+Grok Build + Antigravity only.

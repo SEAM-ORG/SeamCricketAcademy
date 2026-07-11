@@ -194,7 +194,7 @@ Trigger: Architect says install/init Agent OS, or you find no usable `AGENTS.md`
    - Write `.github/ai-context/PROJECT_KNOWLEDGE_GRAPH.md` (real entry points — explore repo).
    - Write `.github/ai-context/dev-journal.md` (init entry).
    - Ensure `.agents/skills/agent-os-bootstrap/SKILL.md` exists.
-   - Symlink `CLAUDE.md` → `AGENTS.md` if useful for other tools.
+   - Keep a single instruction entrypoint: root `AGENTS.md`. Do **not** add Claude/Cursor/OpenCode instruction forks.
 4. **Environment Discovery:** Run the protocol below.
 5. **Fill This Project** from evidence: stack, commands, code map, deploy target, hooks (local CI), GitHub deploy workflows, external services, invariants, product doc paths.
 6. **Gap analysis — Hooks, Workflows, Guardrails:**
@@ -468,9 +468,11 @@ Blind edits · session-diff tunnel vision (ignoring whole-repo status) · silent
 
 ---
 
-**Lazy-load:** `.github/ai-context/` · **Skills:** `.agents/skills/` · **Tasks:** `tasks/`
+**Lazy-load:** `.github/ai-context/` · **Skills:** `.agents/skills/` (Grok) · `.agent/` (agy/OpenSpec) · **Tasks:** `tasks/` · **OpenSpec:** `openspec/`
 
 Judgement: `.github/ai-context/AGENT_PRINCIPLES.md` · Procedures: `.github/ai-context/AGENT_WORKFLOW.md` · Map: `.github/ai-context/PROJECT_KNOWLEDGE_GRAPH.md`
+
+**Harnesses:** Grok Build + Antigravity (`agy`) only.
 
 # This Project
 
@@ -493,6 +495,8 @@ Judgement: `.github/ai-context/AGENT_PRINCIPLES.md` · Procedures: `.github/ai-c
 - **Hooks (local CI):** `.githooks/` + `scripts/install-githooks.sh` · **gold standard** · pre-commit → prettier check on staged · pre-push → `npm test && npm run build`
 - **GitHub:** `.github/workflows/deploy.yml` (Pages deploy/release only) · no PR lint/test Actions · Dependabot present
 - **External services:** SeamFusion Cloud Functions API (`PUBLIC_API_URL`, `PUBLIC_ACADEMY_ID`) · Web3Forms (contact) · WhatsApp deep links
+- **Harnesses:** Grok Build + Antigravity (`agy`) only — no OpenCode/Claude/Cursor config
+- **OpenSpec:** `openspec/` · non-trivial changes via explore/propose/apply/archive · agy skills in `.agent/`
 - **Invariants:** dark glassmorphism + neon design system (`DESIGN_SYSTEM.md`) · do not edit `backup-legacy/` · do not commit video >90MB · validate dynamic email/WhatsApp links · deploy workflow runs from **repo root** (not a nested astro folder)
 
 ---
@@ -530,3 +534,51 @@ This OS is sourced from a canonical Gist. The Gist is **project-agnostic** (one 
 - When a standing rule is taught that feels universal.
 
 ---
+
+
+# Supported harnesses (Grok Build + Antigravity only)
+
+This OS is **harness-scoped** so setup stays lean:
+
+| Supported | Role |
+|-----------|------|
+| **Grok Build** (`grok` CLI / Grok Build TUI) | Primary agent runtime |
+| **Antigravity** (`agy` IDE + `agy` CLI) | IDE + alternate CLI |
+
+**Do not** install, maintain, or generate configs for OpenCode, Claude Code, Cursor, Copilot agent, Windsurf, Codex, etc. Prefer one instruction surface: root **`AGENTS.md`**. Optional Antigravity OpenSpec skills live under `.agent/` only when OpenSpec is initialized with `--tools antigravity`.
+
+If you find foreign harness files (`opencode.json`, `.cursor/`, Claude-only trees, multi-tool OpenSpec dumps), remove or ignore them rather than repairing them — unless the Architect explicitly revives that harness.
+
+# OpenSpec (change artifacts)
+
+**OpenSpec** is the preferred durable layer for non-trivial product work (proposal → specs/design/tasks → apply → archive). It complements Agent OS:
+
+| Layer | Owns |
+|-------|------|
+| Agent OS (`AGENTS.md`) | How the agent behaves (ownership, GitOps, local CI, continuity) |
+| OpenSpec (`openspec/`) | What change is agreed (proposal, specs, design, tasks) |
+| Local CI (`.githooks/`) | Quality/correctness gates |
+
+**When to use OpenSpec**
+
+- Multi-step features, architecture shifts, cross-cutting refactors, anything needing Architect review of approach before code.
+- Commands (when Antigravity skills installed): `/opsx:explore` → `/opsx:propose` → `/opsx:apply` → `/opsx:archive` (or `openspec` CLI equivalents).
+- Grok Build: follow the same artifact flow by reading/writing `openspec/changes/<name>/` even without `/opsx` slash commands.
+
+**When not to**
+
+- Tiny one-file fixes, typo/docs-only, pure chore hook tweaks — intent + Agent OS is enough.
+
+**Install (project):** `openspec init --tools antigravity` (agy skills only) or `openspec init --tools none` (folder only). Never `openspec init --tools all`. Refresh: `openspec update --tools antigravity`.
+
+**Global:** OpenSpec CLI (`npm i -g @fission-ai/openspec`); do not scatter per-harness instruction forks.
+
+
+# Portable install (Architect one-liner)
+
+> Install Architect↔Agent OS from gist `saadev0/5828479245f786c80993b67a6f669aee`, fill This Project for this repo, verify the checklist, commit on a chore branch.
+
+For a new project:
+> Create a new [stack] project for [purpose]. Install Architect↔Agent OS from gist `saadev0/5828479245f786c80993b67a6f669aee`, set everything up.
+
+Agent executes Bootstrap (Greenfield or Brownfield) + Environment Discovery + Verify above. No human file copying.

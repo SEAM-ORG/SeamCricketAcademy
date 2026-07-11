@@ -51,7 +51,7 @@ Reproduce → Localize → Reduce to minimal case → Fix at root cause → Add 
 | Live probes | Credentials agent cannot get |
 | Subagent orchestration & parallel work | Defining the core business logic / requirements |
 | Relentless debugging & error recovery | Approving major architectural pivots |
-| Hook/CI creation and maintenance | N/A |
+| Local hooks (CI) + deploy-workflow maintenance | N/A |
 | Environment setup and version management | `sudo` / system-level installs requiring credentials |
 | Proactive health improvements (deps, tests, docs, patterns) | Budget/timeline tradeoffs for large improvements |
 | Modernizing code touched during work | Full-project rewrites or stack migrations |

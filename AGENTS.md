@@ -107,7 +107,7 @@ Lead engineer + technical steward. The Architect does not code or hand-hold. **M
 You are an autonomous entity, not a simple autocomplete. You must leverage your environment:
 - **Subagents (`invoke_subagent`)**: Delegate research, large refactors, or independent testing to subagents. Give each subagent **one focused objective** with a concrete deliverable ("Find where X is implemented and list files + key functions" beats "look around"). Merge subagent outputs into a short, actionable synthesis before coding.
 - **Background Tasks (`manage_task`)**: Run long-running servers, builds, or tests in the background while you continue working.
-- **Timers (`schedule`)**: If waiting on a CI pipeline or deployment, set a timer to check back autonomously instead of ending your turn and waiting for the Architect.
+- **Timers (`schedule`)**: If waiting on a **deploy/release** pipeline (or external review bot), set a timer to check back autonomously instead of ending your turn and waiting for the Architect.
 - **Relentless Execution**: When given a `/goal`, do not stop at the first error. Diagnose, read logs, search the web for solutions, and retry until successful.
 
 ## First actions every session
@@ -151,9 +151,9 @@ Trigger: Architect says install/init Agent OS, or you find no usable `AGENTS.md`
 4. **Branch:** `git checkout -b chore/agent-os-init`
 5. **Environment setup:** Run **Environment Discovery** (below).
 6. **Wire development infrastructure:**
-   - Create appropriate git hooks (pre-commit: lint+format; pre-push: test+build).
-   - Create initial CI pipeline (`.github/workflows/ci.yml` — lint, test, build on PRs).
-   - Create deployment pipeline if the deploy target is known.
+   - Create appropriate **local CI** via git hooks (pre-commit: lint+format; pre-push: test+build). Quality gates run on the developer machine — not as GitHub Actions PR checks.
+   - Create a **deploy/release** pipeline only if the deploy target is known (tag push, environment deploy, manual dispatch). Do **not** create GitHub workflows that duplicate local lint/test/build.
+   - Assume GitHub-side hygiene (Dependabot, Jules, etc.) may already cover dependency and review essentials — do not re-implement those as Actions CI.
 7. **Materialize Agent OS surfaces:** (same as Brownfield step 3 below)
 8. **Fill This Project** from the scaffolded structure.
 9. **Verify** with checklist below.
@@ -174,11 +174,12 @@ Trigger: Architect says install/init Agent OS, or you find no usable `AGENTS.md`
    - Ensure `.agents/skills/agent-os-bootstrap/SKILL.md` exists.
    - Symlink `CLAUDE.md` → `AGENTS.md` if useful for other tools.
 4. **Environment Discovery:** Run the protocol below.
-5. **Fill This Project** from evidence: stack, commands, code map, deploy target, hooks, CI, external services, invariants, product doc paths.
+5. **Fill This Project** from evidence: stack, commands, code map, deploy target, hooks (local CI), GitHub deploy workflows, external services, invariants, product doc paths.
 6. **Gap analysis — Hooks, Workflows, Guardrails:**
-   - Scan for existing git hooks (`.git/hooks/`, `.husky/`, `lefthook.yml`, `lint-staged` config). Note what they check.
-   - Scan for existing CI/CD (`.github/workflows/`, `Makefile`, `scripts/`). Note what they run.
-   - Identify **gaps**: missing pre-commit hooks? No CI pipeline? No deploy workflow? Fill them per the Hooks & Workflows section below.
+   - Scan for existing git hooks (`.git/hooks/`, `.husky/`, `lefthook.yml`, `lint-staged` config). Note what they check — these are **local CI**.
+   - Scan for existing GitHub workflows (`.github/workflows/`). Keep **deploy/release/environment** workflows. Do **not** add or reinstate PR lint/test/build Actions that duplicate hooks.
+   - Identify **gaps**: missing pre-commit/pre-push hooks? Missing deploy/release workflow when deploy target is known? Fill them per Hooks, Workflows & Guardrails below.
+   - If a repo has both local hooks and redundant GitHub PR CI for the same gates, prefer local hooks and remove or avoid the duplicate Actions (cost + drift).
 7. **Align handoff/README** links to `AGENTS.md` if present.
 8. **Initialize task management:** Create `tasks/lessons.md` (empty, with header). Create `tasks/todo.md` if a multi-step objective is active.
 9. **Verify** with checklist below.
@@ -220,8 +221,9 @@ Run this during Bootstrap and whenever the agent suspects environment drift (e.g
 [ ] Session start commands work (git available)
 [ ] Environment requirements met (correct node/python/flutter/etc. version active)
 [ ] Project build/test commands discovered and noted under This Project
-[ ] Git hooks are wired (pre-commit and/or pre-push)
-[ ] CI pipeline exists and runs on PRs
+[ ] Local CI via git hooks is wired (pre-commit and/or pre-push: quality + correctness)
+[ ] No redundant GitHub PR CI for lint/test/build (Dependabot/Jules/etc. OK; deploy Actions OK)
+[ ] Deploy/release GitHub workflow exists only when deploy target is known
 [ ] tasks/lessons.md exists
 [ ] Architect can prompt with intent only; agent owns CLI
 ```
@@ -265,9 +267,11 @@ If any box fails → fix in the same session.
 
 Three layers of enforcement. The agent **discovers, creates, and maintains** all three.
 
-#### Hooks (system-enforced, git-level)
+**Division of labor:** Local git hooks = **CI** (quality + correctness). GitHub Actions = **deploy/release/environment** only. Do not duplicate local gates as PR workflows (cost and drift). Dependabot, Jules, and similar cover GitHub-side essentials.
 
-Automated scripts that the system runs to block bad actions before they land.
+#### Hooks / local CI (system-enforced, git-level)
+
+Automated scripts that the system runs to block bad actions before they land. **This is the project's CI.**
 
 - **Discovery:** At bootstrap, scan `.git/hooks/`, `.husky/`, `lefthook.yml`, `lint-staged` config, and `package.json` scripts for existing hooks.
 - **Creation (if missing):** Create appropriate hooks for the detected stack:
@@ -277,17 +281,22 @@ Automated scripts that the system runs to block bad actions before they land.
 - **Maintenance:** If a hook fails during agent work → fix the root cause. **Never** use `--no-verify` or skip flags.
 - **Project-agnostic rule:** The specific hooks and tools vary per project. What is constant: pre-commit must check code quality, pre-push must check correctness.
 
-#### Workflows (CI/CD pipelines, automation)
+#### Local CI (hooks — primary quality gate)
 
-Executable pipelines that run on GitHub or locally.
+**Policy:** Quality verification (lint, format, test, build) runs **locally via git hooks**, not as GitHub Actions on every PR. This avoids duplicate compute cost and drift between two CI systems. GitHub already has Dependabot, Jules, and similar for essentials.
 
-- **Discovery:** At bootstrap, scan `.github/workflows/`, `Makefile`, `scripts/`, CI config files (`Jenkinsfile`, `.circleci/`, `.gitlab-ci.yml`).
-- **Creation (if missing):**
-  - **CI pipeline** (`.github/workflows/ci.yml`): lint, test, build — runs on every PR to `main`.
-  - **Deploy pipeline** (if deploy target is known): triggered on tag push or manual dispatch.
-  - Map canonical commands (`install`, `dev`, `build`, `test`, `lint`) into the `This Project` section.
-- **Maintenance:** Keep pipelines passing. If CI drifts or breaks, fix autonomously as part of the current workstream.
-- **Autonomous improvement:** If the agent notices manual repetition (e.g., the Architect keeps asking to "run the full test suite"), propose a script or workflow to automate it.
+- Hooks **are** the CI. pre-commit = quality; pre-push = correctness (test + build as stack-appropriate).
+- Map canonical commands (`install`, `dev`, `build`, `test`, `lint`) into the `This Project` section and wire them into hooks.
+- If the Architect asks to "run the full suite," run the project's local scripts/hooks — do not stand up a GitHub PR CI workflow for it.
+
+#### GitHub workflows (deploy / release / environment only)
+
+- **Discovery:** At bootstrap, scan `.github/workflows/` for existing Actions.
+- **Allowed on GitHub:** deployment, release tagging, environment promotion, pages/hosting publish, store submission, scheduled rebuilds tied to **shipping** — not PR lint/test/build mirrors of local hooks.
+- **Creation (if missing and deploy target known):** deploy/release workflow (tag push, environment, or `workflow_dispatch`).
+- **Do not create:** `.github/workflows/ci.yml` (or equivalent) that only re-runs lint/test/build already enforced by hooks.
+- **If redundant PR CI already exists:** remove it during bootstrap/stewardship when hooks cover the same gates (unless Architect explicitly wants both).
+- **Maintenance:** Keep deploy/release pipelines healthy. Local hook failures → fix root cause; never `--no-verify`.
 
 #### Guardrails (agent-enforced, behavioral)
 
@@ -316,7 +325,8 @@ Local (Agent-owned)
 GitHub (Agent-owned)
 ├─ Push to feature branch
 ├─ Create PR (link issue if exists: Closes #N)
-├─ CI pipeline passes
+├─ Local CI already passed via hooks on commit/push; no GitHub PR CI required
+├─ Dependabot/Jules/review bots may comment — address if product-relevant
 ├─ Squash merge (or await Architect review if requested)
 └─ Checkout main, clean up branch
 
@@ -357,7 +367,7 @@ The agent owns the project's complete lifecycle — not just the current task. T
 - Missing or inadequate test coverage
 - Suboptimal project structure or patterns
 - Missing documentation for critical flows
-- CI/CD gaps or fragile pipelines
+- Missing/broken local hooks or fragile deploy/release pipelines
 - Security vulnerabilities (`npm audit`, `pip audit`, etc.)
 - Accessibility gaps in UI code
 - Performance anti-patterns (N+1 queries, unbounded loops, missing indexes)
@@ -369,7 +379,7 @@ The agent owns the project's complete lifecycle — not just the current task. T
 
 **Best-practices enforcement:**
 - If the project uses outdated patterns (e.g., class components in a hooks-era React project, callback hell in an async/await codebase), modernize code you touch — don't rewrite the whole project, but don't perpetuate obsolete patterns either.
-- If the project is missing standard infrastructure (no `.gitignore`, no `README`, no CI, no linter config), create it during bootstrap or the first relevant session.
+- If the project is missing standard infrastructure (no `.gitignore`, no `README`, no local hooks, no linter config), create it during bootstrap or the first relevant session. Prefer local hooks over GitHub PR CI.
 - Keep dependencies reasonably current. Flag major version bumps that may have breaking changes.
 
 **Communicate proactively:**
@@ -414,6 +424,7 @@ Blind edits · silent deferral · hook bypass (`--no-verify`) · AI language in 
 | Product docs | Product truth |
 
 ---
+
 ---
 
 **Lazy-load:** `.github/ai-context/` · **Skills:** `.agents/skills/` · **Tasks:** `tasks/`
@@ -436,8 +447,8 @@ Judgement: `.github/ai-context/AGENT_PRINCIPLES.md` · Procedures: `.github/ai-c
   - Lint: none dedicated (build + tests are gates)
   - Deploy: push/merge to `main` or `workflow_dispatch` / `repository_dispatch` (rebuild-site)
 - **Code map:** `src/pages/index.astro` · `src/components/*` · `src/layouts/Layout.astro` · `src/lib/seamfusion-api.ts` · `src/lib/validation.ts` · `src/styles/`
-- **Hooks:** husky · pre-commit: `npm run build` · pre-push: `npm test && npm run build`
-- **CI/CD:** `.github/workflows/ci.yml` (PR gates) · `.github/workflows/deploy.yml` (Pages deploy on main)
+- **Hooks (local CI):** husky · pre-commit: `npm run build` · pre-push: `npm test && npm run build`
+- **GitHub:** `.github/workflows/deploy.yml` (Pages deploy/release only) · no PR lint/test Actions · Dependabot present
 - **External services:** SeamFusion Cloud Functions API (`PUBLIC_API_URL`, `PUBLIC_ACADEMY_ID`) · Web3Forms (contact) · WhatsApp deep links
 - **Invariants:** dark glassmorphism + neon design system (`DESIGN_SYSTEM.md`) · do not edit `backup-legacy/` · do not commit video >90MB · validate dynamic email/WhatsApp links · deploy workflow runs from **repo root** (not a nested astro folder)
 

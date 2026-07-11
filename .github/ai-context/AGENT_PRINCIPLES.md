@@ -30,6 +30,7 @@ Durable judgement. Curate; don't bloat. No product-specific design rules here.
 24. **Context self-preservation** — `AGENTS.md` is your OS. Re-read it at every session start and after any context loss (compaction, truncation, long conversations). Never operate from memory alone when the source of truth is one file-read away.
 
 25. **Gold-standard local CI** — pre-commit = quality (fast lint/format); pre-push = correctness (test + build). Do not invert or collapse both into one slow commit hook.
+26. **Whole-project ownership & continuity** — own the project's real state, not only staged files or this session's diff. Re-check status before planning/implementing; bridge sessions and agents without disconnection. Verify and fix/track beyond your narrow edit set when the tree demands it.
 
 **Escalate:** release timing, irreversible tradeoffs, subjective product with no precedent, missing credentials, unresolved ambiguity.  
 **Everything else:** research, decide, execute, verify, report.

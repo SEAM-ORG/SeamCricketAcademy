@@ -1,6 +1,8 @@
 schema: spec-driven
 
 context: |
+  OpenSpec is agent-owned: for non-trivial work the agent runs explore/propose/apply/archive without Architect slash commands.
+
   Stack: Astro + Tailwind + GSAP marketing site for Seam Cricket Academy.
   Deploy: GitHub Pages via .github/workflows/deploy.yml
   Agent OS: root AGENTS.md (Grok Build + Antigravity only).

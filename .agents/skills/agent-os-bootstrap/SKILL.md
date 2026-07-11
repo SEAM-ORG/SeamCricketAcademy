@@ -21,3 +21,7 @@ description: >
 5. OpenSpec (product repos): `openspec init --tools antigravity` or `openspec update` + ensure `--tools antigravity` on init — never `--tools all`.
 6. Remove foreign harness files if found (`opencode.json`, etc.).
 7. Verify checklist; commit; closeout.
+
+## OpenSpec autonomy
+
+Document and enforce: agents drive OpenSpec for non-trivial work without Architect slash commands. Init with `--tools antigravity` only (Grok+agy).

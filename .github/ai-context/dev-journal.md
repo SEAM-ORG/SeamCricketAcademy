@@ -29,3 +29,7 @@ Agents own the repo's real state, not only staged files or one session's diff. R
 ### 2026-07-11: Harness scope Grok+agy + OpenSpec
 
 Standardized on Grok Build + Antigravity. OpenSpec init with `--tools antigravity` only. Removed OpenCode/CLAUDE forks.
+
+### 2026-07-11: OpenSpec autonomy
+
+Agents must drive OpenSpec for non-trivial work without Architect slash commands. `/opsx` is optional UX only.

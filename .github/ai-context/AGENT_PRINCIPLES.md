@@ -32,6 +32,7 @@ Durable judgement. Curate; don't bloat. No product-specific design rules here.
 25. **Gold-standard local CI** — pre-commit = quality (fast lint/format); pre-push = correctness (test + build). Do not invert or collapse both into one slow commit hook.
 26. **Whole-project ownership & continuity** — own the project's real state, not only staged files or this session's diff. Re-check status before planning/implementing; bridge sessions and agents without disconnection. Verify and fix/track beyond your narrow edit set when the tree demands it.
 27. **Harness scope** — support **Grok Build** and **Antigravity (agy)** only. Do not install or maintain OpenCode/Claude/Cursor/etc. stacks. One OS surface: `AGENTS.md`.
+28. **OpenSpec autonomy** — for non-trivial product work, agents drive OpenSpec (create/continue change artifacts, apply, archive) without Architect slash commands or reminders. Slash commands are optional UX only. Missing "please use OpenSpec" in the prompt is not permission to skip.
 
 **Escalate:** release timing, irreversible tradeoffs, subjective product with no precedent, missing credentials, unresolved ambiguity.  
 **Everything else:** research, decide, execute, verify, report.

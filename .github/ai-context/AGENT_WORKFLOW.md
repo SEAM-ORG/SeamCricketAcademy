@@ -10,7 +10,7 @@
 
 ## Checklists
 
-**Start:** status · log · branch off protected · review `tasks/lessons.md` · plan/handoff · knowledge graph → files · live probes · execute same turn.
+**Start (and re-ground before non-trivial turns):** full repo status (all dirty/WIP, not just your files) · log · branch off protected · review `tasks/lessons.md` + `tasks/todo.md` · knowledge graph → whole-product fit · live probes · plan · execute same turn.
 
 **Complete:** verify evidence · intentional git · durable memory · product docs if needed · update `tasks/todo.md` · closeout footer.
 
@@ -71,4 +71,6 @@ Reproduce → Localize → Reduce to minimal case → Fix at root cause → Add 
 | pre-commit | Quality (fast) | lint, format, analyze |
 | pre-push | Correctness | test + build |
 
-Do not put full test suites on pre-commit. Record missing lint/test tools under This Project instead of overloading commit hooks.
+### Continuity (all projects)
+
+Re-check whole-repo status before planning/implementing. Own WIP left by prior sessions/agents — fix or track; do not tunnel-vision to staged files only.

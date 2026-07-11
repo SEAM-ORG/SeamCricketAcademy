@@ -121,11 +121,25 @@ You are an autonomous entity, not a simple autocomplete. You must leverage your 
 ## First actions every session
 
 1. **Read `AGENTS.md` (this file) in full.** This is non-negotiable. It is your operating system. If you cannot recall these instructions, re-read before doing anything else.
-2. `git status --short --branch` · `git log --oneline -5`
-3. If resuming work, check out existing branch. If starting new from `main`, branch off protected **before any edit**.
+2. **Reality check the whole repo** (not just this chat's files):
+   - `git status --short --branch` · `git log --oneline -5`
+   - Note **all** dirty/untracked/staged work, other agents' leftovers, half-finished WIP, and branch divergence from `main`/remote
+   - Skim `tasks/todo.md` / open PR/issue state if relevant
+3. If resuming work, check out the existing branch. If starting new from `main`, branch off protected **before any edit**.
 4. Review `tasks/lessons.md` if it exists — avoid repeating past mistakes.
-5. Load knowledge graph + product docs for the objective
+5. Load knowledge graph + product docs for the objective; map how the objective sits in the **whole product**, not only the file the Architect named.
 6. Execute next safe step **same turn** (unless analysis-only)
+
+### Whole-project ownership (not session-diff ownership)
+
+You own the **project's real state**, not only the files you or this session touched.
+
+- **Do not** treat "staged files", "files I edited this turn", or "the Architect's last paste" as the full problem space.
+- **Before planning or implementing anything new** (session start **and** before each non-trivial turn): re-check current status — git state, relevant entry points, open tasks/lessons, and whether prior sessions left incomplete work.
+- Continuity is mandatory across sessions and agents: assume another agent may have changed the tree; verify rather than inherit chat memory.
+- Verification and closeout cover **repo health related to the objective** (build/test/docs/hooks as needed), not only the diff hunk you authored.
+- If you find broken, incomplete, or conflicting work outside your narrow edit set, **fix or track it** — never ignore it because "someone else started it" or "it was pre-existing."
+- Narrow surgical edits are still preferred; ownership means **awareness + correct scope**, not rewriting the monorepo every turn.
 
 ### Context loss recovery (compaction / truncation)
 
@@ -250,6 +264,7 @@ If any box fails → fix in the same session.
 - **Product feature work is single-repo by default.** Inside a project folder, stay in that product unless the Architect names more.
 - Work only in in-scope path(s) (worktrees when isolation is required).
 
+- **Whole-project ownership:** you are accountable for continuity of the repo's real state across sessions/agents — not only this session's staged/edited files. Status-check before plan/implement.
 - End-to-end completion > smallest local fix with unfinished verify/docs/GitOps.
 - No closure excuses: `pre-existing`, `unrelated`, `out of scope`, `broader dependency` → fix or track.
 - Docs vs code conflict → executable truth wins; fix docs same branch.
@@ -259,12 +274,12 @@ If any box fails → fix in the same session.
 
 ### Core loop
 
-1. **Research** — map code; plans are hypotheses until git + file inspection.
-2. **Plan** — thin vertical slices. Self-enter plan mode for non-trivial work (3+ steps, multi-file changes, architectural decisions, production-impacting behavior). Write the plan to `tasks/todo.md` with verification steps included. If new information invalidates the plan, stop, update it, then continue.
-3. **Implement** — surgical; reuse; root cause at shared path.
-4. **Verify** — real project gates; inspect output.
+1. **Research** — map code **and current repo state**; plans are hypotheses until git + file inspection. Re-ground on every non-trivial turn (status, relevant modules, prior WIP). Chat history is a hint, not ground truth.
+2. **Plan** — thin vertical slices that fit the **bigger product picture**. Self-enter plan mode for non-trivial work (3+ steps, multi-file changes, architectural decisions, production-impacting behavior). Write the plan to `tasks/todo.md` with verification steps included. If new information invalidates the plan, stop, update it, then continue.
+3. **Implement** — surgical; reuse; root cause at shared path. Own integration consequences outside the files you touch.
+4. **Verify** — real project gates against the **repo**, not only staged hunks; inspect output.
 
-**Investigation ledger** (non-trivial): inventory · current vs intended · root cause · local vs live · verification commands.
+**Investigation ledger** (non-trivial): whole-repo status · inventory · current vs intended · root cause · local vs live · continuity risks · verification commands.
 
 ### GitOps
 
@@ -433,7 +448,7 @@ Taste + function · stack-fit modern tools · root cause · security · a11y bas
 
 ### Forbidden
 
-Blind edits · silent deferral · hook bypass (`--no-verify`) · AI language in public git · empty catch on money/user paths · committing secrets · forking always-on instruction files · moving/deleting release tags.
+Blind edits · session-diff tunnel vision (ignoring whole-repo status) · silent deferral · hook bypass (`--no-verify`) · AI language in public git · empty catch on money/user paths · committing secrets · forking always-on instruction files · moving/deleting release tags.
 
 ### Instruction surfaces
 

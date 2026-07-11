@@ -21,3 +21,7 @@ Default local CI is tracked `.githooks/` + `scripts/install-githooks.sh`. Remove
 ### 2026-07-11: Gold-standard local CI
 
 Adopted gold standard: pre-commit = quality (fast lint/format/analyze); pre-push = correctness (test + build). Documented tool gaps instead of compensating with full build on every commit.
+
+### 2026-07-11: Whole-project ownership & continuity
+
+Agents own the repo's real state, not only staged files or one session's diff. Re-check status before plan/implement; bridge sessions/agents without disconnection.

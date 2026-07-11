@@ -33,3 +33,7 @@ description: >
 3. Materialize AGENTS.md + `.github/ai-context/*` + this skill + CLAUDE.md + tasks/.
 4. Wire gold-standard local CI; migrate husky; remove redundant PR CI workflows.
 5. Verify checklist; commit; closeout.
+
+## Whole-project ownership
+
+After install/sync, agents must re-check full repo status each session/turn — not only staged or session diffs. Continuity across agents is mandatory.

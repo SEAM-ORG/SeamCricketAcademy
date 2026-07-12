@@ -510,6 +510,17 @@ OpenCode is **project-scoped**. Do **not** rely only on machine-global `~/.confi
 
 **Gitignore:** ignore only `.opencode/state/` / `.opencode/cache/` — never blanket-ignore tracked commands.
 
+#### GitHub Actions vs local CI (what belongs on GitHub)
+
+| On GitHub (OK)                                  | On GitHub (NOT OK)                                                    | Local (required)                      |
+| ----------------------------------------------- | --------------------------------------------------------------------- | ------------------------------------- |
+| Deploy / Pages / hosting publish                | PR-only lint/test/build that duplicates hooks                         | pre-commit quality                    |
+| Release tag / Cloud Build submit / store submit | "CI" workflows that re-run the same gates as pre-push                 | pre-push test+build                   |
+| Dependabot, CodeQL, org security products       | Actions that only move Project cards (agents own Project V2 via `gh`) | `scripts/github/*`                    |
+| Manual `workflow_dispatch` release              | —                                                                     | Session Start: `gh run list` failures |
+
+**Agent autonomy:** Session Start (`session-preflight.sh`) and Session End (`session-end-hygiene.sh`) **must** list recent Actions runs/failures and open Dependabot/bot PRs. Failed deploys after your merge are your problem until fixed or tracked. Inventory per repo: `docs/GITHUB_ACTIONS.md`.
+
 #### GitHub Project V2 sync (agent CLI only — no Actions)
 
 **Hard rule:** Every Architect org has a **GitHub Projects (v2)** board. Agents keep Issues/PRs **and** board Status aligned using **`gh project`** + portable scripts under `scripts/github/`. **Do not** add GitHub Actions workflows to move cards, label, or close Issues — that is agent work at the right GitOps moment.

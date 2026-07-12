@@ -37,4 +37,13 @@ else
 fi
 
 echo
+
+echo
+echo "=== GitHub Actions (recent runs) ==="
+# Agents must notice failed deploys/security scans — no PR lint CI expected.
+gh run list -R "$REPO" --limit 10 2>/dev/null || echo "(no runs or no access)"
+echo
+echo "=== Failed Actions (last 5, if any) ==="
+gh run list -R "$REPO" --status failure --limit 5 2>/dev/null || true
+
 info "Preflight complete. Resume open PR/branch work before inventing parallel streams."

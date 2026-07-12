@@ -38,4 +38,13 @@ if [[ -n "$OWNER" && "$OWNER" != "REPLACE_ORG" && "$PNUM" != "0" ]] && require_p
   echo "=== Project items still In Progress (review manually) ==="
   gh project item-list "$PNUM" --owner "$OWNER" --limit 50 2>&1 | head -40 || true
 fi
+
+echo
+echo "=== Recent Actions failures (agent must not ignore) ==="
+gh run list -R "$REPO" --status failure --limit 5 2>/dev/null || true
+echo
+echo "=== Dependabot / bot open PRs (value-first triage on stewardship) ==="
+gh pr list -R "$REPO" --state open --limit 20 --json number,title,author,labels \
+  --jq '.[] | select(.author.login|test("dependabot|copilot|app/"; "i") or (.title|test("dependabot|Bump |deps"; "i"))) | "#\(.number) \(.title)"' 2>/dev/null || true
+
 info "Hygiene report done."

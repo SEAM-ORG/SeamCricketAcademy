@@ -12,6 +12,21 @@ HOOKS_TARGET="$REPO_ROOT/.git/hooks"
 [ -d "$HOOKS_SOURCE" ] || { echo "Missing .githooks"; exit 1; }
 mkdir -p "$HOOKS_TARGET"
 
+
+# If a previous husky install left core.hooksPath pointing at a missing
+# .husky tree, git would skip .git/hooks entirely. Prefer gold-standard
+# .git/hooks from this script.
+if git config --local --get core.hooksPath >/dev/null 2>&1; then
+  hp="$(git config --local --get core.hooksPath)"
+  case "$hp" in
+    .husky|.husky/*|*/.husky|*/.husky/*)
+      git config --local --unset-all core.hooksPath || true
+      echo "  cleared stale core.hooksPath=$hp (husky residue)"
+      ;;
+  esac
+fi
+
+
 installed=0
 for name in pre-commit pre-push commit-msg; do
   src="$HOOKS_SOURCE/$name"

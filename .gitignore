@@ -23,3 +23,17 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 *.code-workspace
+
+# OpenCode: track project commands; ignore local runtime only
+.opencode/*
+!.opencode/README.md
+!.opencode/command/
+!.opencode/command/**
+!.opencode/commands/
+!.opencode/commands/**
+!.opencode/skill/
+!.opencode/skill/**
+!.opencode/skills/
+!.opencode/skills/**
+.opencode/state/
+.opencode/cache/

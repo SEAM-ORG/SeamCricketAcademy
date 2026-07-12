@@ -27,3 +27,6 @@ Superpowers is not the default work layer. Agents follow the Gist / root `AGENTS
 
 ### 2026-07-12: Protected Gist session + Local-vs-GitOps protocols
 Agents previously slimmed the portable Agent OS Gist and lost local-first / session start-end protocols. **Prevention:** Session Start, Local vs GitOps (verified+committed locally by default; push/PR on `/end` or exception), Session End, Hooks/CI, and harness scope are protected. Do not delete or collapse them when editing the Gist or syncing `AGENTS.md`. Propose diffs; never unilaterally slim.
+
+### 2026-07-12: Grok CLI + OpenCode only; agent-skills global
+Supported harnesses are **Grok CLI** and **OpenCode** only — no Antigravity IDE/CLI. Keep `opencode-antigravity-auth` (OpenCode Google auth). Global **addyosmani/agent-skills** is required; agents use skills/hooks/commands autonomously. On bootstrap, repair global install and fill project gaps.

@@ -148,7 +148,7 @@ You are an autonomous entity, not a simple autocomplete. You must leverage your 
 2. **Reality check the whole repo** (not just this chat's files):
    - `git status --short --branch` · `git log --oneline -5`
    - Note **all** dirty/untracked/staged work, other agents' leftovers, half-finished WIP, and branch divergence from `main`/remote
-   - Skim `tasks/todo.md` / open PR/issue state if relevant (`gh issue list`, `gh pr list` when useful)
+   - Skim `tasks/todo.md`. Run `bash scripts/github/session-preflight.sh` when remote exists (open PRs/Issues + Project V2). Resume open work before net-new.
    - List open work under `docs/plans/`, `docs/specs/`, or legacy `docs/superpowers/{plans,specs}/`; continue incomplete plans before net-new work
    - If **This Project** names a session-preflight script, run it; otherwise the git/gh checks above are enough (no product-specific scripts required in the portable OS)
 3. **Session Start Decision Gate:** If the checkout is dirty, staged, non-protected, local-only, ahead/behind protected, or tied to an open PR, treat it as an **active handoff**. Decide whether to continue that work, finish and commit it first, promote it under Local vs GitOps rules, or ask with a structured question when a real branch/product choice remains. **Never** classify existing work as irrelevant, never bypass it by silently switching branches, and never leave orphan untracked files from a prior turn.
@@ -225,7 +225,7 @@ Trigger: Architect says install/init Agent OS, or you find no usable `AGENTS.md`
    - Keep a single instruction entrypoint: root `AGENTS.md`. Do **not** add Claude/Cursor/OpenCode instruction forks.
 4. **Environment Discovery:** Run the protocol below.
 5. **Agent Skills pack health (global + project gaps):** Run **Agent Skills Pack** protocol below — ensure global install for Grok CLI + OpenCode; fill project gaps that skills/hooks/workflows expect (tests, local CI, docs dirs, definition-of-done surfaces).
-   5b. **GitHub hygiene surfaces:** ensure `gh` works; thin `scripts/create-pr.sh` + `scripts/finalize-pr.sh` if missing; PR/Issue templates under `.github/` if missing; create portable labels (`bug`, `enhancement`, `chore`, `agent-infra`) when the remote exists. Record product-specific label/milestone scheme under **This Project** only.
+   5b. **GitHub hygiene + Project V2:** ensure `gh` works with `project`/`read:project` scopes; install `scripts/github/*` + `.github/agent-project.yml` (owner + project number); `bash scripts/github/bootstrap.sh`; thin `create-pr.sh`/`finalize-pr.sh` + PR/Issue templates; labels + infra milestone. **No** Project-sync GitHub Actions — agents own the board via CLI.
 6. **Fill This Project** from evidence: stack, commands, code map, deploy target, hooks (local CI), GitHub deploy workflows, external services, invariants, product doc paths.
 7. **Gap analysis — Hooks, Workflows, Guardrails:**
    - Scan for existing git hooks (`.githooks/`, `.git/hooks/`, legacy `.husky/` / `lefthook.yml`). Note what they check — these are **local CI**. Prefer migrating legacy husky/lefthook → `.githooks` + install script.
@@ -497,6 +497,47 @@ Restored and consolidated from historical Agent OS GitOps practice (labels/miles
 
 Product-heavy repos (e.g. SeamFusionServices) may keep richer scripts (`prepare-commit.sh`, guardrails, release helpers) under **This Project** — the portable pair above is the minimum.
 
+#### GitHub Project V2 sync (agent CLI only — no Actions)
+
+**Hard rule:** Every Architect org has a **GitHub Projects (v2)** board. Agents keep Issues/PRs **and** board Status aligned using **`gh project`** + portable scripts under `scripts/github/`. **Do not** add GitHub Actions workflows to move cards, label, or close Issues — that is agent work at the right GitOps moment.
+
+**Machine prerequisite (once):** token must include Project scopes:
+
+```bash
+gh auth refresh -s project,read:project -h github.com
+bash scripts/github/ensure-scopes.sh
+```
+
+**Repo config:** `.github/agent-project.yml` — `project_owner`, `project_number`, `status_map` (exact Status option names on the board), labels, `infra_milestone`. Fill at bootstrap (`bash scripts/github/bootstrap.sh`).
+
+**Portable scripts (commit in every product repo):**
+
+| Script                                                    | When agents run it                                                                                       |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `scripts/github/session-preflight.sh`                     | **Session Start** — open PRs/Issues, branch vs main, board snapshot                                      |
+| `scripts/github/ensure-labels.sh` / `ensure-milestone.sh` | Bootstrap + before create Issue/PR                                                                       |
+| `scripts/github/open-unit.sh`                             | Starting a tracked product/infra unit (Issue + labels + board **In Progress**)                           |
+| `scripts/github/project-sync.sh`                          | `add <url>` · `status <url> <stage>` · `done <url>`                                                      |
+| `scripts/github/ship-unit.sh`                             | **GitOps ship** — push, PR+labels, board In Review → merge → board **Done**, checkout protected          |
+| `scripts/github/session-end-hygiene.sh`                   | **Session End** after ship — list remaining open work; `--close-stale-os-prs` for superseded OS-init PRs |
+| `scripts/github/bootstrap.sh`                             | OS install / drift repair                                                                                |
+
+**Status stages (map names in yml to board options):** `backlog` · `ready` · `in_progress` · `in_review` · `done`.
+
+**Timing (when to touch GitHub):**
+
+| Moment                          | GitHub / board action                                                                          |
+| ------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Session Start                   | Preflight open PRs/Issues/board; **resume** open agent work before net-new                     |
+| Local turn                      | **No** push/PR/board required; commit locally                                                  |
+| Start multi-session product arc | `open-unit.sh` Issue + milestone/labels + board In Progress                                    |
+| `/end` / ship unit              | `ship-unit.sh` (or equivalent: PR → labels → project In Review → squash merge → project Done)  |
+| After merge                     | Linked Issues close via `Closes #N`; board item **Done**; no orphan remote branches            |
+| Session End closeout            | `session-end-hygiene.sh` — do not leave obsolete agent-os-init PRs open if main already has OS |
+| Dependabot / bot PRs            | Value-first triage on Session Start or stewardship — not ignore forever                        |
+
+**Forbidden:** “Someone will update the board later.” **Forbidden:** GitHub Actions that only mirror local CI or auto-move Project cards as a substitute for agent duty.
+
 #### Guardrails (agent-enforced, behavioral)
 
 Rules the agent must obey before taking an action. These are **always active** regardless of project.
@@ -607,15 +648,16 @@ Stop at **verified locally + committed locally** unless `/end` / ship or a mid-s
 
 ### Session End Protocol (only on `/end`, "end session", "ship it", or equivalent)
 
-A session is **never** complete just because code changed locally. When there is shippable work, full completion requires **GitOps evidence**.
+A session is **never** complete just because code changed locally. When there is shippable work, full completion requires **GitOps evidence** **and** GitHub hygiene (Issues/PRs/labels/milestones/**Project V2 Status**).
 
 1. Update durable memory first when needed (`tasks/todo.md`, lessons, docs/plans/specs) so it lands with the work
 2. Consolidate committed work into reviewable unit(s); prefer one PR per logical unit over a mega-PR
-3. For each unit: ensure Issue exists/linked when product-relevant → push branch → open PR (`gh`) → squash merge (or leave PR open if Architect wants review — say so explicitly)
+3. For each unit: prefer `bash scripts/github/ship-unit.sh` (or: Issue link → push → PR with labels → Project **In Review** → squash merge → Project **Done** → `Closes #N` where applicable)
 4. Checkout protected branch; delete merged local branch residue when safe
-5. Final closeout: **summary · status · evidence · PR/issue links · project health · next-session first step**
+5. Run `bash scripts/github/session-end-hygiene.sh` (add `--close-stale-os-prs` when obsolete agent-os-init PRs are superseded by main)
+6. Final closeout: **summary · status · evidence · PR/issue links · Project V2 status · remaining open work · next-session first step**
 
-If you must hand off with open PRs still unmerged, justify that in the closeout — do not claim session-complete GitOps without evidence.
+If you must hand off with open PRs still unmerged, justify that in the closeout and leave board Status honest (**In Review**, not **Done**). Do not claim session-complete GitOps without evidence.
 
 ### Question tool
 
@@ -782,6 +824,7 @@ Reproduce → Localize → Reduce to minimal case → Fix at root cause → Add 
 - **Hooks (local CI):** `.githooks/` + `scripts/install-githooks.sh` · **gold standard** · pre-commit → prettier check on staged · pre-push → `npm test && npm run build`
 - **GitHub:** `.github/workflows/deploy.yml` (Pages deploy/release only) · no PR lint/test Actions · Dependabot present
 - **External services:** SeamFusion Cloud Functions API (`PUBLIC_API_URL`, `PUBLIC_ACADEMY_ID`) · Web3Forms (contact) · WhatsApp deep links
+- **GitHub Project V2:** configure `.github/agent-project.yml` (`project_owner`, `project_number`); agents use `scripts/github/*` (no Actions card-movers)
 - **Harnesses:** Grok Build (CLI/TUI) + OpenCode — same root `AGENTS.md` + global **agent-skills** pack; **no** Antigravity IDE/CLI, Superpowers methodology, or OpenSpec
 - **Durable docs:** optional `docs/specs/`, `docs/plans/` (legacy `docs/superpowers/` ok) for multi-session work; no Superpowers; no OpenSpec
 - **Invariants:** dark glassmorphism + neon design system (`DESIGN_SYSTEM.md`) · do not edit `backup-legacy/` · do not commit video >90MB · validate dynamic email/WhatsApp links · deploy workflow runs from **repo root** (not a nested astro folder)
@@ -807,6 +850,7 @@ When editing the Gist, the following structural contracts are **protected**. Age
 - Per-turn completion + Session End Protocol
 - Solo Architect↔Agent team (no other humans; no babysitting; agent owns routine work)
 - GitHub Issues/PRs/labels/milestones/status hygiene (agent-owned on GitOps)
+- GitHub Project V2 sync via `gh` + `scripts/github/*` (no Actions card-movers)
 - Hooks / local CI gold standard + deploy-only GitHub Actions policy
 - Agent Skills Pack (global install + autonomous use + bootstrap gaps)
 - Harness scope (Grok Build CLI + OpenCode for same AGENTS.md)

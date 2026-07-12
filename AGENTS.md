@@ -497,6 +497,19 @@ Restored and consolidated from historical Agent OS GitOps practice (labels/miles
 
 Product-heavy repos (e.g. SeamFusionServices) may keep richer scripts (`prepare-commit.sh`, guardrails, release helpers) under **This Project** — the portable pair above is the minimum.
 
+#### OpenCode project surfaces (tracked in each repo)
+
+OpenCode is **project-scoped**. Do **not** rely only on machine-global `~/.config/opencode/` or `~/.grok/commands`.
+
+| Tracked in repo             | Purpose                                                                   |
+| --------------------------- | ------------------------------------------------------------------------- |
+| `.opencode/command/*.md`    | Slash commands (`/start`, `/end`, lifecycle) for OpenCode in this product |
+| `.agents/skills/*/SKILL.md` | Project skills (`agent-os-bootstrap`, `project-boot`)                     |
+| `opencode.json`             | Instructions entry (`AGENTS.md` + workflow)                               |
+| `scripts/github/*`          | Agent GitHub/Project V2 CLI (no Actions)                                  |
+
+**Gitignore:** ignore only `.opencode/state/` / `.opencode/cache/` — never blanket-ignore tracked commands.
+
 #### GitHub Project V2 sync (agent CLI only — no Actions)
 
 **Hard rule:** Every Architect org has a **GitHub Projects (v2)** board. Agents keep Issues/PRs **and** board Status aligned using **`gh project`** + portable scripts under `scripts/github/`. **Do not** add GitHub Actions workflows to move cards, label, or close Issues — that is agent work at the right GitOps moment.

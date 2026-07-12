@@ -20,7 +20,7 @@ Keep OpenCode's `opencode-antigravity-auth` plugin (Google/Gemini auth) — that
 3. Ensure durable docs dirs exist: prefer `docs/{specs,plans,archive}/`; keep legacy `docs/superpowers/*` if present.
 4. Local CI: `.githooks/` + install script (gold standard).
 5. **Agent Skills pack (global):** ensure [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) is installed for Grok + OpenCode; repair if missing (see Gist **Agent Skills Pack**). Fill project gaps (tests, local CI, docs, commands).
-6. **GitHub hygiene:** portable `scripts/create-pr.sh` + `scripts/finalize-pr.sh`; PR/Issue templates; labels `bug`/`enhancement`/`chore`/`agent-infra` when remote exists. Solo team: Architect + agent only — no babysitting.
+6. **GitHub hygiene + Project V2:** install `scripts/github/*` + `.github/agent-project.yml` (set `project_owner` + `project_number`); `gh auth` needs `project`/`read:project`; `bash scripts/github/bootstrap.sh`. Portable `create-pr.sh`/`finalize-pr.sh` + PR templates + labels. **No** Actions for card moves — agents use `gh project` at Session Start / ship / Session End. Solo team: Architect + agent only.
 7. Clear stale husky: if `core.hooksPath` points at missing `.husky`, unset it so `.git/hooks` gold-standard hooks run.
 8. Do **not** install Superpowers/OpenSpec as the work layer unless Architect explicitly asks.
 9. Do **not** install Antigravity IDE/CLI. Do **not** strip `~/.config/opencode/` or `opencode-antigravity-auth`.

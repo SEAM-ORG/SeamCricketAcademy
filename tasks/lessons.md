@@ -52,3 +52,11 @@ Supported harnesses are **Grok CLI** and **OpenCode** only — no Antigravity ID
 - **Standing rule:** Only Architect + agent. Never assume another human finishes steps.
 - **Restored:** GitHub Issues/PRs/labels/milestones/status duties + portable `create-pr.sh` / `finalize-pr.sh`.
 - **Husky:** removed; gold `.githooks` + install script clears stale `core.hooksPath`.
+
+## 2026-07-12 — GitHub Project V2 + open-PR hygiene is agent CLI work
+
+- Session Start: `bash scripts/github/session-preflight.sh`
+- Ship: `bash scripts/github/ship-unit.sh` (labels + board Status + merge)
+- Session End: `bash scripts/github/session-end-hygiene.sh [--close-stale-os-prs]`
+- Requires once: `gh auth refresh -s project,read:project`
+- Never use GitHub Actions to move Project cards as a substitute for agent duty.

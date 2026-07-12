@@ -1,11 +1,5 @@
 Architect↔Agent OS — For Humans + For Agents (portable bootstrap)
 
-Architect↔Agent OS — For Humans + For Agents (portable bootstrap)
-
-Architect↔Agent OS — For Humans + For Agents (portable bootstrap)
-
-Architect↔Agent OS — For Humans + For Agents (portable bootstrap)
-
 # Architect ↔ Agent Operating System
 
 Portable, project-agnostic operating contract. Drop into any repo — greenfield or brownfield — so a non-coding Architect can direct work in human language and agents execute end-to-end.
@@ -42,10 +36,24 @@ Optional flavor (helps, not required):
 
 ## Advanced Architect Controls (Slash Commands)
 
-To trigger specific agentic behaviors, use slash commands:
-- **`/plan`**: For complex features. The agent will research, create a detailed markdown plan, and ask for your approval before writing code.
-- **`/goal`**: For long-running, end-to-end tasks. The agent enters maximum autonomy mode (e.g., overnight runs) and will not stop until the objective is fully built, tested, and verified.
-- **`/teamwork-preview`**: For massive scopes where the agent should spin up subagents to handle tasks in parallel.
+You do **not** need slash commands for normal product work — state the objective in plain language. Agents should run Session Start, skills, and local CI **without** waiting for you to name them.
+
+When you want an explicit control surface (OpenCode global commands + Grok skills/plugin):
+
+| Command | What it does |
+|---------|----------------|
+| **`/start`** | Session Start Protocol (repo reality-check + handoff gate) |
+| **`/boot`** | Project boot status (where we are; not full OS install) |
+| **`/end`** | Session End Protocol (consolidate → push → PR → squash merge) |
+| **`/agent-os-bootstrap`** | Install/repair OS from Gist + agent-skills health |
+| **`/spec`** `/plan` `/build` `/test` `/review` `/ship` | Lifecycle (agent-skills). Also: `/webperf`, `/code-simplify` |
+| **`/goal`** | Long-running maximum autonomy until objective is verified |
+| **`/teamwork-preview`** | Large scopes with parallel subagents |
+
+**Harness notes:**
+- **OpenCode:** commands live in `~/.config/opencode/command/` (global). Skills auto-load from `~/.agents/skills/`.
+- **Grok Build:** skills appear as slash commands; agent-skills plugin adds short lifecycle commands when enabled.
+- **`/start` / `/end`** are also protocol phrases in `AGENTS.md` — typing the words works even if a harness has no slash entry.
 
 ## What the agent will do without asking
 
@@ -731,7 +739,7 @@ Reproduce → Localize → Reduce to minimal case → Fix at root cause → Add 
 - **Hooks (local CI):** `.githooks/` + `scripts/install-githooks.sh` · **gold standard** · pre-commit → prettier check on staged · pre-push → `npm test && npm run build`
 - **GitHub:** `.github/workflows/deploy.yml` (Pages deploy/release only) · no PR lint/test Actions · Dependabot present
 - **External services:** SeamFusion Cloud Functions API (`PUBLIC_API_URL`, `PUBLIC_ACADEMY_ID`) · Web3Forms (contact) · WhatsApp deep links
-- **Harnesses:** Grok Build + Antigravity (`agy`) only — Agent OS / Gist; no Superpowers plugin required; no OpenCode/Claude/Cursor/OpenSpec
+- **Harnesses:** Grok Build (CLI/TUI) + OpenCode — same root `AGENTS.md` + global **agent-skills** pack; **no** Antigravity IDE/CLI, Superpowers methodology, or OpenSpec
 - **Durable docs:** optional `docs/specs/`, `docs/plans/` (legacy `docs/superpowers/` ok) for multi-session work; no Superpowers; no OpenSpec
 - **Invariants:** dark glassmorphism + neon design system (`DESIGN_SYSTEM.md`) · do not edit `backup-legacy/` · do not commit video >90MB · validate dynamic email/WhatsApp links · deploy workflow runs from **repo root** (not a nested astro folder)
 

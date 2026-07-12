@@ -30,3 +30,10 @@ Agents previously slimmed the portable Agent OS Gist and lost local-first / sess
 
 ### 2026-07-12: Grok CLI + OpenCode only; agent-skills global
 Supported harnesses are **Grok CLI** and **OpenCode** only — no Antigravity IDE/CLI. Keep `opencode-antigravity-auth` (OpenCode Google auth). Global **addyosmani/agent-skills** is required; agents use skills/hooks/commands autonomously. On bootstrap, repair global install and fill project gaps.
+
+## 2026-07-12 — Agent OS slash surfaces (Architect repair)
+
+- **Lesson:** "Boot complete" ≠ slash commands installed. OpenCode needs `~/.config/opencode/command/*.md` for `/start` `/end` etc.; skills alone are intent-driven.
+- **Lesson:** Stale **This Project** harness lines ("Antigravity only / no OpenCode") contradict OS body and confuse agents — keep harness = Grok + OpenCode.
+- **Lesson:** Grok `plugins.enabled` must not list removed plugins (e.g. superpowers) or agents/harness drift.
+- **Fix applied:** global OpenCode commands + AGENTS harness/header cleanup + Gist Advanced Controls.

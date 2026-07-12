@@ -21,6 +21,19 @@ Grok Build + Antigravity only. **No Superpowers methodology. No OpenSpec / OpenC
 6. Do **not** install Superpowers unless Architect explicitly asks.
 7. Verify checklist; commit; closeout.
 
+## Protected protocols (never strip)
+
+When installing or syncing from the Gist, **preserve** these OS contracts — refine wording if needed, but do not delete or "slim" them without Architect-approved explicit diff:
+
+- **Session Start Protocol** (decision gate / handoff ownership)
+- **Local vs GitOps** (local-first per turn; push/PR only on `/end` / ship or exceptions)
+- **Per-turn completion + Session End Protocol**
+- Hooks / local CI gold standard + deploy-only GitHub Actions policy
+- Harness scope (Grok Build + Antigravity only)
+- Gist Sync Protocol (including Protected OS sections)
+
+Verify after sync: `rg -n 'Local vs GitOps|Session Start Protocol|Session End Protocol|verified locally' AGENTS.md`
+
 ## Autonomy
 
-Non-trivial work → Research → Plan → Implement → Verify under Agent OS. Persist optional plans/specs under `docs/` for multi-session work. **Intent before invention** — no skill-driven redesigns without Architect objective.
+Non-trivial work → Research → Plan → Implement → Verify under Agent OS (local-first commits; GitOps on `/end` / ship). Persist optional plans/specs under `docs/` for multi-session work. **Intent before invention** — no skill-driven redesigns without Architect objective.

@@ -24,3 +24,6 @@ Non-trivial work uses Superpowers + docs/superpowers/* for durability. Do not wa
 
 ### 2026-07-12: Agent OS only — no Superpowers methodology
 Superpowers is not the default work layer. Agents follow the Gist / root `AGENTS.md` (Research → Plan → Implement → Verify). Do not reinstall Superpowers or invent design systems from plugin skills. Intent before invention.
+
+### 2026-07-12: Protected Gist session + Local-vs-GitOps protocols
+Agents previously slimmed the portable Agent OS Gist and lost local-first / session start-end protocols. **Prevention:** Session Start, Local vs GitOps (verified+committed locally by default; push/PR on `/end` or exception), Session End, Hooks/CI, and harness scope are protected. Do not delete or collapse them when editing the Gist or syncing `AGENTS.md`. Propose diffs; never unilaterally slim.

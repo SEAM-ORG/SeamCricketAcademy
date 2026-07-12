@@ -6,11 +6,11 @@
 version: 1
 
 # GitHub login that owns the Project V2 board (usually the org)
-project_owner: SEAM-ORG # SEAM board   # e.g. Tanti-ORG | SEAM-ORG
+project_owner: SEAM-ORG
 
 # Project number from: gh project list --owner <org>
 # Example: https://github.com/orgs/SEAM-ORG/projects/1 → number: 1
-project_number: 0
+project_number: 0  # set via: gh project list --owner SEAM-ORG
 
 # Optional human title (documentation only)
 project_title: ""

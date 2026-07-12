@@ -20,9 +20,11 @@ Keep OpenCode's `opencode-antigravity-auth` plugin (Google/Gemini auth) — that
 3. Ensure durable docs dirs exist: prefer `docs/{specs,plans,archive}/`; keep legacy `docs/superpowers/*` if present.
 4. Local CI: `.githooks/` + install script (gold standard).
 5. **Agent Skills pack (global):** ensure [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) is installed for Grok + OpenCode; repair if missing (see Gist **Agent Skills Pack**). Fill project gaps (tests, local CI, docs, commands).
-6. Do **not** install Superpowers/OpenSpec as the work layer unless Architect explicitly asks.
-7. Do **not** install Antigravity IDE/CLI. Do **not** strip `~/.config/opencode/` or `opencode-antigravity-auth`.
-8. Verify checklist; **local commit**; closeout (GitOps only on `/end` / ship).
+6. **GitHub hygiene:** portable `scripts/create-pr.sh` + `scripts/finalize-pr.sh`; PR/Issue templates; labels `bug`/`enhancement`/`chore`/`agent-infra` when remote exists. Solo team: Architect + agent only — no babysitting.
+7. Clear stale husky: if `core.hooksPath` points at missing `.husky`, unset it so `.git/hooks` gold-standard hooks run.
+8. Do **not** install Superpowers/OpenSpec as the work layer unless Architect explicitly asks.
+9. Do **not** install Antigravity IDE/CLI. Do **not** strip `~/.config/opencode/` or `opencode-antigravity-auth`.
+10. Verify checklist; **local commit**; closeout (GitOps only on `/end` / ship).
 
 ### Agent Skills repair commands
 
@@ -41,6 +43,8 @@ When installing or syncing from the Gist, **preserve** these OS contracts — re
 - **Session Start Protocol** (decision gate / handoff ownership)
 - **Local vs GitOps** (local-first per turn; push/PR only on `/end` / ship or exceptions)
 - **Per-turn completion + Session End Protocol**
+- **Solo Architect↔Agent team** (no other humans; no babysitting)
+- **GitHub Issues/PRs/labels/milestones/status** hygiene (agent-owned on GitOps)
 - Hooks / local CI gold standard + deploy-only GitHub Actions policy
 - **Agent Skills Pack** (global install + autonomous use + bootstrap gaps)
 - Harness scope (**Grok CLI + OpenCode** only)

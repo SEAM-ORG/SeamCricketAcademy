@@ -7,8 +7,10 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "prepare": "husky",
-    "test": "node --experimental-strip-types --test src/**/*.test.ts"
+    "prepare": "bash scripts/install-githooks.sh",
+    "test": "node --experimental-strip-types --test src/**/*.test.ts",
+    "local-ci:quality": "bash scripts/local-ci-pre-commit.sh",
+    "local-ci:correctness": "bash scripts/local-ci-pre-push.sh"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.9",
@@ -19,7 +21,6 @@
     "typescript": "^6.0.3"
   },
   "devDependencies": {
-    "husky": "^9.1.7",
     "jimp": "^1.6.1"
   },
   "overrides": {

@@ -69,3 +69,7 @@ The agent configuration is **built-in** to the repository in the `.agent/` direc
 
 - **Rules**: `.agent/rules/` (Loaded automatically)
 - **Workflows**: `.agent/workflows/` (Available immediately)
+
+## Agent OS
+
+See root [`AGENTS.md`](AGENTS.md) for Architect↔Agent contract. One-sentence objectives are enough once OS is installed.

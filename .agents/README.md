@@ -1,15 +1,15 @@
 # Agent surfaces (project source of truth)
 
-| Path                   | Role                                                        |
-| ---------------------- | ----------------------------------------------------------- |
-| `skills/`              | Project-specific skills (`SKILL.md` each)                   |
-| `commands/`            | Workflow slash-command templates                            |
-| `vendor/agent-skills/` | Shared craft pack (git submodule → addyosmani/agent-skills) |
+| Path                   | Role                                                                                            |
+| ---------------------- | ----------------------------------------------------------------------------------------------- |
+| `commands/`            | Slash workflows (`/boot`, `/start`, `/agent-os-bootstrap`, `/spec`, …) — **invoke these**       |
+| `skills/`              | Optional **project-only** skills (product-specific). Do **not** mirror lifecycle commands here. |
+| `vendor/agent-skills/` | Shared craft pack (git submodule)                                                               |
 
-OpenCode discovers via:
+OpenCode:
 
-- `.opencode/skills` → symlink to `skills/`
-- `.opencode/command` → symlink to `commands/`
-- `opencode.jsonc` → `skills.paths` includes `skills/` + `vendor/agent-skills/skills`
+- `.opencode/command` → `commands/`
+- `.opencode/skills` → `skills/`
+- `opencode.jsonc` `skills.paths` → `skills/` + `vendor/agent-skills/skills`
 
-Do not copy the craft pack into `skills/`; update the submodule instead.
+Lifecycle actions are **commands only** (one picker entry each). Craft skills live in the vendor submodule.

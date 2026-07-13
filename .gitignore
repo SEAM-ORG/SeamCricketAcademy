@@ -37,3 +37,6 @@ pnpm-debug.log*
 !.opencode/skills/**
 .opencode/state/
 .opencode/cache/
+
+# Agent surfaces: track skills/commands; ignore vendor runtime if any
+.agents/**/node_modules/

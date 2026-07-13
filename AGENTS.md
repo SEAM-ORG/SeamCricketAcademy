@@ -8,6 +8,8 @@ Architect↔Agent OS — For Humans + For Agents (portable bootstrap)
 
 Architect↔Agent OS — For Humans + For Agents (portable bootstrap)
 
+Architect↔Agent OS — For Humans + For Agents (portable bootstrap)
+
 # Architect ↔ Agent Operating System
 
 Portable, project-agnostic operating contract. Drop into any repo — greenfield or brownfield — so a non-coding Architect can direct work in human language and agents execute end-to-end.
@@ -493,7 +495,7 @@ Run this during Bootstrap and whenever the agent suspects environment drift (e.g
 | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | **Grok Build**                     | `grok plugin install addyosmani/agent-skills --trust` + `[plugins] enabled` includes `agent-skills`                                    | Skills, slash commands, specialist agents, plugin hooks                                        |
 | **Grok skills path**               | `~/.agents/skills/*` (via `npx skills add …`) and/or `[skills] paths = ["~/.agents/skills"]`                                           | Skill discovery even without plugin                                                            |
-| **OpenCode**                       | `npx skills add addyosmani/agent-skills -g -a opencode --skill '*' -y` → `~/.agents/skills/` (auto-loaded)                             | Same 24 skills for OpenCode                                                                    |
+| **OpenCode / project**             | Git submodule `.agents/vendor/agent-skills` + `opencode.jsonc` `skills.paths`                                                          | Craft pack tracked in repo; discovered per project                                             |
 | **Chrome DevTools MCP (Grok)**     | `grok plugin install ChromeDevTools/chrome-devtools-mcp --trust` (or marketplace) + `[plugins] enabled` includes `chrome-devtools-mcp` | Browser verification tools for both CLI and skills                                             |
 | **Chrome DevTools MCP (OpenCode)** | Global `~/.config/opencode/opencode.jsonc` → `mcp.chrome-devtools` local command `npx -y chrome-devtools-mcp@latest`                   | Same MCP tools in OpenCode                                                                     |
 | **Session lifecycle (Grok)**       | Optional Grok hooks under `~/.grok/hooks/` when useful                                                                                 | Evidence injection is helpful; **Session Start/End protocols in this file remain agent-owned** |
@@ -566,22 +568,30 @@ Grok and OpenCode load **skills, hooks, commands, plugins, and MCP differently**
 
 Agents **follow these protocols even when no hook fires**. Hooks/commands are accelerators, not the source of truth.
 
-### What agents set up and maintain (harness-native)
+### What agents set up and maintain (project-tracked, harness-discovered)
 
-Use each harness’s **native** surfaces. Prefer the lightest setup that keeps outcomes reliable. Avoid stacking custom plugins that re-implement the OS.
+**Source of truth lives in the git repo** (not a second copy under the home directory for product work).
 
-| Concern                     | Grok-native (typical)                            | OpenCode-native (typical)                                                                                         |
-| --------------------------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| Skills                      | `agent-skills` plugin + `~/.agents/skills`       | `~/.agents/skills` auto-load (`npx skills add … -a opencode`)                                                     |
-| Lifecycle shortcuts         | Slash skills / plugin commands                   | Global `~/.config/opencode/command/` (`/start`, `/end`, `/spec`, …) when useful                                   |
-| Session evidence (optional) | `~/.grok/hooks/*` scripts if they help re-ground | Rely on **Session Start Protocol** in chat + optional commands — **no required custom OpenCode plugin**           |
-| Browser MCP                 | Grok `chrome-devtools-mcp` plugin                | `mcp.chrome-devtools` in `~/.config/opencode/opencode.jsonc`                                                      |
-| Model / Google auth         | Provider config for Grok                         | **`opencode-antigravity-auth@latest` only** as the standing OpenCode auth plugin; model prefs in `opencode.jsonc` |
-| Project facts               | **This Project** + `docs/`                       | Same files — not a parallel OpenCode instruction tree                                                             |
+| Path (in each product repo)       | Role                                                               |
+| --------------------------------- | ------------------------------------------------------------------ |
+| `.agents/skills/`                 | Project-specific skills only                                       |
+| `.agents/commands/`               | Workflow templates (`/start`, `/spec`, …)                          |
+| `.agents/vendor/agent-skills/`    | Shared craft pack as a **git submodule** (addyosmani/agent-skills) |
+| `.opencode/skills`                | **Symlink** → `.agents/skills`                                     |
+| `.opencode/command`               | **Symlink** → `.agents/commands`                                   |
+| `opencode.jsonc` → `skills.paths` | `.agents/skills` + `.agents/vendor/agent-skills/skills`            |
 
-**OpenCode plugin posture:** keep the auth plugin lean. Extra local plugins that force model behavior or re-host Session Start/End are optional experiments, not OS requirements. If something fails, fix config or follow the protocol in this file.
+| Concern           | Grok                                             | OpenCode                                            |
+| ----------------- | ------------------------------------------------ | --------------------------------------------------- |
+| Craft skills      | Plugin and/or project `skills.paths` / submodule | Project `skills.paths` + `.opencode/skills` symlink |
+| Workflows         | Project commands / slash from skills             | Project `.agents/commands` via symlink              |
+| Session protocols | **AGENTS.md** (optional hooks assist)            | **AGENTS.md** + project commands                    |
+| Browser MCP       | Grok plugin when needed                          | Global or project `mcp.chrome-devtools`             |
+| Google auth       | Grok provider config                             | **`opencode-antigravity-auth@latest` only**         |
 
-**Grok hook posture:** optional evidence injection is welcome when present; if hooks are missing, the agent still runs Session Start/End from `AGENTS.md`.
+**No dual product trees:** do not maintain a parallel full skill/command set under `~/.agents/skills` or `~/.config/opencode/command` for product work. Machine-global copies are optional caches; **git is authoritative**.
+
+**Bootstrap:** init/update submodule, ensure symlinks + `skills.paths`, preserve existing project skills/commands. Do not re-copy the craft pack into `.agents/skills/`.
 
 ### Chrome DevTools MCP (when UI work needs it)
 

@@ -1,57 +1,47 @@
 ---
 name: agent-os-bootstrap
-description: >
-  Install/repair/sync Architect↔Agent OS from gist saadev0/5828479245f786c80993b67a6f669aee
-  for Grok CLI and OpenCode. Use on install, drift, or /agent-os-bootstrap.
+description: Install, repair, or sync Architect↔Agent OS from gist saadev0/5828479245f786c80993b67a6f669aee for Grok CLI and OpenCode. Use on install, drift, /agent-os-bootstrap, or missing AGENTS.md.
 ---
 
 # Agent OS Bootstrap / Sync
 
-## Harness scope
+## Harness
 
-**Grok Build (CLI/TUI) + OpenCode only.** Same root `AGENTS.md` for both.  
-**No Antigravity IDE/CLI.** **No Superpowers methodology. No OpenSpec.**  
-Keep OpenCode's `opencode-antigravity-auth` plugin (Google/Gemini auth) — that is not Antigravity IDE.
+**Grok Build + OpenCode.** Same root `AGENTS.md`. OpenCode auth: `opencode-antigravity-auth`.
+
+## Project skill/command layout (source of truth)
+
+| Path                              | Role                                                    |
+| --------------------------------- | ------------------------------------------------------- |
+| `.agents/skills/`                 | Project-specific skills (this folder)                   |
+| `.agents/commands/`               | Workflow command templates (git-tracked)                |
+| `.agents/vendor/agent-skills/`    | Shared craft pack (**git submodule**)                   |
+| `.opencode/skills`                | Symlink → `.agents/skills`                              |
+| `.opencode/command`               | Symlink → `.agents/commands`                            |
+| `opencode.jsonc` → `skills.paths` | `.agents/skills` + `.agents/vendor/agent-skills/skills` |
+
+Craft pack is **not** copied into `skills/`. Update with `git submodule update --remote .agents/vendor/agent-skills` when needed.
 
 ## Steps
 
 1. Fetch gist: `gh gist view 5828479245f786c80993b67a6f669aee --raw`
-2. Materialize `AGENTS.md` + `.github/ai-context/*` + skills + `tasks/`.
-3. Ensure durable docs dirs exist: prefer `docs/{specs,plans,archive}/`; keep legacy `docs/superpowers/*` if present.
-4. Local CI: `.githooks/` + install script (gold standard).
-5. **Agent Skills pack (global):** ensure [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) is installed for Grok + OpenCode; repair if missing (see Gist **Agent Skills Pack**). Fill project gaps (tests, local CI, docs, commands).
-6. **GitHub hygiene + Project V2:** install `scripts/github/*` + `.github/agent-project.yml` (set `project_owner` + `project_number`); `gh auth` needs `project`/`read:project`; `bash scripts/github/bootstrap.sh`. Portable `create-pr.sh`/`finalize-pr.sh` + PR templates + labels. **No** Actions for card moves — agents use `gh project` at Session Start / ship / Session End. Solo team: Architect + agent only.
-7. Clear stale husky: if `core.hooksPath` points at missing `.husky`, unset it so `.git/hooks` gold-standard hooks run.
-8. Do **not** install Superpowers/OpenSpec as the work layer unless Architect explicitly asks.
-9. Do **not** install Antigravity IDE/CLI. Do **not** strip `~/.config/opencode/` or `opencode-antigravity-auth`.
-10. Verify checklist; **local commit**; closeout (GitOps only on `/end` / ship).
+2. Materialize `AGENTS.md` + ai-context + tasks (preserve **This Project**).
+3. Durable docs: `docs/{specs,plans,archive}/`, `docs/INDEX.md` as needed.
+4. Local CI: `.githooks/` + install script.
+5. Ensure layout above: symlinks, submodule init, `opencode.jsonc` skills.paths.
+6. Project commands under `.agents/commands/` (lifecycle thin templates).
+7. GitHub hygiene scripts when the product uses Projects.
+8. Verify: `opencode debug skill` shows project + vendor skills; hooks installed.
+9. Local commit; GitOps on `/end` / ship.
 
-### Agent Skills repair commands
+## Submodule repair
 
 ```bash
-grok plugin install addyosmani/agent-skills --trust
-# ensure ~/.grok/config.toml [plugins].enabled includes "agent-skills"
-npx skills add addyosmani/agent-skills -g -a opencode --skill '*' -y
+git submodule update --init --recursive .agents/vendor/agent-skills
+# optional: track upstream updates
+# git submodule update --remote .agents/vendor/agent-skills
 ```
-
-Verify: `grok inspect` shows pack skills; `opencode debug skill` lists ~24 pack skills; `ls ~/.agents/skills | wc -l` ≈ 24.
-
-## Protected protocols (never strip)
-
-When installing or syncing from the Gist, **preserve** these OS contracts — refine wording if needed, but do not delete or "slim" them without Architect-approved explicit diff:
-
-- **Session Start Protocol** (decision gate / handoff ownership)
-- **Local vs GitOps** (local-first per turn; push/PR only on `/end` / ship or exceptions)
-- **Per-turn completion + Session End Protocol**
-- **Solo Architect↔Agent team** (no other humans; no babysitting)
-- **GitHub Issues/PRs/labels/milestones/status** hygiene (agent-owned on GitOps)
-- Hooks / local CI gold standard + deploy-only GitHub Actions policy
-- **Agent Skills Pack** (global install + autonomous use + bootstrap gaps)
-- Harness scope (**Grok CLI + OpenCode** only)
-- Gist Sync Protocol (including Protected OS sections)
-
-Verify after sync: `rg -n 'Local vs GitOps|Session Start Protocol|Session End Protocol|Agent Skills Pack|verified locally' AGENTS.md`
 
 ## Autonomy
 
-Non-trivial work → Research → Plan → Implement → Verify under Agent OS **composed with agent-skills** (invoke applicable skills without waiting for slash names). Local-first commits; GitOps on `/end` / ship. Persist optional plans/specs under `docs/`. **Intent before invention** — skills never authorize product redesign without Architect objective.
+Research → Plan → Implement → Verify under Agent OS composed with craft skills from the vendored pack + project skills. End-to-end by default; deferred work tracked with status/priority.

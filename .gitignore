@@ -24,19 +24,19 @@ pnpm-debug.log*
 .idea/
 *.code-workspace
 
-# OpenCode: track project commands; ignore local runtime only
+# OpenCode discovery symlinks (source of truth is .agents/)
 .opencode/*
 !.opencode/README.md
-!.opencode/command/
+!.opencode/command
 !.opencode/command/**
-!.opencode/commands/
-!.opencode/commands/**
-!.opencode/skill/
-!.opencode/skill/**
-!.opencode/skills/
+!.opencode/skills
+!.opencode/skill
 !.opencode/skills/**
+!.opencode/skill/**
 .opencode/state/
 .opencode/cache/
+.opencode/node_modules/
+
 
 # Agent surfaces: track skills/commands; ignore vendor runtime if any
 .agents/**/node_modules/

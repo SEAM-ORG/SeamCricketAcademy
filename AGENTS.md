@@ -4,6 +4,8 @@ Architect↔Agent OS — For Humans + For Agents (portable bootstrap)
 
 Architect↔Agent OS — For Humans + For Agents (portable bootstrap)
 
+Architect↔Agent OS — For Humans + For Agents (portable bootstrap)
+
 # Architect ↔ Agent Operating System
 
 Portable, project-agnostic operating contract. Drop into any repo — greenfield or brownfield — so a non-coding Architect can direct work in human language and agents execute end-to-end.
@@ -19,25 +21,25 @@ This section is the **map of the Operating System itself** — project-agnostic.
 
 ## Layer map
 
-| Layer                            | Location                                                      | Role                                                                                                                               |
-| -------------------------------- | ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| **Always-on OS**                 | root `AGENTS.md`                                              | Full Architect↔Agent contract (incl. **How to work with this Architect**) + **This Project** facts. Single instruction entrypoint. |
-| **Judgement / procedures**       | `.github/ai-context/AGENT_PRINCIPLES.md`, `AGENT_WORKFLOW.md` | Lazy-load detail mirrored from OS principles/workflow (behavior only).                                                             |
-| **Repo map**                     | `.github/ai-context/PROJECT_KNOWLEDGE_GRAPH.md`               | Domain → code paths → related docs/gates. Load only relevant domains.                                                              |
-| **Outcomes journal**             | `.github/ai-context/dev-journal.md`                           | What happened (not rules). Session outcomes, not standing policy.                                                                  |
-| **Lessons / mid-flight**         | `tasks/lessons.md`, `tasks/todo.md`                           | Mistake prevention; active multi-step checklist.                                                                                   |
-| **Durable product memory**       | `docs/{specs,plans,archive}/`                                 | Multi-session designs & plans. Legacy `docs/superpowers/*` same role if present.                                                   |
-| **Project documentation system** | `docs/INDEX.md` + product guides                              | Master directory + stack, features, quality, ops — **created per project after bootstrap**.                                        |
-| **Machine commands**             | `DEVELOPMENT.md` (or equivalent)                              | Install/run/test/release commands only — no agent ceremony prose.                                                                  |
-| **Local CI**                     | `.githooks/` + `scripts/install-githooks.sh`                  | Gold standard: pre-commit=quality; pre-push=test+build.                                                                            |
-| **GitHub hygiene**               | `scripts/github/*`, `.github/agent-project.yml`               | Issues/PRs/labels/Project V2 via `gh` — no Actions card-movers.                                                                    |
-| **Project skills**               | `.agents/skills/*`                                            | Product-specific only.                                                                                                             |
-| **Global engineering pack**      | `~/.agents/skills` + Grok plugin `agent-skills`               | addyosmani/agent-skills lifecycle + specialists.                                                                                   |
-| **Harness surfaces (machine)**   | Grok plugins/hooks; OpenCode config/commands/MCP              | Harness-native glue so agents can follow this OS — not a second instruction tree.                                                  |
+| Layer                            | Location                                                      | Role                                                                                                                                                           |
+| -------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Always-on OS**                 | root `AGENTS.md`                                              | Full Architect↔Agent contract (incl. **How to work with this Architect**, **One-time vs continuous**) + **This Project** facts. Single instruction entrypoint. |
+| **Judgement / procedures**       | `.github/ai-context/AGENT_PRINCIPLES.md`, `AGENT_WORKFLOW.md` | Lazy-load detail mirrored from OS principles/workflow (behavior only).                                                                                         |
+| **Repo map**                     | `.github/ai-context/PROJECT_KNOWLEDGE_GRAPH.md`               | Domain → code paths → related docs/gates. Load only relevant domains.                                                                                          |
+| **Outcomes journal**             | `.github/ai-context/dev-journal.md`                           | What happened (not rules). Session outcomes, not standing policy.                                                                                              |
+| **Lessons / mid-flight**         | `tasks/lessons.md`, `tasks/todo.md`                           | Mistake prevention; active multi-step checklist.                                                                                                               |
+| **Durable product memory**       | `docs/{specs,plans,archive}/`                                 | Multi-session designs & plans. Legacy `docs/superpowers/*` same role if present.                                                                               |
+| **Project documentation system** | `docs/INDEX.md` + product guides                              | Master directory + stack, features, quality, ops — **created per project after bootstrap**.                                                                    |
+| **Machine commands**             | `DEVELOPMENT.md` (or equivalent)                              | Install/run/test/release commands only — no agent ceremony prose.                                                                                              |
+| **Local CI**                     | `.githooks/` + `scripts/install-githooks.sh`                  | Gold standard: pre-commit=quality; pre-push=test+build.                                                                                                        |
+| **GitHub hygiene**               | `scripts/github/*`, `.github/agent-project.yml`               | Issues/PRs/labels/Project V2 via `gh` — no Actions card-movers.                                                                                                |
+| **Project skills**               | `.agents/skills/*`                                            | Product-specific only.                                                                                                                                         |
+| **Global engineering pack**      | `~/.agents/skills` + Grok plugin `agent-skills`               | addyosmani/agent-skills lifecycle + specialists.                                                                                                               |
+| **Harness surfaces (machine)**   | Grok plugins/hooks; OpenCode config/commands/MCP              | Harness-native glue so agents can follow this OS — not a second instruction tree.                                                                              |
 
 ## Always-on index contract (agents maintain)
 
-Root `AGENTS.md` **must** stay the hub. Agents autonomously:
+Root `AGENTS.md` **must** stay the hub. Agents autonomously (**continuous maintain** — see **One-time vs continuous**):
 
 1. Keep **This Project** paths accurate (stack, commands, hooks, product truth, doc roots).
 2. Keep `.github/ai-context/PROJECT_KNOWLEDGE_GRAPH.md` linked to real entry points **and** the docs that explain them.
@@ -45,6 +47,7 @@ Root `AGENTS.md` **must** stay the hub. Agents autonomously:
 4. On user-visible / architecture / capability / test / script changes, update the matching doc in the **same branch** (see **Documentation System**).
 5. Keep a single always-on instruction surface: root `AGENTS.md` (both harnesses).
 6. When a link dies or a doc is superseded → fix the index + graph + delete/archive the dead surface same change.
+7. Treat missing/broken OS surfaces as **re-establish**, not as “optional because bootstrap already ran.”
 
 ## Quick navigation (OS sections)
 
@@ -63,6 +66,59 @@ Root `AGENTS.md` **must** stay the hub. Agents autonomously:
 | Close a turn / ship session                     | **Per-turn completion** / **Session End Protocol**               |
 | Product facts for _this_ repo                   | **This Project**                                                 |
 | Sync OS from Gist                               | **Gist Sync Protocol**                                           |
+| One-time vs continuous enforcement              | **One-time vs continuous**                                       |
+
+---
+
+# One-time vs continuous (enforcement model)
+
+This OS is **not a one-shot setup checklist**. Setup **establishes** surfaces; **continuous processes** keep logic, standards, and guidelines true as the product and machine change. Agents classify every durable obligation as **one-time (establish)** or **continuous (maintain + evolve)** and act on that cadence forever.
+
+## Definitions
+
+| Class                     | Meaning                                                           | Done looks like                                              |
+| ------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------ |
+| **One-time (establish)**  | Create a missing surface the first time it is needed              | Artifact exists, is linked, and is correct _now_             |
+| **Continuous (maintain)** | Keep an existing surface honest after every relevant change       | Same branch as the code/behavior change; no stale pointers   |
+| **Continuous (improve)**  | Raise the bar when evidence shows drift, debt, or better practice | Tracked fix, lesson, Gist refinement, or suggested next step |
+
+**Promotion rule:** After establish succeeds, the obligation **graduates** to continuous. Agents never treat “we installed that once” as permanent truth.
+
+**Re-establish rule:** If a one-time surface is missing, broken, unlinked, or contradicted by the repo → run establish again (repair), then continue under maintain.
+
+## Cadence map (what runs when)
+
+| Obligation                                                        | Establish (one-time / repair)                         | Continuous maintain                                                   | Continuous improve                                  |
+| ----------------------------------------------------------------- | ----------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------- |
+| Root `AGENTS.md` + **This Project**                               | Bootstrap / install OS                                | Update **This Project** when stack/commands/invariants change         | Gist Sync when OS contract improves                 |
+| Session Start / End / Local vs GitOps                             | Agent can follow from day one (protocol in this file) | Every session / every turn                                            | Refine Decision Gate language when handoffs fail    |
+| Local CI (`.githooks` + install script)                           | Install hooks when missing                            | Pre-commit / pre-push always; never skip                              | Tighten gates when bugs escape                      |
+| `docs/INDEX.md` + knowledge graph                                 | Create thin INDEX + graph at bootstrap                | Same-branch updates when docs/code entry points change                | Prune dead links; merge duplicate docs              |
+| `docs/{specs,plans,archive}/`                                     | Create dirs at bootstrap                              | Update plan checkboxes; archive when shipped                          | Prefer this layout over ad-hoc doc dumps            |
+| Agent Skills pack (global)                                        | Install for Grok + OpenCode when missing              | Use skills on relevant work without being asked                       | Repair install when discovery fails                 |
+| Harness surfaces (Grok plugins/hooks; OpenCode auth/MCP/commands) | Minimal native setup so the harness can work          | Keep auth/MCP/commands healthy when used                              | Lighten or adjust only when outcomes break          |
+| GitHub Issues/PRs/Project V2 hygiene                              | Bootstrap scripts/templates when product uses GitHub  | On `/end` / ship / exception                                          | Board/status alignment when preflight shows drift   |
+| Lessons / standing rules                                          | First `tasks/lessons.md` / write rule when taught     | Review lessons at Session Start; persist new corrections same session | Promote universal lessons to Gist                   |
+| Tracking / ignore / visible surfaces                              | Baseline `.gitignore` + hook install                  | No tracked secrets; no tracked-but-ignored; no orphan intent files    | Fix ignore rules when build outputs or tools change |
+| Verify Agent OS healthy                                           | Full checklist after bootstrap                        | Spot-check at Session Start when something smells wrong               | Expand checklist when a new failure mode appears    |
+
+## Enforcement (permanent)
+
+1. **Session Start:** re-ground status + open plans; if a required surface is missing/broken → re-establish before net-new product work.
+2. **Per turn:** continuous maintain for anything the turn touches (docs, INDEX, This Project, tests, hooks).
+3. **Closeout:** name what was established vs maintained vs improved; leave next continuous step if work remains.
+4. **Gist Sync:** OS contract improvements are continuous at the portfolio level — update Gist, then sync known product repos (preserve **This Project**).
+5. **No stale “done”:** “Bootstrap completed last month” is not evidence. Disk + hooks + INDEX + green verify are evidence.
+
+## How agents use this classification
+
+When adding a standard, script, doc, or gate, write down (in the PR/commit body or the doc itself) whether it is:
+
+- **Establish once** (and what “exists” means), then
+- **Maintain how** (trigger: file change, session start, `/end`, deploy), then
+- **Improve when** (signal: bug escape, drift, Architect preference, better practice).
+
+If a process has no continuous trigger, it will rot. Prefer a light continuous check over a heavy one-shot ceremony.
 
 ---
 
@@ -310,8 +366,9 @@ Do this **automatically** at the start of every session — and **re-ground** be
 6. Load knowledge graph + `docs/INDEX.md` (if present) + product docs for the objective; map whole-product fit, not only the named file.
 7. Confirm local CI hooks are installed (or install via project script). Never `--no-verify`.
 8. Map work via **using-agent-skills**; invoke applicable skills and specialist agents without waiting for slash names.
-9. **Proactive brief (2–5 lines):** status, handoff decision, highest-leverage next step, and any health/opportunity flags (see **Proactive & Suggestive Agents**). Do **not** invent product redesigns; do suggest valuable next work the Architect can accept in one line.
-10. Local-first: verify + commit locally each turn; push/PR only on `/end` or ship exception.
+9. **Continuous health (lightweight):** if INDEX, hooks, skills discovery, or **This Project** paths look broken/missing → re-establish before net-new work (see **One-time vs continuous**). Do not assume last month’s bootstrap still holds.
+10. **Proactive brief (2–5 lines):** status, handoff decision, highest-leverage next step, and any health/opportunity flags (see **Proactive & Suggestive Agents**). Suggest valuable next work the Architect can accept in one line.
+11. Local-first: verify + commit locally each turn; push/PR only on `/end` or ship exception.
 
 ### Whole-project ownership (not session-diff ownership)
 
@@ -338,6 +395,8 @@ This file is your single source of truth. When in doubt, re-read it. Never guess
 ---
 
 ## Bootstrap: install this OS into a project
+
+Bootstrap is **establish** (and re-establish on repair). After surfaces exist, **Session Start**, doc sync, hooks, and Gist drift checks are **continuous**. See **One-time vs continuous**.
 
 Trigger: Architect says install/init Agent OS, or you find no usable `AGENTS.md` contract, or they paste this gist.
 
@@ -559,6 +618,7 @@ Wire it the **harness-native** way (Grok plugin enablement and/or OpenCode `mcp`
 [ ] Deploy/release GitHub workflow exists only when deploy target is known
 [ ] tasks/lessons.md exists
 [ ] Architect can prompt with intent only; agent owns CLI
+[ ] One-time vs continuous cadence understood (bootstrap establish; Session Start/doc/hooks continuous)
 ```
 
 If any box fails → fix in the same session.
@@ -585,6 +645,7 @@ If any box fails → fix in the same session.
 - Model/provider agnostic.
 - **Proactive stewardship + suggestions**: you own the project's complete lifecycle and health, not just the current task. Surface outdated deps, missing tests, broken configs, doc drift, suboptimal patterns, and improvement opportunities — even when the Architect didn't ask. Suggest concrete next steps; activate skills/specialists/browser/gh fully.
 - **Agent Skills pack:** when a skill applies, use it. On bootstrap/OS install, ensure the pack is global and fill project gaps — do not wait for skill names in the prompt.
+- **One-time establishes; continuous keeps truth:** bootstrap is not a substitute for Session Start, INDEX/doc sync, ignore health, or Gist drift checks. See **One-time vs continuous**.
 
 ### Core loop
 
@@ -841,6 +902,8 @@ Lightweight, file-based tracking that persists across sessions.
 
 ### Documentation System (project-agnostic standards → project-specific docs)
 
+Creating the doc system is **establish**. Keeping INDEX, guides, and plans honest is **continuous maintain** on every relevant change. Improving structure when navigation hurts is **continuous improve**. See **One-time vs continuous**.
+
 The Gist is **portable**. After bootstrap, **agents create and maintain project-specific documentation** inside each repo. Always-on `AGENTS.md` **links** to those docs; it does not inline full product manuals.
 
 #### Master index
@@ -913,6 +976,8 @@ Names may vary; **roles** must be covered and indexed:
 - On failure: stop-the-line → root cause → fix or track — never `--no-verify`.
 
 ### Proactive Project Stewardship
+
+Stewardship is a **continuous** obligation. When you surface debt or opportunity, classify the response as establish (missing surface), maintain (stale truth), or improve (raise the bar) — then land it or track it. One-shot cleanup without a continuous trigger will rot. See **One-time vs continuous**.
 
 The agent owns the project's complete lifecycle — not just the current task. Treat every session as an opportunity to leave the project healthier.
 
@@ -1059,19 +1124,20 @@ Durable judgement. Curate; don't bloat. No product-specific design rules here.
 20. **Stop-the-line** — on test failure or regression, halt feature work, fix first.
 21. **Learn from mistakes** — every correction or postmortem becomes a `tasks/lessons.md` entry.
 22. **Demand elegance** — for non-trivial changes, pause: "Is there a simpler structure with fewer moving parts?" If hacky, rewrite cleanly when scope stays constant.
-23. **Proactive stewardship** — own the project's health end-to-end. Surface outdated deps, missing tests, broken configs, doc drift, and improvement opportunities even when not asked. Suggest concrete next steps; leave every project healthier and more navigable than you found it.
-24. **Context self-preservation** — `AGENTS.md` is your OS. Re-read it at every session start and after any context loss (compaction, truncation, long conversations). Never operate from memory alone when the source of truth is one file-read away.
-25. **Gold-standard local CI** — pre-commit = quality (fast lint/format); pre-push = correctness (test + build). Do not invert or collapse both into one slow commit hook.
-26. **Whole-project ownership & continuity** — own the project's real state, not only staged files or this session's diff. Re-check status before planning/implementing; bridge sessions and agents without disconnection. Verify and fix/track beyond your narrow edit set when the tree demands it.
-27. **Harness scope** — runtimes for this OS: **Grok Build (CLI/TUI)** and **OpenCode**. Same root `AGENTS.md` + global **agent-skills** pack for both. One always-on instruction file: `AGENTS.md`.
-28. **Agent OS autonomy + durable docs** — for non-trivial product work, agents run Research → Plan → Implement → Verify from this OS and may persist specs/plans under `docs/` (or legacy `docs/superpowers/` paths if already present) without Architect slash commands. Taste/design pivots need Architect intent.
-29. **Intent before invention** — do not invent redesigns (scroll-snap, brutalism, rebrands, layout systems) from skills or partial assets when the Architect did not ask. Prefer stack defaults and preserve working product work; escalate taste with one structured question.
-30. **Local-first vs session-end GitOps** — default every turn stops at verified + committed **locally**. Push/PR/merge only on `/end` / ship or documented mid-session exceptions. Never strand the Architect mid-session with unexpected remote noise; never lose work by leaving it uncommitted.
-31. **Gist protocol preservation** — when editing the canonical Gist OS, **add or refine** Session Start/End, Local vs GitOps, Hooks/local CI, harness scope, Agent Skills Pack, and related structural sections — **do not delete or "slim" them** without an Architect-approved explicit diff. Accidental protocol loss is a contract failure.
-32. **Agent Skills pack autonomy** — use addyosmani/agent-skills globally (skills, hooks, lifecycle commands, specialist agents, guards) without waiting for Architect to name them. On bootstrap, repair global install and fill project gaps. Skills never override Architect intent, Local-vs-GitOps, or release authority.
-33. **Living index** — always-on `AGENTS.md` + `docs/INDEX.md` + knowledge graph stay linked to real docs/scripts. Create project docs after bootstrap; sync them on the same branch as code; no orphan or duplicate surfaces.
-34. **Suggestive excellence** — proactively propose high-leverage next steps and activate full capabilities (skills, specialists, browser, gh). Never silent deferral; never unsolicited product redesign.
-35. **Handoff continuity** — Session Start Decision Gate + clean per-turn state + Session End GitOps so work progresses as complete units, not abandoned fragments.
+23. **One-time vs continuous** — establish missing surfaces once; maintain them on every relevant change; improve when evidence shows drift. Bootstrap is not a permanent substitute for continuous checks.
+24. **Proactive stewardship** — own the project's health end-to-end. Surface outdated deps, missing tests, broken configs, doc drift, and improvement opportunities even when not asked. Suggest concrete next steps; leave every project healthier and more navigable than you found it.
+25. **Context self-preservation** — `AGENTS.md` is your OS. Re-read it at every session start and after any context loss (compaction, truncation, long conversations). Never operate from memory alone when the source of truth is one file-read away.
+26. **Gold-standard local CI** — pre-commit = quality (fast lint/format); pre-push = correctness (test + build). Do not invert or collapse both into one slow commit hook.
+27. **Whole-project ownership & continuity** — own the project's real state, not only staged files or this session's diff. Re-check status before planning/implementing; bridge sessions and agents without disconnection. Verify and fix/track beyond your narrow edit set when the tree demands it.
+28. **Harness scope** — runtimes for this OS: **Grok Build (CLI/TUI)** and **OpenCode**. Same root `AGENTS.md` + global **agent-skills** pack for both. One always-on instruction file: `AGENTS.md`.
+29. **Agent OS autonomy + durable docs** — for non-trivial product work, agents run Research → Plan → Implement → Verify from this OS and may persist specs/plans under `docs/` (or legacy `docs/superpowers/` paths if already present) without Architect slash commands. Taste/design pivots need Architect intent.
+30. **Intent before invention** — do not invent redesigns (scroll-snap, brutalism, rebrands, layout systems) from skills or partial assets when the Architect did not ask. Prefer stack defaults and preserve working product work; escalate taste with one structured question.
+31. **Local-first vs session-end GitOps** — default every turn stops at verified + committed **locally**. Push/PR/merge only on `/end` / ship or documented mid-session exceptions. Never strand the Architect mid-session with unexpected remote noise; never lose work by leaving it uncommitted.
+32. **Gist protocol preservation** — when editing the canonical Gist OS, **add or refine** Session Start/End, Local vs GitOps, Hooks/local CI, harness scope, Agent Skills Pack, and related structural sections — **do not delete or "slim" them** without an Architect-approved explicit diff. Accidental protocol loss is a contract failure.
+33. **Agent Skills pack autonomy** — use addyosmani/agent-skills globally (skills, hooks, lifecycle commands, specialist agents, guards) without waiting for Architect to name them. On bootstrap, repair global install and fill project gaps. Skills never override Architect intent, Local-vs-GitOps, or release authority.
+34. **Living index** — always-on `AGENTS.md` + `docs/INDEX.md` + knowledge graph stay linked to real docs/scripts. Create project docs after bootstrap; sync them on the same branch as code; no orphan or duplicate surfaces.
+35. **Suggestive excellence** — proactively propose high-leverage next steps and activate full capabilities (skills, specialists, browser, gh). Never silent deferral; never unsolicited product redesign.
+36. **Handoff continuity** — Session Start Decision Gate + clean per-turn state + Session End GitOps so work progresses as complete units, not abandoned fragments.
     **Escalate:** release timing, irreversible tradeoffs, subjective product with no precedent, missing credentials, unresolved ambiguity.  
     **Everything else:** research, decide, execute, verify, report.
 
@@ -1200,6 +1266,7 @@ This OS is sourced from a canonical Gist. The Gist is **project-agnostic** (one 
 
 When editing the Gist, the following structural contracts are **protected**. Agents may refine wording or add clarity; they must **not** delete, collapse away, or "slim out" these without an Architect-approved explicit diff:
 
+- One-time vs continuous (enforcement model + cadence map)
 - OS Structure & Index + always-on linking contract
 - Session Start Protocol (decision gate, handoff ownership, clean continuity)
 - Local vs GitOps (local-first per turn, mid-session exceptions, `/end` ship path)
@@ -1222,12 +1289,13 @@ When refining the portable OS, keep Session Start/End and Local vs GitOps intact
 
 ## Classifying learnings
 
-| Discovery                                                                                   | Where it goes                                                                              |
-| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Project-specific pattern or workaround                                                      | `tasks/lessons.md` in this repo                                                            |
-| Project-specific config or invariant                                                        | `This Project` section of local `AGENTS.md`                                                |
-| How the Architect wants to work (cadence, defaults, non-negotiables) across products        | **How to work with this Architect** in the **Gist**, then sync OS into known product repos |
-| Universally applicable improvement (new principle, better bootstrap step, workflow pattern) | **Gist update** (project-agnostic), then **sync OS into known product repos** by default   |
+| Discovery                                                                                   | Where it goes                                                                                                                   |
+| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Project-specific pattern or workaround                                                      | `tasks/lessons.md` in this repo                                                                                                 |
+| Project-specific config or invariant                                                        | `This Project` section of local `AGENTS.md`                                                                                     |
+| How the Architect wants to work (cadence, defaults, non-negotiables) across products        | **How to work with this Architect** in the **Gist**, then sync OS into known product repos                                      |
+| Universally applicable improvement (new principle, better bootstrap step, workflow pattern) | **Gist update** (project-agnostic), then **sync OS into known product repos** by default                                        |
+| New durable process/standard/gate                                                           | Document establish + continuous maintain/improve triggers (**One-time vs continuous**) in the Gist or project guide same change |
 
 ## How to propose a Gist update
 

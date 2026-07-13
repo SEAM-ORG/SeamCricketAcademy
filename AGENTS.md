@@ -1165,6 +1165,7 @@ Reproduce → Localize → Reduce to minimal case → Fix at root cause → Add 
 - **Deployment target:** GitHub Pages (`www.seamcricketacademy.com` via `CNAME`) · workflow `.github/workflows/deploy.yml`
 - **Environment:** Node 22 (CI + local Homebrew) · no `.nvmrc` yet
 - **Product truth:** `PROJECT_CONTEXT.md` · `DESIGN_SYSTEM.md` · `DEPLOYMENT.md` · `src/data/academy.json` · `src/data/programs.ts`
+- **Doc index:** `docs/INDEX.md` · knowledge graph · `DEVELOPMENT.md`
 - **Canonical commands:**
   - Install: `npm ci` then `bash scripts/install-githooks.sh`
   - Dev: `npm run dev`
@@ -1180,7 +1181,7 @@ Reproduce → Localize → Reduce to minimal case → Fix at root cause → Add 
 - **External services:** SeamFusion Cloud Functions API (`PUBLIC_API_URL`, `PUBLIC_ACADEMY_ID`) · Web3Forms (contact) · WhatsApp deep links
 - **GitHub Project V2:** configure `.github/agent-project.yml` (`project_owner`, `project_number`); agents use `scripts/github/*` (no Actions card-movers)
 - **Harnesses:** Grok Build (CLI/TUI) + OpenCode — same root `AGENTS.md` + global **agent-skills**; harness-native machine glue
-- **Durable docs:** `docs/specs/`, `docs/plans/` (and legacy `docs/superpowers/` if present) for multi-session work
+- **Durable docs:** `docs/INDEX.md` · `docs/specs/` · `docs/plans/` · `docs/archive/` (legacy `docs/superpowers/` if present)
 - **Invariants:** dark glassmorphism + neon design system (`DESIGN_SYSTEM.md`) · do not edit `backup-legacy/` · do not commit video >90MB · validate dynamic email/WhatsApp links · deploy workflow runs from **repo root** (not a nested astro folder)
 
 ---

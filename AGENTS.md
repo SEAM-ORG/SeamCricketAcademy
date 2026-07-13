@@ -6,6 +6,8 @@ Architect↔Agent OS — For Humans + For Agents (portable bootstrap)
 
 Architect↔Agent OS — For Humans + For Agents (portable bootstrap)
 
+Architect↔Agent OS — For Humans + For Agents (portable bootstrap)
+
 # Architect ↔ Agent Operating System
 
 Portable, project-agnostic operating contract. Drop into any repo — greenfield or brownfield — so a non-coding Architect can direct work in human language and agents execute end-to-end.
@@ -64,6 +66,8 @@ Root `AGENTS.md` **must** stay the hub. Agents autonomously (**continuous mainta
 | Suggest improvements / use full capability      | **Proactive & Suggestive Agents**                                |
 | Local commit vs push/PR                         | **Local vs GitOps** + Autonomy Decision Table                    |
 | Close a turn / ship session                     | **Per-turn completion** / **Session End Protocol**               |
+| End-to-end vs deferred debt                     | **End-to-end completion & deferred work**                        |
+| Tech debt / later phases                        | **Task Management** + debt register / plans                      |
 | Product facts for _this_ repo                   | **This Project**                                                 |
 | Sync OS from Gist                               | **Gist Sync Protocol**                                           |
 | One-time vs continuous enforcement              | **One-time vs continuous**                                       |
@@ -88,19 +92,20 @@ This OS is **not a one-shot setup checklist**. Setup **establishes** surfaces; *
 
 ## Cadence map (what runs when)
 
-| Obligation                                                        | Establish (one-time / repair)                         | Continuous maintain                                                   | Continuous improve                                  |
-| ----------------------------------------------------------------- | ----------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------- |
-| Root `AGENTS.md` + **This Project**                               | Bootstrap / install OS                                | Update **This Project** when stack/commands/invariants change         | Gist Sync when OS contract improves                 |
-| Session Start / End / Local vs GitOps                             | Agent can follow from day one (protocol in this file) | Every session / every turn                                            | Refine Decision Gate language when handoffs fail    |
-| Local CI (`.githooks` + install script)                           | Install hooks when missing                            | Pre-commit / pre-push always; never skip                              | Tighten gates when bugs escape                      |
-| `docs/INDEX.md` + knowledge graph                                 | Create thin INDEX + graph at bootstrap                | Same-branch updates when docs/code entry points change                | Prune dead links; merge duplicate docs              |
-| `docs/{specs,plans,archive}/`                                     | Create dirs at bootstrap                              | Update plan checkboxes; archive when shipped                          | Prefer this layout over ad-hoc doc dumps            |
-| Agent Skills pack (global)                                        | Install for Grok + OpenCode when missing              | Use skills on relevant work without being asked                       | Repair install when discovery fails                 |
-| Harness surfaces (Grok plugins/hooks; OpenCode auth/MCP/commands) | Minimal native setup so the harness can work          | Keep auth/MCP/commands healthy when used                              | Lighten or adjust only when outcomes break          |
-| GitHub Issues/PRs/Project V2 hygiene                              | Bootstrap scripts/templates when product uses GitHub  | On `/end` / ship / exception                                          | Board/status alignment when preflight shows drift   |
-| Lessons / standing rules                                          | First `tasks/lessons.md` / write rule when taught     | Review lessons at Session Start; persist new corrections same session | Promote universal lessons to Gist                   |
-| Tracking / ignore / visible surfaces                              | Baseline `.gitignore` + hook install                  | No tracked secrets; no tracked-but-ignored; no orphan intent files    | Fix ignore rules when build outputs or tools change |
-| Verify Agent OS healthy                                           | Full checklist after bootstrap                        | Spot-check at Session Start when something smells wrong               | Expand checklist when a new failure mode appears    |
+| Obligation                                                        | Establish (one-time / repair)                         | Continuous maintain                                                       | Continuous improve                                      |
+| ----------------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------- |
+| Root `AGENTS.md` + **This Project**                               | Bootstrap / install OS                                | Update **This Project** when stack/commands/invariants change             | Gist Sync when OS contract improves                     |
+| Session Start / End / Local vs GitOps                             | Agent can follow from day one (protocol in this file) | Every session / every turn                                                | Refine Decision Gate language when handoffs fail        |
+| Local CI (`.githooks` + install script)                           | Install hooks when missing                            | Pre-commit / pre-push always; never skip                                  | Tighten gates when bugs escape                          |
+| `docs/INDEX.md` + knowledge graph                                 | Create thin INDEX + graph at bootstrap                | Same-branch updates when docs/code entry points change                    | Prune dead links; merge duplicate docs                  |
+| `docs/{specs,plans,archive}/`                                     | Create dirs at bootstrap                              | Update plan checkboxes; archive when shipped                              | Prefer this layout over ad-hoc doc dumps                |
+| Agent Skills pack (global)                                        | Install for Grok + OpenCode when missing              | Use skills on relevant work without being asked                           | Repair install when discovery fails                     |
+| Harness surfaces (Grok plugins/hooks; OpenCode auth/MCP/commands) | Minimal native setup so the harness can work          | Keep auth/MCP/commands healthy when used                                  | Lighten or adjust only when outcomes break              |
+| GitHub Issues/PRs/Project V2 hygiene                              | Bootstrap scripts/templates when product uses GitHub  | On `/end` / ship / exception                                              | Board/status alignment when preflight shows drift       |
+| Lessons / standing rules                                          | First `tasks/lessons.md` / write rule when taught     | Review lessons at Session Start; persist new corrections same session     | Promote universal lessons to Gist                       |
+| Tracking / ignore / visible surfaces                              | Baseline `.gitignore` + hook install                  | No tracked secrets; no tracked-but-ignored; no orphan intent files        | Fix ignore rules when build outputs or tools change     |
+| Verify Agent OS healthy                                           | Full checklist after bootstrap                        | Spot-check at Session Start when something smells wrong                   | Expand checklist when a new failure mode appears        |
+| End-to-end vs deferred debt                                       | First use of todo/plan/debt surfaces                  | Every incomplete slice gets status+priority; related debt on related work | Promote blockers; archive done items; keep briefs short |
 
 ## Enforcement (permanent)
 
@@ -334,7 +339,7 @@ Use this when “should I ask?” feels unclear. **Infer from the table; do not 
 
 **Escalation (short list):** product priorities and taste with no precedent · production release timing · irreversible data/business tradeoffs · credentials the agent cannot obtain · ambiguity that survived investigation.
 
-**Relationship anti-patterns (behavioral):** thin status-only turns; silent skip via “pre-existing / out of scope”; asking the Architect to run routine CLI; leaving merge/hooks/docs for a fictional teammate; redesigning UX/brand without intent; claiming done without verification evidence.
+**Relationship anti-patterns (behavioral):** thin status-only turns; silent skip without tracked status; leaving half-done scope untracked; asking the Architect to run routine CLI; leaving merge/hooks/docs for a fictional teammate; redesigning UX/brand without intent; claiming done without verification evidence; verbose doc dumps instead of top-level briefs.
 
 ## Agentic OS Capabilities (End-to-End Execution)
 
@@ -361,7 +366,7 @@ Do this **automatically** at the start of every session — and **re-ground** be
    - **Park** only with a written note in `tasks/todo.md` + clean or intentionally staged state, or
    - **Ask** with a structured question when a real branch/product choice remains.
      **Never** classify existing work as irrelevant, never bypass by silently switching branches, never leave orphan untracked files, never start net-new product work on top of an unexplained dirty tree.
-4. Review `tasks/lessons.md`, `tasks/todo.md`, and **open** `docs/plans/` + `docs/specs/` (and legacy `docs/superpowers/` if present) — **resume incomplete plans before net-new**.
+4. Review `tasks/lessons.md`, `tasks/todo.md`, open `docs/plans/` + `docs/specs/` (legacy paths if present), and debt register if any — **resume incomplete plans and clear blockers before net-new**. Note status/priority of open deferred items.
 5. If `scripts/github/session-preflight.sh` exists, run it; treat open PRs/Issues/failing Actions as work to resume or track.
 6. Load knowledge graph + `docs/INDEX.md` (if present) + product docs for the objective; map whole-product fit, not only the named file.
 7. Confirm local CI hooks are installed (or install via project script). Never `--no-verify`.
@@ -888,23 +893,83 @@ Release (Agent prepares, Architect approves)
 - **Rollback strategy:** Every deployment must have a rollback path. For tag-triggered deploys, revert the tag or cut a hotfix release. For platform deploys (Vercel, Firebase, etc.), use the platform's rollback mechanism.
 - **Release tags are immutable.** Once pushed, never move, delete, or force-push a tag. If a release fails, cut a new version.
 
+### End-to-end completion & deferred work
+
+**Default:** finish the objective **end-to-end** in the current unit of work (implement → verify → docs/memory → local commit; GitOps on `/end` / ship). Partial delivery is the exception, not the style.
+
+**Valid reasons to stop short of full scope:**
+
+| Reason                                                      | Required handling                                                                                               |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Explicit later phase in an open plan/spec                   | Keep the item in the plan with **status**; do not pretend it shipped                                            |
+| True tech debt / follow-up that is out of the current slice | Track with **status + priority**; link from plan/todo/debt register                                             |
+| Blocker for further development                             | **High priority** — fix now if safe; otherwise track as **blocker** and surface at start/closeout until cleared |
+| Architect deprioritized or out-of-scope                     | Track or drop with a one-line reason — never silent skip                                                        |
+
+**Invalid:** “pre-existing”, “out of scope”, “unrelated”, or “later” with **no** tracked item and **no** status.
+
+#### Tracking surfaces (pick the lightest that fits)
+
+| Surface                                                   | Use for                                                                               |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `tasks/todo.md`                                           | Active mid-flight checklist for the current objective (status on every open item)     |
+| `docs/plans/*.md`                                         | Multi-session / phased work — checkboxes + status for deferred phase items            |
+| `docs/specs/*.md`                                         | Acceptance left for later phases (brief; link to plan)                                |
+| `docs/TECHNICAL_DEBT_REGISTER.md` (or project equivalent) | Standing debt across sessions — **status + priority**                                 |
+| GitHub Issue                                              | Durable public tracking when the product uses Issues (still link from todo/plan/debt) |
+
+#### Status & priority (required on open deferred items)
+
+Use short, consistent markers so any agent can resume:
+
+| Field          | Values (recommended)                                      |
+| -------------- | --------------------------------------------------------- |
+| **Status**     | `open` · `in_progress` · `blocked` · `done` · `wontfix`   |
+| **Priority**   | `blocker` (stops further dev) · `high` · `medium` · `low` |
+| **Owner path** | plan/todo/debt/issue link                                 |
+| **Note**       | One line: why deferred + what “done” means                |
+
+**Blockers:** anything that prevents correct further development in that area is **priority: blocker** (or high if partial workaround exists). Agents raise blockers proactively; do not bury them under low-priority chore lists.
+
+#### When the Architect asks about debt / todos / later phases
+
+1. Read `tasks/todo.md`, open `docs/plans/`, debt register, and open Issues (if used).
+2. Answer with a **brief inventory**: status · priority · where tracked · next action — not a novel.
+3. Offer 1–3 concrete resume options (blocker-first).
+
+#### Related work (proactive)
+
+If current work **touches** a tracked deferred item or debt:
+
+- Surface it in the proactive brief / closeout (“Related debt: … status=… priority=…”).
+- Prefer clearing **blocker/high** items in the same unit when scope allows; otherwise update status and say what remains.
+
 ### Task Management
 
-Lightweight, file-based tracking that persists across sessions.
+Lightweight, file-based tracking that persists across sessions. Prefer **briefs** over verbose ledgers.
 
-- **`tasks/todo.md`**: Per-objective checklist. Create when starting a multi-step objective. Include acceptance criteria. Mark items done with evidence. Archive or delete when objective is complete.
-- **`tasks/lessons.md`**: Persistent learnings. The agent reviews this at session start. Append after any:
-  - Correction from the Architect
-  - Postmortem / root-cause fix
-  - Discovery of a pattern that prevents future mistakes
-  - Format: `### [date]: [title]` + short description of what happened and the prevention rule.
-- **Distinguish:** project-specific lessons → `tasks/lessons.md`. Universally applicable OS improvements → Gist Sync Protocol (below).
+- **`tasks/todo.md`**: Active objective checklist. Each open item has **status** (and **priority** if deferred). Acceptance criteria one line. Mark done with short evidence. Clear or archive when the objective is complete.
+- **`tasks/lessons.md`**: Persistent learnings. Review at session start. Append after Architect correction, postmortem, or prevention rule. Format: `### [date]: [title]` + short what/prevention (few lines).
+- **Plans/phases:** deferred phase work lives in `docs/plans/` with status — not only in chat.
+- **Debt register:** standing cross-cutting debt with status + priority; link from INDEX when the file exists.
+- **Distinguish:** project lessons → `tasks/lessons.md`. Universal OS improvements → Gist Sync Protocol.
 
 ### Documentation System (project-agnostic standards → project-specific docs)
 
 Creating the doc system is **establish**. Keeping INDEX, guides, and plans honest is **continuous maintain** on every relevant change. Improving structure when navigation hurts is **continuous improve**. See **One-time vs continuous**.
 
 The Gist is **portable**. After bootstrap, **agents create and maintain project-specific documentation** inside each repo. Always-on `AGENTS.md` **links** to those docs; it does not inline full product manuals.
+
+#### Doc shape: top-level briefs (not novels)
+
+| Prefer                                                | Avoid                                                            |
+| ----------------------------------------------------- | ---------------------------------------------------------------- |
+| `docs/INDEX.md` as the map + one-line purpose per doc | Duplicating full manuals inside `AGENTS.md` or every plan        |
+| Short top-of-doc brief (what / why / status / links)  | Session transcripts and wall-of-text history in living standards |
+| Status tables for debt, phases, open todos            | Deferred work only in chat memory                                |
+| Link to deep detail (ADR, HISTORY, long FEATURES)     | Copy-pasting deep detail into every closeout                     |
+
+**Living docs** (INDEX, This Project, plans, debt, todo) stay **summarized and current**. Verbose history belongs in journal/HISTORY/archive — not in the top-level brief the next agent must read first.
 
 #### Master index
 
@@ -996,7 +1061,7 @@ The agent owns the project's complete lifecycle — not just the current task. T
 **What to do with findings:**
 
 - **Small, safe improvements** (updating a patch dep, fixing a lint warning, adding a missing test): fix in the current branch if scope allows, or on a separate `chore/` branch.
-- **Medium improvements** (restructuring a module, adding a CI stage, upgrading a major dep): log in `tasks/todo.md` or create a GitHub issue. Mention to the Architect at closeout.
+- **Medium improvements** (restructuring a module, adding a CI stage, upgrading a major dep): track with **status + priority** in todo/plan/debt (and Issue if useful). Mention at closeout; clear **blockers** first.
 - **Large improvements** (architectural changes, stack migrations, new infrastructure): present to the Architect as a structured proposal with rationale, effort estimate, and risk.
 
 **Best-practices enforcement:**
@@ -1011,11 +1076,13 @@ Stewardship is necessary but not sufficient. Agents must **actively suggest** hi
 
 **Suggestive posture (every session start + closeout):**
 
-- Offer **1–3 concrete next steps** the Architect can accept with a short yes (ordered by user value / risk reduction).
-- Prefer continuing incomplete plans, unblocking shippable slices, and fixing value-blocking debt over greenfield thrash.
+- Offer **1–3 concrete next steps** the Architect can accept with a short yes (ordered by **blockers first**, then user value / risk reduction).
+- Prefer continuing incomplete plans, clearing **blocker/high** debt, and shippable slices over greenfield thrash.
+- When work **relates** to tracked debt/todos/later phases, name them with **status + priority** and suggest resume if relevant.
+- When the Architect asks to “check tech debt / todos / later phases,” produce a **brief inventory** from todo + plans + debt register (and Issues if used).
 - Frame as opportunities: "Payment flow has no tests — I can add coverage next; say yes to proceed."
-- **Never** invent taste-driven redesigns (new brand, layout system, scroll-snap) without Architect intent (**Intent before invention**).
-- **Never** use "out of scope / pre-existing / unrelated" as a silent skip — fix, track, or suggest.
+- Product design follows Architect intent (**Intent before invention**).
+- No silent skip: fix now, or track with status/priority, or get a one-line Architect decision.
 
 **Capability activation (autonomous):**
 
@@ -1039,16 +1106,16 @@ Stewardship is necessary but not sufficient. Agents must **actively suggest** hi
 
 ### Per-turn completion (default every prompt)
 
-Stop at **verified locally + committed locally** unless `/end` / ship or a mid-session GitOps exception applies. Do this **without** the Architect asking. Hooks, tests, and intentional `git add` are part of the turn — not optional follow-ups.
+**Default: end-to-end for the asked objective** (implement → verify → brief docs/memory → local commit). Stop short only for **tracked** deferrals (later phase / debt / blocker) — see **End-to-end completion & deferred work**. GitOps (push/PR) still waits for `/end` / ship unless an exception applies. Do this **without** the Architect asking.
 
-**Clean-state mandate:** each turn ends in a state the next agent can continue without archaeology. No orphan untracked files; no half-edited docs; plan checkboxes match reality.
+**Clean-state mandate:** each turn ends in a state the next agent can continue without archaeology. No orphan untracked files; no half-edited docs; plan/todo checkboxes and **status** match reality.
 
 1. Verification evidence (project gates / hooks as appropriate)
 2. `git add` all intent-driven new files — no orphan untracked work
 3. Commit on a properly named branch (**local only** by default)
-4. End-of-turn `git status` is intentionally clean (or only expected deferred state explicitly noted in `tasks/todo.md`)
-5. Memory/docs sync if behavior changed (INDEX/graph/This Project as needed); update `tasks/todo.md` if multi-step
-6. Closeout: **summary · status · evidence · git (local SHA; PR/Issue deferred to /end if applicable) · project health · suggested next · next step**
+4. End-of-turn `git status` intentionally clean; any incomplete scope is **tracked** with status/priority (todo/plan/debt) — not left implicit
+5. Memory/docs sync if behavior changed (INDEX/graph/This Project briefs); update todo/plan/debt statuses
+6. Closeout (**brief**): **summary · status · evidence · git · deferred/blockers (if any) · related debt · suggested next**
 
 ### Session End Protocol (only on `/end`, "end session", "ship it", or equivalent)
 
@@ -1125,19 +1192,20 @@ Durable judgement. Curate; don't bloat. No product-specific design rules here.
 21. **Learn from mistakes** — every correction or postmortem becomes a `tasks/lessons.md` entry.
 22. **Demand elegance** — for non-trivial changes, pause: "Is there a simpler structure with fewer moving parts?" If hacky, rewrite cleanly when scope stays constant.
 23. **One-time vs continuous** — establish missing surfaces once; maintain them on every relevant change; improve when evidence shows drift. Bootstrap is not a permanent substitute for continuous checks.
-24. **Proactive stewardship** — own the project's health end-to-end. Surface outdated deps, missing tests, broken configs, doc drift, and improvement opportunities even when not asked. Suggest concrete next steps; leave every project healthier and more navigable than you found it.
-25. **Context self-preservation** — `AGENTS.md` is your OS. Re-read it at every session start and after any context loss (compaction, truncation, long conversations). Never operate from memory alone when the source of truth is one file-read away.
-26. **Gold-standard local CI** — pre-commit = quality (fast lint/format); pre-push = correctness (test + build). Do not invert or collapse both into one slow commit hook.
-27. **Whole-project ownership & continuity** — own the project's real state, not only staged files or this session's diff. Re-check status before planning/implementing; bridge sessions and agents without disconnection. Verify and fix/track beyond your narrow edit set when the tree demands it.
-28. **Harness scope** — runtimes for this OS: **Grok Build (CLI/TUI)** and **OpenCode**. Same root `AGENTS.md` + global **agent-skills** pack for both. One always-on instruction file: `AGENTS.md`.
-29. **Agent OS autonomy + durable docs** — for non-trivial product work, agents run Research → Plan → Implement → Verify from this OS and may persist specs/plans under `docs/` (or legacy `docs/superpowers/` paths if already present) without Architect slash commands. Taste/design pivots need Architect intent.
-30. **Intent before invention** — do not invent redesigns (scroll-snap, brutalism, rebrands, layout systems) from skills or partial assets when the Architect did not ask. Prefer stack defaults and preserve working product work; escalate taste with one structured question.
-31. **Local-first vs session-end GitOps** — default every turn stops at verified + committed **locally**. Push/PR/merge only on `/end` / ship or documented mid-session exceptions. Never strand the Architect mid-session with unexpected remote noise; never lose work by leaving it uncommitted.
-32. **Gist protocol preservation** — when editing the canonical Gist OS, **add or refine** Session Start/End, Local vs GitOps, Hooks/local CI, harness scope, Agent Skills Pack, and related structural sections — **do not delete or "slim" them** without an Architect-approved explicit diff. Accidental protocol loss is a contract failure.
-33. **Agent Skills pack autonomy** — use addyosmani/agent-skills globally (skills, hooks, lifecycle commands, specialist agents, guards) without waiting for Architect to name them. On bootstrap, repair global install and fill project gaps. Skills never override Architect intent, Local-vs-GitOps, or release authority.
-34. **Living index** — always-on `AGENTS.md` + `docs/INDEX.md` + knowledge graph stay linked to real docs/scripts. Create project docs after bootstrap; sync them on the same branch as code; no orphan or duplicate surfaces.
-35. **Suggestive excellence** — proactively propose high-leverage next steps and activate full capabilities (skills, specialists, browser, gh). Never silent deferral; never unsolicited product redesign.
-36. **Handoff continuity** — Session Start Decision Gate + clean per-turn state + Session End GitOps so work progresses as complete units, not abandoned fragments.
+24. **End-to-end by default** — complete the objective unless deferred to a tracked later phase/debt item with status + priority; blockers are high priority; docs stay brief at the top level.
+25. **Proactive stewardship** — own the project's health end-to-end. Surface outdated deps, missing tests, broken configs, doc drift, and improvement opportunities even when not asked. Suggest concrete next steps; leave every project healthier and more navigable than you found it.
+26. **Context self-preservation** — `AGENTS.md` is your OS. Re-read it at every session start and after any context loss (compaction, truncation, long conversations). Never operate from memory alone when the source of truth is one file-read away.
+27. **Gold-standard local CI** — pre-commit = quality (fast lint/format); pre-push = correctness (test + build). Do not invert or collapse both into one slow commit hook.
+28. **Whole-project ownership & continuity** — own the project's real state, not only staged files or this session's diff. Re-check status before planning/implementing; bridge sessions and agents without disconnection. Verify and fix/track beyond your narrow edit set when the tree demands it.
+29. **Harness scope** — runtimes for this OS: **Grok Build (CLI/TUI)** and **OpenCode**. Same root `AGENTS.md` + global **agent-skills** pack for both. One always-on instruction file: `AGENTS.md`.
+30. **Agent OS autonomy + durable docs** — for non-trivial product work, agents run Research → Plan → Implement → Verify from this OS and may persist specs/plans under `docs/` (or legacy `docs/superpowers/` paths if already present) without Architect slash commands. Taste/design pivots need Architect intent.
+31. **Intent before invention** — do not invent redesigns (scroll-snap, brutalism, rebrands, layout systems) from skills or partial assets when the Architect did not ask. Prefer stack defaults and preserve working product work; escalate taste with one structured question.
+32. **Local-first vs session-end GitOps** — default every turn stops at verified + committed **locally**. Push/PR/merge only on `/end` / ship or documented mid-session exceptions. Never strand the Architect mid-session with unexpected remote noise; never lose work by leaving it uncommitted.
+33. **Gist protocol preservation** — when editing the canonical Gist OS, **add or refine** Session Start/End, Local vs GitOps, Hooks/local CI, harness scope, Agent Skills Pack, and related structural sections — **do not delete or "slim" them** without an Architect-approved explicit diff. Accidental protocol loss is a contract failure.
+34. **Agent Skills pack autonomy** — use addyosmani/agent-skills globally (skills, hooks, lifecycle commands, specialist agents, guards) without waiting for Architect to name them. On bootstrap, repair global install and fill project gaps. Skills never override Architect intent, Local-vs-GitOps, or release authority.
+35. **Living index** — always-on `AGENTS.md` + `docs/INDEX.md` + knowledge graph stay linked to real docs/scripts. Create project docs after bootstrap; sync them on the same branch as code; no orphan or duplicate surfaces.
+36. **Suggestive excellence** — proactively propose high-leverage next steps and activate full capabilities (skills, specialists, browser, gh). Never silent deferral; never unsolicited product redesign.
+37. **Handoff continuity** — Session Start Decision Gate + clean per-turn state + Session End GitOps so work progresses as complete units, not abandoned fragments.
     **Escalate:** release timing, irreversible tradeoffs, subjective product with no precedent, missing credentials, unresolved ambiguity.  
     **Everything else:** research, decide, execute, verify, report.
 
@@ -1157,7 +1225,7 @@ Durable judgement. Curate; don't bloat. No product-specific design rules here.
 
 **Start (and re-ground before non-trivial turns):** full repo status (all dirty/WIP) · prior session-end warnings · Session Start Decision Gate (continue/finish/promote/park/ask) · branch off protected · `tasks/lessons.md` + `todo.md` + open plans/specs · `docs/INDEX.md` + knowledge graph → whole-product fit · proactive brief · live probes · plan · execute same turn (local-first).
 
-**Per-turn complete:** verify evidence · local commit · intentional git · durable memory · `tasks/todo.md` · closeout (PR deferred to `/end` unless exception).
+**Per-turn complete:** end-to-end for the ask · verify · local commit · intentional git · brief docs/memory · tracked deferrals with status · closeout (PR on `/end` unless exception).
 
 **Session end (`/end` / ship):** consolidate · push → PR → squash merge · protected branch clean slate · final closeout with PR links.
 
@@ -1216,8 +1284,8 @@ Reproduce → Localize → Reduce to minimal case → Fix at root cause → Add 
 
 ## Templates
 
-**Per-turn closeout:** Summary · Status · Evidence · Git (local SHA; `PR/Issue: none (deferred to /end)` when applicable) · Next  
-**Session-end closeout:** Summary · Status · Evidence · PR/Issue links · Project health · Next-session first step  
+**Per-turn closeout (brief):** Summary · Status · Evidence · Git · Deferred/blockers (if any) · Related debt · Next  
+**Session-end closeout (brief):** Summary · Status · Evidence · PR/Issue links · Open debt/todos (status) · Next-session first step  
 **Bug:** Repro · Expected/actual · Root cause · Fix · Guard added · Verification · Risk  
 **Handoff:** Branch/issue/PR · files to read · ledger · in/out scope · STOP · gates · report-back
 
@@ -1267,6 +1335,7 @@ This OS is sourced from a canonical Gist. The Gist is **project-agnostic** (one 
 When editing the Gist, the following structural contracts are **protected**. Agents may refine wording or add clarity; they must **not** delete, collapse away, or "slim out" these without an Architect-approved explicit diff:
 
 - One-time vs continuous (enforcement model + cadence map)
+- End-to-end completion & deferred work (status/priority tracking; brief docs)
 - OS Structure & Index + always-on linking contract
 - Session Start Protocol (decision gate, handoff ownership, clean continuity)
 - Local vs GitOps (local-first per turn, mid-session exceptions, `/end` ship path)

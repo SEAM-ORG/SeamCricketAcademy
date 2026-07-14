@@ -916,15 +916,16 @@ bash scripts/github/ensure-scopes.sh
 
 **Portable scripts (commit in every product repo):**
 
-| Script                                                    | When agents run it                                                                                       |
-| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `scripts/github/session-preflight.sh`                     | **Session Start** — open PRs/Issues, branch vs main, board snapshot                                      |
-| `scripts/github/ensure-labels.sh` / `ensure-milestone.sh` | Bootstrap + before create Issue/PR                                                                       |
-| `scripts/github/open-unit.sh`                             | Starting a tracked product/infra unit (Issue + labels + board **In Progress**)                           |
-| `scripts/github/project-sync.sh`                          | `add <url>` · `status <url> <stage>` · `done <url>`                                                      |
-| `scripts/github/ship-unit.sh`                             | **GitOps ship** — push, PR+labels, board In Review → merge → board **Done**, checkout protected          |
-| `scripts/github/session-end-hygiene.sh`                   | **Session End** after ship — list remaining open work; `--close-stale-os-prs` for superseded OS-init PRs |
-| `scripts/github/bootstrap.sh`                             | OS install / drift repair                                                                                |
+| Script                                                    | When agents run it                                                                                              |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `scripts/github/session-preflight.sh`                     | **Session Start** — open PRs/Issues, branch vs main, board snapshot                                             |
+| `scripts/github/ensure-labels.sh` / `ensure-milestone.sh` | Bootstrap + before create Issue/PR                                                                              |
+| `scripts/github/open-unit.sh`                             | Starting a tracked product/infra unit (Issue + labels + board **In Progress**)                                  |
+| `scripts/github/project-sync.sh`                          | `add <url>` · `status <url> <stage>` · `done <url>`                                                             |
+| `scripts/github/ship-unit.sh`                             | **GitOps ship** — push, PR+labels, board In Review → merge → board **Done**, checkout protected                 |
+| `scripts/github/session-end-hygiene.sh`                   | **Session End** after ship — list remaining open work; `--close-stale-os-prs` for superseded OS-init PRs        |
+| `scripts/github/session-end-return-main.sh`               | **Session End hard gate** — clean tree on protected branch, ff to origin; fail if unmerged feature work remains |
+| `scripts/github/bootstrap.sh`                             | OS install / drift repair                                                                                       |
 
 **Status stages (map names in yml to board options):** `backlog` · `ready` · `in_progress` · `in_review` · `done`.
 
@@ -1218,16 +1219,32 @@ Stewardship is necessary but not sufficient. Agents must **actively suggest** hi
 5. Memory/docs sync if behavior changed (INDEX/graph/This Project briefs); update todo/plan/debt statuses
 6. Closeout (**brief**): **summary · status · evidence · git · deferred/blockers (if any) · related debt · suggested next**
 
+### Required project-tracked skills (every product repo)
+
+Every onboarded product repo **must** carry (under `.agents/skills/`):
+
+| Skill                | Role                                            |
+| -------------------- | ----------------------------------------------- |
+| `session-start`      | Session Start Decision Gate                     |
+| `session-end`        | Session End Protocol + return-to-main hard gate |
+| `agent-os-bootstrap` | Install/repair OS from Gist                     |
+| `project-boot`       | Whole-repo boot / status                        |
+
+OpenCode: symlink `.opencode/command` → `.agents/commands` and `.opencode/skill(s)` → `.agents/skills` when the project uses command/skill surfaces. Missing skills = incomplete bootstrap — repair via `/agent-os-bootstrap`.
+
 ### Session End Protocol (only on `/end`, "end session", "ship it", or equivalent)
 
 A session is **never** complete just because code changed locally. When there is shippable work, full completion requires **GitOps evidence** **and** GitHub hygiene (Issues/PRs/labels/milestones/**Project V2 Status**).
 
 1. Update durable memory first when needed (`tasks/todo.md`, lessons, docs/plans/specs) so it lands with the work
 2. Consolidate committed work into reviewable unit(s); prefer one PR per logical unit over a mega-PR
-3. For each unit: prefer `bash scripts/github/ship-unit.sh` (or: Issue link → push → PR with labels → Project **In Review** → squash merge → Project **Done** → `Closes #N` where applicable)
+3. For each unit: prefer `bash scripts/github/ship-unit.sh` (or: Issue link → push → PR with labels → Project **In Review** → squash merge → Project **Done** → `Closes #N` where applicable). If you are **on protected with unpushed commits**, rehome to a `chore/…` feature branch first — never leave stranded protected-only history.
 4. Checkout protected branch; delete merged local branch residue when safe
-5. Run `bash scripts/github/session-end-hygiene.sh` (add `--close-stale-os-prs` when obsolete agent-os-init PRs are superseded by main)
-6. Final closeout: **summary · status · evidence · PR/issue links · Project V2 status · remaining open work · next-session first step**
+5. Run `bash scripts/github/session-end-hygiene.sh` (add `--close-stale-os-prs` when obsolete agent-os-init PRs are superseded by main). Hygiene **must** end by invoking `session-end-return-main.sh`.
+6. **Hard gate (non-optional):** `bash scripts/github/session-end-return-main.sh` exits 0 — workspace is on protected branch, **clean**, and (when `origin` exists) **not ahead** of `origin/<protected>`. Fail the session-end claim if this gate fails.
+7. Final closeout: **summary · status · evidence · PR/issue links (merged) · Project V2 status · remaining open work · next-session first step**. (NOTE: Agents MUST review and merge PRs themselves. Never hand open PRs back to the Architect.)
+
+**Ready for next session means:** `git status -sb` shows protected branch, clean tree, tracking origin (or local-only with intentional clean main). Never end Session End on a feature branch without an open PR URL + written justification.
 
 If you must hand off with open PRs still unmerged, justify that in the closeout and leave board Status honest (**In Review**, not **Done**). Do not claim session-complete GitOps without evidence.
 
@@ -1328,7 +1345,7 @@ Durable judgement. Curate; don't bloat. No product-specific design rules here.
 
 **Per-turn complete:** end-to-end for the ask · verify · local commit · intentional git · brief docs/memory · tracked deferrals with status · closeout (PR on `/end` unless exception).
 
-**Session end (`/end` / ship):** consolidate · push → PR → squash merge · protected branch clean slate · final closeout with PR links.
+**Session end (`/end` / ship):** consolidate · push → PR → squash merge · `session-end-return-main.sh` hard gate · protected branch clean slate (ready for next session) · final closeout with PR links.
 
 ## GitOps behavior
 

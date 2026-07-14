@@ -48,3 +48,11 @@ gh pr list -R "$REPO" --state open --limit 20 --json number,title,author,labels 
   --jq '.[] | select(.author.login|test("dependabot|copilot|app/"; "i") or (.title|test("dependabot|Bump |deps"; "i"))) | "#\(.number) \(.title)"' 2>/dev/null || true
 
 info "Hygiene report done."
+
+# Hard gate: leave Architect on protected branch, clean, ready for next session
+echo
+info "Session End return-to-main gate"
+bash "$(cd "$(dirname "$0")" && pwd)/session-end-return-main.sh" || {
+  echo "ERROR: return-to-main failed — ship unmerged work first (ship-unit.sh) or clean/park dirty tree." >&2
+  exit 1
+}

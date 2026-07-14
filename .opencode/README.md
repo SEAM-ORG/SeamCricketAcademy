@@ -1,13 +1,16 @@
 # OpenCode project surfaces
 
-Runtime config is **global only:** `~/.config/opencode/opencode.jsonc`  
-(models, plugins, MCP, LSP — not per-repo JSON).
+Runtime config, plugins, MCP, and skills are **global only**:
 
-This directory only holds discovery surfaces:
+| Path                                | Role                                                           |
+| ----------------------------------- | -------------------------------------------------------------- |
+| `~/.config/opencode/opencode.jsonc` | Models, plugins (incl. **Superpowers**), MCP, LSP              |
+| `~/.config/opencode/command/`       | Global slash commands (`/start`, `/end`, …)                    |
+| `~/.agents/skills/`                 | Global Agent OS + agent-skills pack                            |
+| Superpowers plugin                  | Methodology skills (brainstorming, TDD, …) via OpenCode plugin |
 
-| Path                                  | Purpose                              |
-| ------------------------------------- | ------------------------------------ |
-| `command` → `.agents/commands`        | Slash commands (`/start`, `/end`, …) |
-| `skill` / `skills` → `.agents/skills` | Optional skill discovery             |
+**Do not** create project-local `.agents/`, `.agent/`, skill vendor trees, or
+`opencode.json(c)`. Product instructions live in root **`AGENTS.md`**.
 
-Do not add `opencode.json(c)` here or at the repo root.
+This directory may exist for OpenCode cache/state only (gitignored). Keep this
+README if useful; do not reintroduce skill/command symlinks into the repo.

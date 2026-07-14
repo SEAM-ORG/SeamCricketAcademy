@@ -10,6 +10,6 @@ OpenCode:
 
 - `.opencode/command` → `commands/`
 - `.opencode/skills` → `skills/`
-- `opencode.jsonc` `skills.paths` → `skills/` + `vendor/agent-skills/skills`
+- OpenCode discovers skills via `.opencode/skills` symlink + global config (no project `opencode.jsonc`)
 
 Lifecycle actions are **commands only** (one picker entry each). Craft skills live in the vendor submodule.

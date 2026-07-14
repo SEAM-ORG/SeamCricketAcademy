@@ -1,10 +1,13 @@
-# OpenCode project surfaces (tracked)
+# OpenCode project surfaces
 
-| Path           | Purpose                                                                    |
-| -------------- | -------------------------------------------------------------------------- |
-| `command/*.md` | Slash commands (`/start`, `/end`, lifecycle) for OpenCode in **this repo** |
-| Skills         | Live under `.agents/skills/` (OpenCode auto-loads them)                    |
+Runtime config is **global only:** `~/.config/opencode/opencode.jsonc`  
+(models, plugins, MCP, LSP — not per-repo JSON).
 
-**Source of truth for the product:** these tracked files — not only machine-global `~/.config/opencode/` or `~/.grok/`.
+This directory only holds discovery surfaces:
 
-Ignore local runtime only: `.opencode/state/`, `.opencode/cache/`.
+| Path                                  | Purpose                              |
+| ------------------------------------- | ------------------------------------ |
+| `command` → `.agents/commands`        | Slash commands (`/start`, `/end`, …) |
+| `skill` / `skills` → `.agents/skills` | Optional skill discovery             |
+
+Do not add `opencode.json(c)` here or at the repo root.

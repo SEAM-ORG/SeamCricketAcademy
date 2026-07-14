@@ -1,5 +1,10 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "instructions": [
+    "{file:/Users/saadev0/.config/opencode/AGENT_OS_ENFORCEMENT.md}",
+    "AGENTS.md",
+    ".github/ai-context/AGENT_WORKFLOW.md",
+  ],
   "skills": {
     "paths": [".agents/skills", ".agents/vendor/agent-skills/skills"],
   },

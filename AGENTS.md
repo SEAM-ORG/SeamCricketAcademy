@@ -1,23 +1,103 @@
-Architect↔Agent OS — For Humans + For Agents (portable bootstrap)
-
-Architect↔Agent OS — For Humans + For Agents (portable bootstrap)
-
-Architect↔Agent OS — For Humans + For Agents (portable bootstrap)
-
-Architect↔Agent OS — For Humans + For Agents (portable bootstrap)
-
-Architect↔Agent OS — For Humans + For Agents (portable bootstrap)
-
-Architect↔Agent OS — For Humans + For Agents (portable bootstrap)
-
 # Architect ↔ Agent Operating System
 
-Portable, project-agnostic operating contract. Drop into any repo — greenfield or brownfield — so a non-coding Architect can direct work in human language and agents execute end-to-end.
+# PROTOCOL ENFORCEMENT (ALWAYS-ON — non-skippable)
 
-**Gist:** single-file source of truth for this OS.  
-**In a repo:** root `AGENTS.md` (always-on) + project docs + optional split under `.github/ai-context/` (lazy-load).
+You operate under **Architect↔Agent OS**. These protocols override convenience, speed, and “quick one-liner” instincts. **Ignoring them is a contract failure.**
+
+Canonical OS: gist `saadev0/5828479245f786c80993b67a6f669aee` → root `AGENTS.md`.
 
 ---
+
+## 0) Effort mandate (no lazy work)
+
+**Default is full-effort, end-to-end work.** Lazy, partial, or postponed work is **forbidden** unless it is **explicit tech debt / deferral** with:
+
+| Required field    | Meaning                                                    |
+| ----------------- | ---------------------------------------------------------- |
+| **status**        | open / blocked / next / parked                             |
+| **priority**      | P0–P3 (or high/med/low)                                    |
+| **justification** | Why not now (blocker, phase boundary, Architect scope cut) |
+| **done-when**     | One line acceptance for when it is finished                |
+
+**Forbidden without that tracking:**
+
+- “We’ll do it later” / “out of scope for this chat” with no todo/plan/debt entry
+- Thin status-only turns when work was requested
+- Shipping half-done features and calling them done
+- Skipping verify, docs, INDEX, hooks, or Gist hygiene to “save tokens”
+- Lazy-closing PRs/Issues instead of fix-and-merge when valuable
+
+**Anti-patterns:** never use an anti-pattern (shortcuts, `--no-verify`, silent skips, untracked deferrals, Gist description pollution, claiming done without evidence) **unless** it is **critical to the project itself** and written down with justification (e.g. emergency prod hotfix Architect approved). Personal convenience is never justification.
+
+---
+
+## 1) Every session (before product edits)
+
+1. **Session Start** — do not wait for `/start`.
+2. Reality-check: `git status --short --branch` (+ log) for the **whole repo**.
+3. **Decision Gate** (state one): `CONTINUE` | `FINISH+COMMIT` | `PROMOTE` | `PARK` (todo.md) | `ASK`.
+4. Never start net-new work on an unexplained dirty tree; never silently switch branches.
+5. Non-trivial work: map intent → skill(s) via **`using-agent-skills`** (do not wait for slash names).
+6. Resume incomplete plans/todos/debt **before** net-new work.
+
+---
+
+## 2) Every turn that changes code / docs / config
+
+1. Implement → **verify with evidence** (test / build / runtime / read-back) → only then claim done.
+2. **“Seems right” is never done.** No evidence = not finished.
+3. Local commit on a **feature branch** when the unit is clean. **Never** `--no-verify`.
+4. Same-branch updates for INDEX / This Project / lessons when surfaces change.
+5. Prefer complete the objective **now**; only stop with tracked deferral fields above.
+
+---
+
+## 3) Ship / end / PR (dirty-tree hard gate)
+
+On `/end`, “end session”, “ship it”, or when opening/merging a PR for the unit:
+
+1. Working tree must be **clean** for completed work, **or** remaining work is **PARKed** in `tasks/todo.md` with status + priority + justification + done-when.
+2. **Harness may block** `gh pr create` / `gh pr merge` while the worktree is dirty (uncommitted changes). Commit finished work first, or park leftovers explicitly, then open/merge.
+3. Do not claim Session End complete with silent dirty tree.
+4. Push/PR/merge only with verification evidence; CI green before squash merge unless Architect explicitly waives.
+
+---
+
+## 4) Gist & AGENTS.md hygiene (hard)
+
+1. **NEVER** put the Gist **description** into the file body.
+2. **NEVER** `gh gist edit` the Agent OS Gist from a stale local file.
+3. **MUST:** `git clone https://gist.github.com/5828479245f786c80993b67a6f669aee.git` → edit → **verify** → commit → push.
+4. **Verify after write:** first non-empty line of `AGENTS.md` is `# Architect…`. Description text must not appear as body lines.
+
+---
+
+## 5) Skills (protocols, not kitchen sink)
+
+| Situation         | Protocol / skill                        |
+| ----------------- | --------------------------------------- |
+| Session start     | Session Start (+ `session-start` skill) |
+| Non-trivial work  | `using-agent-skills` → pick 1–N skills  |
+| Before claim done | That skill’s **verify** step + evidence |
+| Ship / end        | Session End (+ dirty-tree gate)         |
+| Gist/OS update    | Gist Sync (clone/push + head verify)    |
+| Compaction        | Re-read AGENTS.md + Decision Gate       |
+
+---
+
+## Anti-patterns (forbidden unless project-critical + justified)
+
+- Skipping Session Start on product work
+- Claiming done without verification evidence
+- Postponing without tracked debt fields
+- Prepending Gist description into `AGENTS.md`
+- `gh gist edit` overwrite without clone
+- `--no-verify`
+- Lazy-close of valuable PRs
+- Leaving half-done scope untracked
+- Asking Architect to run routine CLI
+
+Violation is a **contract failure**, not a style note.
 
 # OS Structure & Index (always maintain)
 
@@ -341,7 +421,18 @@ Use this when “should I ask?” feels unclear. **Infer from the table; do not 
 
 **Escalation (short list):** product priorities and taste with no precedent · production release timing · irreversible data/business tradeoffs · credentials the agent cannot obtain · ambiguity that survived investigation.
 
-**Relationship anti-patterns (behavioral):** thin status-only turns; silent skip without tracked status; leaving half-done scope untracked; asking the Architect to run routine CLI; leaving merge/hooks/docs for a fictional teammate; redesigning UX/brand without intent; claiming done without verification evidence; verbose doc dumps instead of top-level briefs.
+**Relationship anti-patterns (behavioral):** thin status-only turns; silent skip without tracked status; leaving half-done scope untracked; asking the Architect to run routine CLI; leaving merge/hooks/docs for a fictional teammate; redesigning UX/brand without intent; claiming done without verification evidence; lazy postpone without tracked debt fields; anti-patterns for convenience; verbose doc dumps instead of top-level briefs.
+
+## Effort mandate (no lazy work) — hard
+
+**Default is full-effort, end-to-end completion.** Lazy, partial, or postponed work is **forbidden** unless recorded as **tech debt / deferral** with **status + priority + justification + done-when**.
+
+- Do **not** postpone or half-ship for convenience, token savings, or “later in chat.”
+- **Anti-patterns** (silent skip, untracked deferral, `--no-verify`, Gist pollution, claim-done without evidence, lazy-close PRs, asking Architect to run routine CLI) are **never** allowed for agent convenience.
+- An anti-pattern is only acceptable if **critical to the product/project itself** and **written down** with justification (e.g. Architect-approved emergency hotfix). Personal or session convenience is not justification.
+- Ship/end: clean tree for finished work, or PARK leftovers with the four debt fields — harness may **block** `gh pr create/merge` while dirty.
+
+See always-on **PROTOCOL ENFORCEMENT** and `~/.config/opencode/AGENT_OS_ENFORCEMENT.md`.
 
 ## Agentic OS Capabilities (End-to-End Execution)
 

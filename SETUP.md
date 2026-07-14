@@ -5,6 +5,7 @@ This guide ensures you can get the **Seam Cricket Academy** project up and runni
 ## 🚀 The "Single Prompt" Setup
 
 1. **Clone the Repository**
+
    ```bash
    git clone https://github.com/seamcricketacademy-png/html-seamcricketacademy.git
    cd html-seamcricketacademy
@@ -29,12 +30,14 @@ This guide ensures you can get the **Seam Cricket Academy** project up and runni
 ## 💻 OS-Specific Prerequisites
 
 ### 🍎 Mac (macOS)
+
 1. **Install Node.js**:
    - Recommended via Homebrew: `brew install node`
    - Or download [Node.js LTS](https://nodejs.org/) (v20+).
 2. **Git**: usually pre-installed. Run `git --version` to check.
 
 ### 🪟 Windows
+
 1. **Install Node.js**:
    - Download [Node.js LTS](https://nodejs.org/) (v20+).
 2. **Git**:
@@ -49,14 +52,17 @@ This guide ensures you can get the **Seam Cricket Academy** project up and runni
 If you prefer to run commands yourself without the agent:
 
 1. **Install Dependencies**
+
    ```bash
    npm ci
    ```
 
 2. **Start Dev Server**
+
    ```bash
    npm run dev
    ```
+
    > Opens at `http://localhost:4321`
 
 3. **Build for Production**
@@ -65,7 +71,13 @@ If you prefer to run commands yourself without the agent:
    ```
 
 ## 🤖 Agent Configuration
-The agent configuration is **built-in** to the repository in the `.agent/` directory. You do **not** need to copy any files or configure settings manually.
+
+Agent configuration is **not** vendored into this repository.
+
+- **Always-on contract**: root `AGENTS.md` (Architect↔Agent OS)
+- **Skills (global)**: Superpowers (Grok + OpenCode plugins) + OS skills only under `~/.agents/skills/`
+- **Commands**: none (skills + hooks only — no slash-command trees)
+- **Do not** recreate project `.agent/` or `.agents/` trees
 
 - **Rules**: `.agent/rules/` (Loaded automatically)
 - **Workflows**: `.agent/workflows/` (Available immediately)

@@ -586,7 +586,7 @@ Run this during Bootstrap and whenever the agent suspects environment drift (e.g
 | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | **Grok Build**                     | `grok plugin install addyosmani/agent-skills --trust` + `[plugins] enabled` includes `agent-skills`                                    | Skills, slash commands, specialist agents, plugin hooks                                        |
 | **Grok skills path**               | `~/.agents/skills/*` (via `npx skills add …`) and/or `[skills] paths = ["~/.agents/skills"]`                                           | Skill discovery even without plugin                                                            |
-| **OpenCode / project**             | Git submodule `.agents/vendor/agent-skills` + `opencode.jsonc` `skills.paths`                                                          | Craft pack tracked in repo; discovered per project                                             |
+| **OpenCode / project**             | Git submodule `.agents/vendor/agent-skills` + `.opencode/skills` symlink (global OpenCode config)                                      | Craft pack in repo; no project `opencode.jsonc`                                                |
 | **Chrome DevTools MCP (Grok)**     | `grok plugin install ChromeDevTools/chrome-devtools-mcp --trust` (or marketplace) + `[plugins] enabled` includes `chrome-devtools-mcp` | Browser verification tools for both CLI and skills                                             |
 | **Chrome DevTools MCP (OpenCode)** | Global `~/.config/opencode/opencode.jsonc` → `mcp.chrome-devtools` local command `npx -y chrome-devtools-mcp@latest`                   | Same MCP tools in OpenCode                                                                     |
 | **Session lifecycle (Grok)**       | Optional Grok hooks under `~/.grok/hooks/` when useful                                                                                 | Evidence injection is helpful; **Session Start/End protocols in this file remain agent-owned** |
@@ -663,26 +663,26 @@ Agents **follow these protocols even when no hook fires**. Hooks/commands are ac
 
 **Source of truth lives in the git repo** (not a second copy under the home directory for product work).
 
-| Path (in each product repo)       | Role                                                               |
-| --------------------------------- | ------------------------------------------------------------------ |
-| `.agents/skills/`                 | Project-specific skills only                                       |
-| `.agents/commands/`               | Workflow templates (`/start`, `/spec`, …)                          |
-| `.agents/vendor/agent-skills/`    | Shared craft pack as a **git submodule** (addyosmani/agent-skills) |
-| `.opencode/skills`                | **Symlink** → `.agents/skills`                                     |
-| `.opencode/command`               | **Symlink** → `.agents/commands`                                   |
-| `opencode.jsonc` → `skills.paths` | `.agents/skills` + `.agents/vendor/agent-skills/skills`            |
+| Path (in each product repo)    | Role                                                               |
+| ------------------------------ | ------------------------------------------------------------------ |
+| `.agents/skills/`              | Project-specific skills only                                       |
+| `.agents/commands/`            | Workflow templates (`/start`, `/spec`, …)                          |
+| `.agents/vendor/agent-skills/` | Shared craft pack as a **git submodule** (addyosmani/agent-skills) |
+| `.opencode/skills`             | **Symlink** → `.agents/skills`                                     |
+| `.opencode/command`            | **Symlink** → `.agents/commands`                                   |
+| `.opencode/skills` symlink     | `.agents/skills` (+ vendor craft pack when present)                |
 
-| Concern           | Grok                                             | OpenCode                                            |
-| ----------------- | ------------------------------------------------ | --------------------------------------------------- |
-| Craft skills      | Plugin and/or project `skills.paths` / submodule | Project `skills.paths` + `.opencode/skills` symlink |
-| Workflows         | Project commands / slash from skills             | Project `.agents/commands` via symlink              |
-| Session protocols | **AGENTS.md** (optional hooks assist)            | **AGENTS.md** + project commands                    |
-| Browser MCP       | Grok plugin when needed                          | Global or project `mcp.chrome-devtools`             |
-| Google auth       | Grok provider config                             | **`opencode-antigravity-auth@latest` only**         |
+| Concern           | Grok                                            | OpenCode                                               |
+| ----------------- | ----------------------------------------------- | ------------------------------------------------------ |
+| Craft skills      | Global agent-skills + optional vendor submodule | `.opencode/skills` symlink (no project opencode.jsonc) |
+| Workflows         | Project commands / slash from skills            | Project `.agents/commands` via symlink                 |
+| Session protocols | **AGENTS.md** (optional hooks assist)           | **AGENTS.md** + project commands                       |
+| Browser MCP       | Grok plugin when needed                         | Global or project `mcp.chrome-devtools`                |
+| Google auth       | Grok provider config                            | **`opencode-antigravity-auth@latest` only**            |
 
 **No dual product trees:** do not maintain a parallel full skill/command set under `~/.agents/skills` or `~/.config/opencode/command` for product work. Machine-global copies are optional caches; **git is authoritative**.
 
-**Bootstrap:** init/update submodule, ensure symlinks + `skills.paths`, preserve existing project skills/commands. Do not re-copy the craft pack into `.agents/skills/`.
+**Bootstrap:** init/update submodule when used, ensure `.opencode/command` + `.opencode/skills` symlinks, preserve existing project skills/commands. Do not add project `opencode.jsonc`. Do not re-copy the craft pack into `.agents/skills/`.
 
 ### Chrome DevTools MCP (when UI work needs it)
 
@@ -693,8 +693,9 @@ Wire it the **harness-native** way (Grok plugin enablement and/or OpenCode `mcp`
 ### OpenCode health notes
 
 - Standing plugin: `opencode-antigravity-auth@latest` (Google/Gemini auth for OpenCode).
+- **Global config only:** `~/.config/opencode/opencode.jsonc` (kit gist). Prefer `lsp: true` so servers auto-detect by language — do not add project `.opencode/opencode.json` LSP maps.
 - Multi-GB `~/.local/share/opencode/opencode.db` hangs → stop OpenCode, `sqlite3 … 'VACUUM;'`.
-- Prefer starting OpenCode **inside a product repo**.
+- Prefer starting OpenCode **inside a product repo** (for workspace + `AGENTS.md`), still with **global** runtime config.
 
 ## Verify Agent OS is healthy
 
@@ -877,18 +878,26 @@ Restored and consolidated from historical Agent OS GitOps practice (labels/miles
 
 Product-heavy repos (e.g. SeamFusionServices) may keep richer scripts (`prepare-commit.sh`, guardrails, release helpers) under **This Project** — the portable pair above is the minimum.
 
-#### OpenCode project surfaces (tracked in each repo)
+#### OpenCode surfaces (global config + thin project discovery)
 
-OpenCode needs **both** machine-global config (`~/.config/opencode/` plugins, MCP, auth) **and** project-tracked surfaces below. Do **not** skip global session lifecycle / chrome-devtools MCP installs.
+**Runtime config is global only** (project-agnostic): `~/.config/opencode/opencode.jsonc` from the OpenCode kit gist (`fa4d874…`). Models, plugins, MCP, and `lsp: true` (language servers auto-detect by language) live there — **not** in product repos.
 
-| Tracked in repo             | Purpose                                                                   |
-| --------------------------- | ------------------------------------------------------------------------- |
-| `.opencode/command/*.md`    | Slash commands (`/start`, `/end`, lifecycle) for OpenCode in this product |
-| `.agents/skills/*/SKILL.md` | Project skills (`agent-os-bootstrap`, `project-boot`)                     |
-| `opencode.json`             | Instructions entry (`AGENTS.md` + workflow)                               |
-| `scripts/github/*`          | Agent GitHub/Project V2 CLI (no Actions)                                  |
+Do **not** create or commit project-local OpenCode runtime JSON:
 
-**Gitignore:** ignore only `.opencode/state/` / `.opencode/cache/` — never blanket-ignore tracked commands.
+- repo-root `opencode.json` / `opencode.jsonc`
+- `.opencode/opencode.json` / `.opencode/opencode.jsonc`
+- project `tui.json` / `tui.jsonc`
+
+Instructions stay in root **`AGENTS.md`** (OpenCode loads them). Optional discovery symlinks only:
+
+| Tracked in repo                          | Purpose                                                                               |
+| ---------------------------------------- | ------------------------------------------------------------------------------------- |
+| `.agents/skills/*/SKILL.md`              | Project skills (`session-start`, `session-end`, `agent-os-bootstrap`, `project-boot`) |
+| `.opencode/command` → `.agents/commands` | Slash-command discovery (symlink)                                                     |
+| `.opencode/skill(s)` → `.agents/skills`  | Skill discovery (symlink)                                                             |
+| `scripts/github/*`                       | Agent GitHub/Project V2 CLI (no Actions)                                              |
+
+**Gitignore:** ignore accidental local copies of `opencode.json(c)` / project `tui.json(c)`, plus `.opencode/*` runtime except tracked symlinks/README (`state/`, `cache/`, `node_modules/`).
 
 #### GitHub Actions vs local CI (what belongs on GitHub)
 

@@ -10,7 +10,7 @@ Install or repair **Agent OS** for this repo (not a daily status check — use `
 4. Project surfaces (single source of truth):
    - `.agents/commands/` (workflows) + `.opencode/command` → symlink
    - `.agents/skills/` (project-only skills if any) + `.opencode/skills` → symlink
-   - `.agents/vendor/agent-skills` git submodule + `opencode.jsonc` `skills.paths`
+   - `.agents/vendor/agent-skills` git submodule when used (discover via `.agents` / skill symlinks — **not** project `opencode.jsonc`)
 5. Local CI: `.githooks/` + `bash scripts/install-githooks.sh`
 6. GitHub hygiene: `scripts/github/*` + `.github/agent-project.yml` when the product uses Projects
 7. Verify: hooks installed; `opencode debug skill` sees vendor craft skills; no tracked-but-ignored ignore bugs

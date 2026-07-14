@@ -24,6 +24,12 @@ pnpm-debug.log*
 .idea/
 *.code-workspace
 
+# OpenCode runtime config is global (~/.config/opencode/); ignore accidental local copies
+opencode.json
+opencode.jsonc
+tui.json
+tui.jsonc
+
 # OpenCode discovery symlinks (source of truth is .agents/)
 .opencode/*
 !.opencode/README.md

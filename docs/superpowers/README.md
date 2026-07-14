@@ -1,7 +1,5 @@
-# Superpowers durable memory
+# Durable memory (legacy path)
 
-- `specs/` — design docs (brainstorming skill)
-- `plans/` — implementation plans (writing-plans skill)
-- `archive/` — completed work
+Same role as `docs/specs/`, `docs/plans/`, and `docs/archive/`.
 
-Agents create and update these autonomously for non-trivial work. Architect intent only.
+Prefer creating new multi-session work under `docs/specs/` and `docs/plans/`. Keep this folder if older plans/specs already live here.

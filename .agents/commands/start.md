@@ -1,5 +1,5 @@
 ---
-description: Session Start Protocol — re-ground repo + GitHub preflight
+description: Session Start Protocol — Decision Gate before edits (use /boot for quick status only)
 ---
 
 Run **Session Start** from root `AGENTS.md` (Agent OS). Mandatory before any edit.

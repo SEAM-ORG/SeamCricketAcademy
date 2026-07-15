@@ -72,3 +72,7 @@ Supported harnesses are **Grok CLI** and **OpenCode** only — no Antigravity ID
 ### 2026-07-15: Extend existing first — no parallel skills/docs
 
 Before creating skills, docs, hooks, or workflows: update AGENTS.md, INDEX-linked docs, or an existing skill. Product boot is **session-start** (project-boot is a deprecated alias). OS skills only under `~/.agents/skills` (no Grok mirror). Methodology = Superpowers. Durable plans = `docs/{specs,plans,archive}/` only; `docs/superpowers/` is redirect-only. ai-context principles/workflow are thin stubs linking to AGENTS.
+
+### 2026-07-15: No silent ignore of unfinished work
+
+Agents must inventory and dispose dirty trees, local branches ahead of protected, unpushed commits, open plans/todos, open PRs, portfolio loose files under ~/Projects, and machine OS drift. Clean main is not idle. Re-ground mid-session. Superseded chore branches may be deleted after classification; unique product commits must be recovered or PARKED — never silent drop.

@@ -60,3 +60,11 @@ Supported harnesses are **Grok CLI** and **OpenCode** only — no Antigravity ID
 - Session End: `bash scripts/github/session-end-hygiene.sh [--close-stale-os-prs]`
 - Requires once: `gh auth refresh -s project,read:project`
 - Never use GitHub Actions to move Project cards as a substitute for agent duty.
+
+### 2026-07-15: Harness routing + intent over literalism + Superpowers+OS only
+
+- **Product work:** OpenCode desktop inside the product repo.
+- **Agent OS / machine / multi-repo OS:** Grok Build from `~/Projects`.
+- Agents **enhance** Architect intent; full effort; proactive project + OS maintenance.
+- Methodology = **Superpowers** (plugin) + OS skills. **No** OpenSpec work layer. **No** addy agent-skills. Ignore older lessons that say "OpenSpec autonomy" or "Agent OS only — no Superpowers."
+- Product SoT = root `AGENTS.md` **This Project** + `docs/INDEX.md`. Portable OS SoT = gist `5828479245f786c80993b67a6f669aee` (no product facts in gist).

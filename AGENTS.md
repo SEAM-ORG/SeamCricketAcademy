@@ -1,20 +1,58 @@
+# Architect ↔ Agent Operating System (Agent OS)
+
 **Skill stack (machine-global only — no duplicates):**
 
 | Layer                  | What                                                   | Where                                                                                                                                                                             |
 | ---------------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Architect↔Agent OS** | Session Start/End, GitOps, Decision Gate, bootstrap    | root `AGENTS.md` + global skills `session-start`, `session-end`, `session-end-gitops`, `agent-os-bootstrap`, `project-boot`, `opencode-session-hygiene` under `~/.agents/skills/` |
 | **Superpowers**        | Methodology (brainstorm, plans, TDD, debug, review, …) | Grok plugin `superpowers`; OpenCode plugin `superpowers@git+https://github.com/obra/superpowers.git`                                                                              |
-| **Hooks**              | Non-skippable session gates                            | `~/.grok/hooks/agent-os-lifecycle.json` + scripts                                                                                                                                 |
+| **Hooks**              | Non-skippable session gates                            | `~/.grok/hooks/agent-os-lifecycle.json` + scripts (Grok); OpenCode uses global skills + `AGENT_OS_ENFORCEMENT.md`                                                                 |
 
-**Removed / forbidden:** addyosmani **agent-skills** pack, project `.agents/` / `.agent/` trees, vendor submodules, and **slash-command files** (`*(commands removed)*`, `~/.config/opencode/command`). Invoke skills by name/intent — not `/spec` `/plan` command wrappers.
+**Removed / forbidden:** addyosmani **agent-skills** pack, project `.agents/` / `.agent/` trees, vendor submodules, and **slash-command files** (`~/.config/opencode/command`, project command trees). Invoke skills by name/intent — not `/spec` `/plan` command wrappers.
 
-# Architect ↔ Agent Operating System
+> **⚠️ ATTENTION AGENTS: WHAT THIS IS & HOW TO UPDATE IT**
+>
+> - **What it is:** The canonical, project-agnostic source of truth for the Agent OS. It dictates workflows, constraints, and dynamic distribution protocols for all projects.
+> - **Usage:** Fetch this OS during bootstrap. Distribute its wisdom intelligently into local project files (e.g., `docs/`, `.githooks/`). Do not copy it as a single monolith. **Preserve each repo’s filled This Project block** on sync.
+> - **Updating (CRITICAL):** **NEVER overwrite the OS gist from a stale local file** via one-shot remote edit APIs. You MUST `git clone https://gist.github.com/5828479245f786c80993b67a6f669aee.git`, apply your edits, commit, and `git push` to prevent overwriting other agents' work.
+> - **Recording Learnings:** Systemic mistakes or new universal workflows must be recorded. Add local learnings to the project's `tasks/lessons.md`. If universally applicable, upgrade this Gist using the safe clone/push protocol above. **Verify:** first non-empty body line is `# Architect…`; never prepend the Gist description into the file.
+
+### Portfolio gists (do not confuse)
+
+| Gist                                                         | Role                                                         | Edit model                                                                                                                                                                                                                    |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **This gist** `saadev0/5828479245f786c80993b67a6f669aee`     | Architect↔Agent OS (`AGENTS.md`) — project-agnostic contract | Upstream only here (clone → edit → push). Downstream: agents **analyze the project** and distribute wisdom into local surfaces — **not** copy this file as a monolith. **Never put product This Project facts in this gist.** |
+| OpenCode kit `saadev0/fa4d874490158f7252ca2441227d3343`      | **Machine** OpenCode + antigravity-auth harness              | Upstream on that gist; install writes runtime under `~/.config/opencode/` only. Not product-repo bootstrap.                                                                                                                   |
+| seamfusion status `saadev0/f1c2ab293cf8996b787eedf94ec60029` | Unrelated product status JSON                                | Separate product concern.                                                                                                                                                                                                     |
+
+**Local kit/runtime trees are not second sources of truth.** If a universal OS or harness change is made locally while debugging, **promote it to the correct gist immediately**, then re-sync/install. Project-only facts stay in that repo’s **This Project** / lessons.
 
 # PROTOCOL ENFORCEMENT (ALWAYS-ON — non-skippable)
 
 You operate under **Architect↔Agent OS**. These protocols override convenience, speed, and “quick one-liner” instincts. **Ignoring them is a contract failure.**
 
 Canonical OS: gist `saadev0/5828479245f786c80993b67a6f669aee` → root `AGENTS.md`.
+
+## Harness routing (Architect default)
+
+| Work                                                                                               | Where the Architect usually opens the agent                         | Agent behavior                                                                                                           |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **Product work** (features, bugs, docs, project hygiene)                                           | **OpenCode desktop**, cwd = **that product repo**                   | Full product Session Start → ship in that repo. Root `AGENTS.md` + **This Project** are source of truth for the product. |
+| **Agent OS / machine / portfolio OS** (this gist, skills, hooks, OpenCode kit, multi-repo OS sync) | **Grok Build** from **`~/Projects`** (or home) — not a product root | OS/machine work only unless Architect names a product. Do not invent product work from the portfolio folder.             |
+
+Both harnesses share the **same** OS contract and git trees. Multi-agent rules still apply (inventory local branches ahead of protected; no parallel net-new from clean `main` while unmerged product WIP exists).
+
+## Intent over literalism (enhance prompts)
+
+The Architect states **intent and outcomes**, not a literal script. Agents **must**:
+
+1. **Enhance** short or incomplete prompts into a sharper objective using repo evidence (This Project, INDEX, lessons, plans, git state).
+2. **Use logic** — infer constraints, order of operations, and highest-leverage path; do not wait for perfect instructions.
+3. **Maximum effort** — full end-to-end work; verify with evidence; no lazy partial delivery (see effort mandate).
+4. **Proactive autonomy** — maintain project docs, OS surfaces, hooks, lessons, and suggest valuable next steps without being reminded.
+5. **Not pedantic** — do not execute a weak literal reading when a stronger interpretation clearly serves the product and OS.
+
+Suggest improvements; on Architect yes (including short yes), execute end-to-end. Taste, release timing, and irreversible product pivots stay with the Architect.
 
 ---
 
@@ -44,9 +82,10 @@ Canonical OS: gist `saadev0/5828479245f786c80993b67a6f669aee` → root `AGENTS.m
 ## 1) Every session (before product edits)
 
 1. **Session Start** — do not wait for `/start`.
-2. Reality-check: `git status --short --branch` (+ log) for the **whole repo**.
+2. Reality-check: `git status --short --branch` (+ log) for the **whole repo**.  
+   2b. Inventory **local branches ahead of protected** (name · ahead count · tip subject) — multi-agent WIP.
 3. **Decision Gate** (state one): `CONTINUE` | `FINISH+COMMIT` | `PROMOTE` | `PARK` (todo.md) | `ASK`.
-4. Never start net-new work on an unexplained dirty tree; never silently switch branches.
+4. Never start net-new work on an unexplained dirty tree or while ignoring unmerged product branches; never silently switch branches.
 5. Non-trivial work: use **Superpowers** + OS session skills (no addy Superpowers)
 6. Resume incomplete plans/todos/debt **before** net-new work.
 
@@ -106,6 +145,12 @@ On `/end`, “end session”, “ship it”, or when opening/merging a PR for th
 - Lazy-close of valuable PRs
 - Leaving half-done scope untracked
 - Asking Architect to run routine CLI
+- Shipping net-new work from clean `main` while ignoring local branches with unmerged product commits (multi-agent race)
+- Using `git stash` as the only handoff for product WIP
+- Leaving valuable multi-session WIP **only** local-unpushed when a second harness or session may run
+- Pedantic literal execution of weak prompts when evidence + logic yield a better plan
+- Waiting for the Architect to restate Session Start, Superpowers, docs, or GitOps
+- Inventing product work from `~/Projects` / home when the session is OS/machine-scoped
 
 Violation is a **contract failure**, not a style note.
 
@@ -115,22 +160,22 @@ This section is the **map of the Operating System itself** — project-agnostic.
 
 ## Layer map
 
-| Layer                             | Location                                                                                            | Role                                                                                                                                                           |
-| --------------------------------- | --------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Always-on OS**                  | root `AGENTS.md`                                                                                    | Full Architect↔Agent contract (incl. **How to work with this Architect**, **One-time vs continuous**) + **This Project** facts. Single instruction entrypoint. |
-| **Judgement / procedures**        | `.github/ai-context/AGENT_PRINCIPLES.md`, `AGENT_WORKFLOW.md`                                       | Lazy-load detail mirrored from OS principles/workflow (behavior only).                                                                                         |
-| **Repo map**                      | `.github/ai-context/PROJECT_KNOWLEDGE_GRAPH.md`                                                     | Domain → code paths → related docs/gates. Load only relevant domains.                                                                                          |
-| **Outcomes journal**              | `.github/ai-context/dev-journal.md`                                                                 | What happened (not rules). Session outcomes, not standing policy.                                                                                              |
-| **Lessons / mid-flight**          | `tasks/lessons.md`, `tasks/todo.md`                                                                 | Mistake prevention; active multi-step checklist.                                                                                                               |
-| **Durable product memory**        | `docs/{specs,plans,archive}/`                                                                       | Multi-session designs & plans. Legacy `docs/superpowers/*` same role if present.                                                                               |
-| **Project documentation system**  | `docs/INDEX.md` + product guides                                                                    | Master directory + stack, features, quality, ops — **created per project after bootstrap**.                                                                    |
-| **Machine commands**              | `DEVELOPMENT.md` (or equivalent)                                                                    | Install/run/test/release commands only — no agent ceremony prose.                                                                                              |
-| **Local CI**                      | `.githooks/` + `scripts/install-githooks.sh`                                                        | Gold standard: pre-commit=quality; pre-push=test+build.                                                                                                        |
-| **GitHub hygiene**                | `scripts/github/*`, `.github/agent-project.yml`                                                     | Issues/PRs/labels/Project V2 via `gh` — no Actions card-movers.                                                                                                |
-| **Project skills**                | _(retired)_ — do **not** create `.agents/` or `.agent/`                                             | Skills are machine-global only.                                                                                                                                |
-| **OS skills (global)**            | `~/.agents/skills` (session-\* / agent-os-bootstrap / project-boot / opencode-session-hygiene only) | Session + GitOps protocols                                                                                                                                     |
-| **Superpowers (Grok + OpenCode)** | Grok plugin `superpowers`; OpenCode `superpowers@git+…` in global `opencode.jsonc`                  | Methodology skills — not project-vendored                                                                                                                      |
-| **Harness surfaces (machine)**    | Grok plugins/hooks; OpenCode config/commands/MCP                                                    | Harness-native glue so agents can follow this OS — not a second instruction tree.                                                                              |
+| Layer                             | Location                                                                                                                   | Role                                                                                                                                                           |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Always-on OS**                  | root `AGENTS.md`                                                                                                           | Full Architect↔Agent contract (incl. **How to work with this Architect**, **One-time vs continuous**) + **This Project** facts. Single instruction entrypoint. |
+| **Judgement / procedures**        | `.github/ai-context/AGENT_PRINCIPLES.md`, `AGENT_WORKFLOW.md`                                                              | Lazy-load detail mirrored from OS principles/workflow (behavior only).                                                                                         |
+| **Repo map**                      | `.github/ai-context/PROJECT_KNOWLEDGE_GRAPH.md`                                                                            | Domain → code paths → related docs/gates. Load only relevant domains.                                                                                          |
+| **Outcomes journal**              | `.github/ai-context/dev-journal.md`                                                                                        | What happened (not rules). Session outcomes, not standing policy.                                                                                              |
+| **Lessons / mid-flight**          | `tasks/lessons.md`, `tasks/todo.md`                                                                                        | Mistake prevention; active multi-step checklist.                                                                                                               |
+| **Durable product memory**        | `docs/{specs,plans,archive}/`                                                                                              | Multi-session designs & plans. Legacy `docs/superpowers/*` same role if present.                                                                               |
+| **Project documentation system**  | `docs/INDEX.md` + product guides                                                                                           | Master directory + stack, features, quality, ops — **created per project after bootstrap**.                                                                    |
+| **Machine commands**              | `DEVELOPMENT.md` (or equivalent)                                                                                           | Install/run/test/release commands only — no agent ceremony prose.                                                                                              |
+| **Local CI**                      | `.githooks/` + `scripts/install-githooks.sh`                                                                               | Gold standard: pre-commit=quality; pre-push=test+build.                                                                                                        |
+| **GitHub hygiene**                | `scripts/github/*`, `.github/agent-project.yml`                                                                            | Issues/PRs/labels/Project V2 via `gh` — no Actions card-movers.                                                                                                |
+| **Project skills**                | _(retired)_ — do **not** create `.agents/` or `.agent/` in product repos                                                   | Skills are machine-global only.                                                                                                                                |
+| **OS skills (global)**            | `~/.agents/skills/{session-start,session-end,session-end-gitops,agent-os-bootstrap,project-boot,opencode-session-hygiene}` | Session/GitHub protocols only                                                                                                                                  |
+| **Superpowers (Grok + OpenCode)** | Grok plugin `superpowers`; OpenCode `superpowers@git+…` in global `opencode.jsonc`                                         | Methodology skills — not project-vendored                                                                                                                      |
+| **Harness surfaces (machine)**    | Grok plugins/hooks; OpenCode config/commands/MCP                                                                           | Harness-native glue so agents can follow this OS — not a second instruction tree.                                                                              |
 
 ## Always-on index contract (agents maintain)
 
@@ -265,7 +310,7 @@ When you want an explicit control surface (OpenCode global commands + Grok skill
 
 **Harness notes:**
 
-- **OpenCode:** commands in `*(commands removed — use skills)*` (global). Skills: Superpowers plugin + `~/.agents/skills/` (global). Never project `.agents/`.
+- **OpenCode:** Skills from **Superpowers plugin** (global `opencode.jsonc`) + auto-load `~/.agents/skills/` (global). **No** project `.agents/` trees.
 - **Grok Build:** skills appear as slash commands; superpowers plugin adds short lifecycle commands when enabled.
 - **`/start` / `/end`** are also protocol phrases in `AGENTS.md` — typing the words works even if a harness has no slash entry.
 
@@ -287,10 +332,12 @@ When the agent needs you, you get a **structured choice** (recommended option fi
 
 **Where you open the chat matters:**
 
-| You open chat from…            | Meaning                                                                                                                                                                                                                 |
-| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Home / no product folder**   | This chat is **not a project**. Do not invent a product repo or treat the home directory as one. Objectives are project-agnostic (Gist OS, machine/agent setup) **or** explicit multi-project work the Architect names. |
-| **Inside a project directory** | This chat **is** that project. Product work stays in that repo unless the Architect also names others (e.g. install OS on all projects).                                                                                |
+| You open chat from…                        | Meaning                                                                                                                                    |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| **OpenCode desktop inside a product repo** | **Default for product work.** This chat **is** that project. Full Session Start / End / Superpowers / This Project apply.                  |
+| **Grok Build from `~/Projects` or home**   | **Default for Agent OS / machine / portfolio OS work.** Not a product root — do not invent product work unless the Architect names a repo. |
+| **Grok or OpenCode inside a product repo** | That chat **is** that project (either harness). Same OS contract.                                                                          |
+| **Home / no product folder**               | Project-agnostic only (Gist OS, machine setup) **or** multi-project work the Architect names.                                              |
 
 1. One sentence objective is enough if `AGENTS.md` is installed in the relevant project(s).
 2. If a repo has **no** Agent OS yet, say:
@@ -323,13 +370,16 @@ This section is the **personal operating contract** for the human who owns these
 
 ## How the Architect communicates
 
-| Architect says…                      | Agent hears…                                                                                       |
-| ------------------------------------ | -------------------------------------------------------------------------------------------------- |
-| Outcome / user value                 | Ship a verified slice that moves that outcome                                                      |
-| “This feels off” / taste             | Adjust toward the stated taste using **existing** product language; ask only if taste is ambiguous |
-| “Ship it” / `/end`                   | Full Session End: verify → push → PR → squash merge when green                                     |
-| “Going forward, always…”             | Persist as a standing rule **same session** into durable OS/project files                          |
-| A short yes to a suggested next step | That suggestion is now the objective — execute end-to-end                                          |
+| Architect says…                      | Agent hears…                                                                                                  |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| Outcome / user value                 | Ship a verified slice that moves that outcome                                                                 |
+| “This feels off” / taste             | Adjust toward the stated taste using **existing** product language; ask only if taste is ambiguous            |
+| “Ship it” / `/end`                   | Full Session End: verify → push → PR → squash merge when green                                                |
+| “Going forward, always…”             | Persist as a standing rule **same session** into durable OS/project files                                     |
+| A short yes to a suggested next step | That suggestion is now the objective — execute end-to-end                                                     |
+| Short or incomplete objective        | **Enhance** into a full objective from repo evidence; state the enhanced plan briefly; execute at full effort |
+| Product work                         | Default harness: **OpenCode** opened in the product repo                                                      |
+| Agent OS / machine / multi-repo OS   | Default harness: **Grok Build** from `~/Projects`                                                             |
 
 **Cadence agents should keep:**
 
@@ -344,25 +394,28 @@ This section is the **personal operating contract** for the human who owns these
 
 When the prompt is silent, infer:
 
-1. **Intent over ceremony** — plain objectives beat slash commands; run protocols without being named.
-2. **Local proof before remote** — verify + commit locally every turn; GitOps on `/end` / ship unless an exception applies.
-3. **Preserve working product** — extend what exists; do not redesign surfaces the Architect did not ask about.
-4. **Whole-repo continuity** — dirty trees and open plans are owned work, not noise.
-5. **Suggest, then execute on yes** — offer 1–3 high-leverage next steps; a short yes is enough to proceed.
-6. **Skills and tools are assumed** — use Superpowers, specialists, browser MCP, `gh` when they raise quality; the Architect should not have to name them.
-7. **Same OS everywhere** — Gist OS changes sync into known product repos by default; only **This Project** differs per repo.
+1. **Intent over literalism** — enhance weak prompts; never execute a pedantic weak reading when a stronger path is clear.
+2. **Intent over ceremony** — plain objectives beat slash commands; run protocols without being named.
+3. **Maximum effort** — full end-to-end; verify with evidence; proactive project + OS maintenance.
+4. **Harness default** — product → OpenCode in-repo; Agent OS/machine → Grok from `~/Projects`.
+5. **Local proof before remote** — verify + commit locally every turn; GitOps on `/end` / ship unless an exception applies.
+6. **Preserve working product** — extend what exists; do not redesign surfaces the Architect did not ask about.
+7. **Whole-repo continuity** — dirty trees and open plans are owned work, not noise.
+8. **Suggest, then execute on yes** — offer 1–3 high-leverage next steps; a short yes is enough to proceed.
+9. **Skills and tools are assumed** — use Superpowers, specialists, browser MCP, `gh` when they raise quality; the Architect should not have to name them.
+10. **Same OS everywhere** — Gist OS changes sync into known product repos by default; only **This Project** differs per repo.
 
 ## Portfolio context (Architect’s products)
 
 Agents should know these are **separate products** under one OS. Product work stays in the repo whose folder opened the chat unless the Architect names more.
 
-| Product (typical)        | Nature                                                                                        |
-| ------------------------ | --------------------------------------------------------------------------------------------- |
-| **SeamFusion Services**  | Multi-tenant Flutter + Firebase ops product — high correctness bar (money, tenants, releases) |
-| **TantiInfra**           | Marketing / portal / estimator web surface — ship thin, quality gaps may still exist          |
-| **Seam Cricket Academy** | Marketing site + SeamFusion API integration — design system is product truth                  |
+| Product (known repos under `~/Projects`) | Nature                                                                                        |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------- |
+| **SeamFusionServices**                   | Core multi-tenant SaaS (Flutter + Firebase) — high correctness bar (money, tenants, releases) |
+| **SeamCricketAcademy**                   | Marketing / academy site (Astro) — ship thin, iterate fast                                    |
+| **TantiInfra**                           | Civil/construction portal + estimator (Astro + Firebase) — product + UX quality               |
 
-Portfolio priorities and which product is “active” come from the Architect’s objective and the open folder — not from agent preference.
+Portfolio priorities and which product is “active” come from the Architect’s objective and the **open folder / named repo** — not from agent preference. Product SoT = that repo’s root `AGENTS.md` **This Project** + `docs/INDEX.md`. OS SoT = this gist (project-agnostic sections only).
 
 ## Standing non-negotiables (Architect)
 
@@ -371,6 +424,9 @@ Portfolio priorities and which product is “active” come from the Architect�
 - Taste and product scope stay with the Architect; agents preserve and extend rather than invent brand/layout systems.
 - Closeout always includes enough evidence that the Architect can decide without re-running tools.
 - Taught standing rules are written into files the same session.
+- **Enhance prompts** — do not take incomplete instructions literally when logic and repo evidence yield a better plan.
+- **Proactive maintenance** of project docs and Agent OS surfaces without Architect reminders.
+- **Harness routing:** product work in OpenCode (in-repo); Agent OS/machine work in Grok from `~/Projects` (unless Architect says otherwise).
 
 ## Evolving this section
 
@@ -413,26 +469,28 @@ Read with **How to work with this Architect**. That section is personal; this se
 
 Use this when “should I ask?” feels unclear. **Infer from the table; do not invent a third path.**
 
-| Situation                                                    | Agent action                                            | Architect needed?                    |
-| ------------------------------------------------------------ | ------------------------------------------------------- | ------------------------------------ |
-| Verify, format, lint, tests, local CI hooks                  | Run fully                                               | No                                   |
-| Intentional local commit on a feature/chore branch           | Commit with clear message                               | No                                   |
-| Docs/INDEX/graph/lessons sync with the code change           | Update same branch                                      | No                                   |
-| Mid-session work unit (not `/end`)                           | Stay **local-first** — no push/PR unless exception      | No                                   |
-| Architect said `/end`, “ship it”, or ship exception          | Push → PR → labels/Project → squash merge when green    | No (unless they said “review first”) |
-| Architect said “review before merge”                         | Open PR, leave unmerged, present link + evidence        | Yes — merge decision                 |
-| Production deploy / release tag / live traffic change        | Prepare summary + commands/evidence                     | **Yes — timing/approval**            |
-| Missing credentials / `sudo` / paid third-party signup       | Structured ask                                          | Yes                                  |
-| Ambiguity remains after investigation                        | One structured question, recommended option first       | Yes                                  |
-| Product taste / scope pivot with no repo precedent           | Structured ask or wait for clear intent                 | Yes                                  |
-| Security, a11y, performance, test gaps on touched code       | Fix under normal Local vs GitOps                        | No                                   |
-| Large stack migration / full rewrite / major budget tradeoff | Proposal + effort/risk; wait                            | Yes                                  |
-| High-leverage improvement outside current ask                | Suggest at start/closeout (1–3); execute on yes         | Soft yes                             |
-| Dirty tree / open plan from prior session                    | Decision Gate: continue / finish / promote / park / ask | Only if real product fork            |
+| Situation                                                    | Agent action                                                                        | Architect needed?                           |
+| ------------------------------------------------------------ | ----------------------------------------------------------------------------------- | ------------------------------------------- |
+| Verify, format, lint, tests, local CI hooks                  | Run fully                                                                           | No                                          |
+| Intentional local commit on a feature/chore branch           | Commit with clear message                                                           | No                                          |
+| Docs/INDEX/graph/lessons sync with the code change           | Update same branch                                                                  | No                                          |
+| Mid-session work unit (not `/end`)                           | Stay **local-first** — no push/PR unless exception                                  | No                                          |
+| Architect said `/end`, “ship it”, or ship exception          | Push → PR → labels/Project → squash merge when green                                | No (unless they said “review first”)        |
+| Open PRs from previous sessions or agents                    | Review, fix conflicts, squash-merge, or close as superseded                         | No — never hand back to Architect to review |
+| Architect said “review before merge”                         | Open PR, leave unmerged, present link + evidence                                    | Yes — merge decision                        |
+| Production deploy / release tag / live traffic change        | Prepare summary + commands/evidence                                                 | **Yes — timing/approval**                   |
+| Missing credentials / `sudo` / paid third-party signup       | Structured ask                                                                      | Yes                                         |
+| Ambiguity remains after investigation                        | One structured question, recommended option first                                   | Yes                                         |
+| Product taste / scope pivot with no repo precedent           | Structured ask or wait for clear intent                                             | Yes                                         |
+| Security, a11y, performance, test gaps on touched code       | Fix under normal Local vs GitOps                                                    | No                                          |
+| Large stack migration / full rewrite / major budget tradeoff | Proposal + effort/risk; wait                                                        | Yes                                         |
+| High-leverage improvement outside current ask                | Suggest at start/closeout (1–3); execute on yes                                     | Soft yes                                    |
+| Dirty tree / open plan / **local branch ahead of protected** | Decision Gate: continue / finish / promote / park / ask; inventory all WIP branches | Only if real product fork                   |
+| Second harness (Grok vs OpenCode) opens same repo            | Full Session Start incl. branch inventory; no parallel ship over open WIP           | Soft — only if true conflict                |
 
 **Escalation (short list):** product priorities and taste with no precedent · production release timing · irreversible data/business tradeoffs · credentials the agent cannot obtain · ambiguity that survived investigation.
 
-**Relationship anti-patterns (behavioral):** thin status-only turns; silent skip without tracked status; leaving half-done scope untracked; asking the Architect to run routine CLI; leaving merge/hooks/docs for a fictional teammate; redesigning UX/brand without intent; claiming done without verification evidence; lazy postpone without tracked debt fields; anti-patterns for convenience; verbose doc dumps instead of top-level briefs.
+**Relationship anti-patterns (behavioral):** thin status-only turns; silent skip without tracked status; leaving half-done scope untracked; asking the Architect to run routine CLI; leaving merge/hooks/docs for a fictional teammate; redesigning UX/brand without intent; claiming done without verification evidence; lazy postpone without tracked debt fields; anti-patterns for convenience; verbose doc dumps instead of top-level briefs; handing open PRs back to the Architect for review instead of merging/closing them.
 
 ## Effort mandate (no lazy work) — hard
 
@@ -443,7 +501,7 @@ Use this when “should I ask?” feels unclear. **Infer from the table; do not 
 - An anti-pattern is only acceptable if **critical to the product/project itself** and **written down** with justification (e.g. Architect-approved emergency hotfix). Personal or session convenience is not justification.
 - Ship/end: clean tree for finished work, or PARK leftovers with the four debt fields — harness may **block** `gh pr create/merge` while dirty.
 
-See always-on **PROTOCOL ENFORCEMENT** and `~/.config/opencode/AGENT_OS_ENFORCEMENT.md`.
+See always-on **PROTOCOL ENFORCEMENT**.
 
 ## Agentic OS Capabilities (End-to-End Execution)
 
@@ -470,6 +528,13 @@ Do this **automatically** at the start of every session — and **re-ground** be
    - **Park** only with a written note in `tasks/todo.md` + clean or intentionally staged state, or
    - **Ask** with a structured question when a real branch/product choice remains.
      **Never** classify existing work as irrelevant, never bypass by silently switching branches, never leave orphan untracked files, never start net-new product work on top of an unexplained dirty tree.
+     3b. **Local branches inventory (mandatory — multi-session / multi-harness):** List **every** local branch with commits not contained in `origin/<protected>` (or local protected). Include branch name, commit count ahead, and latest subject. Treat any non-empty list as **owned WIP**:
+   - **Resume** the highest-value open unit before inventing parallel work, or
+   - **Integrate** (rebase onto latest protected) if shipping a related fix, or
+   - **Park** with status+priority+done-when in `tasks/todo.md` if intentionally deferred, or
+   - **Ask** only when two product units genuinely conflict.
+     **Never** open a second feature branch from clean `main` and ship to protected while another local branch holds unmerged product work — that is the multi-agent race failure mode (OpenCode vs Grok, or session A vs session B). `main`/GitHub alone is **not** whole-repo truth.
+     3c. **Cross-harness rule:** Grok CLI and OpenCode share the same git working tree. A second harness must run full Session Start (including 3b) before product or GitOps work. Chat memory from the other harness is not ground truth.
 4. Review `tasks/lessons.md`, `tasks/todo.md`, open `docs/plans/` + `docs/specs/` (legacy paths if present), and debt register if any — **resume incomplete plans and clear blockers before net-new**. Note status/priority of open deferred items.
 5. If `scripts/github/session-preflight.sh` exists, run it; treat open PRs/Issues/failing Actions as work to resume or track.
 6. Load knowledge graph + `docs/INDEX.md` (if present) + product docs for the objective; map whole-product fit, not only the named file.
@@ -484,11 +549,12 @@ Do this **automatically** at the start of every session — and **re-ground** be
 You own the **project's real state**, not only the files you or this session touched.
 
 - **Do not** treat "staged files", "files I edited this turn", or "the Architect's last paste" as the full problem space.
-- **Before planning or implementing anything new** (session start **and** before each non-trivial turn): re-check current status — git state, relevant entry points, open tasks/lessons, and whether prior sessions left incomplete work.
-- Continuity is mandatory across sessions and agents: assume another agent may have changed the tree; verify rather than inherit chat memory.
+- **Before planning or implementing anything new** (session start **and** before each non-trivial turn): re-check current status — git state, **all local branches ahead of protected**, relevant entry points, open tasks/lessons, and whether prior sessions left incomplete work.
+- Continuity is mandatory across sessions and agents: assume another agent (same or different harness) may have changed the tree or left unmerged branches; verify rather than inherit chat memory.
 - Verification and closeout cover **repo health related to the objective** (build/test/docs/hooks as needed), not only the diff hunk you authored.
 - If you find broken, incomplete, or conflicting work outside your narrow edit set, **fix or track it** — never ignore it because "someone else started it" or "it was pre-existing."
 - Narrow surgical edits are still preferred; ownership means **awareness + correct scope**, not rewriting the monorepo every turn.
+- **Unmerged local branches are not stashes and are not optional noise.** They are commits. Resume, integrate, park (tracked), or ship — never pretend they do not exist when starting net-new work from `main`.
 
 ### Context loss recovery (compaction / truncation)
 
@@ -524,7 +590,7 @@ Trigger: Architect says install/init Agent OS, or you find no usable `AGENTS.md`
 4. **Branch:** `git checkout -b chore/agent-os-init`
 5. **Environment setup:** Run **Environment Discovery** (below).
 6. **Wire development infrastructure:**
-   - Create **local CI** via **`.githooks/`** + **`scripts/install-githooks.sh`** using the **gold standard**: pre-commit = quality (lint/format); pre-push = test+build. Not GitHub PR CI. **Default framework: `.githooks` (not husky)**.
+   - Create **local CI** via **`.githooks/`** + **`scripts/install-githooks.sh`** using the **gold standard**: pre-commit = quality + memory (`scripts/check-memory-drift.sh`); pre-push = test+build. Not GitHub PR CI. **Default framework: `.githooks` (not husky)**.
    - Create a **deploy/release** pipeline only if the deploy target is known (tag push, environment deploy, manual dispatch). Do **not** create GitHub workflows that duplicate local lint/test/build.
    - Assume GitHub-side hygiene (Dependabot, Jules, etc.) may already cover dependency and review essentials — do not re-implement those as Actions CI.
 7. **Materialize Agent OS surfaces:** (same as Brownfield step 3 below)
@@ -557,7 +623,7 @@ Trigger: Architect says install/init Agent OS, or you find no usable `AGENTS.md`
 7. **Gap analysis — Hooks, Workflows, Guardrails:**
    - Scan for existing git hooks (`.githooks/`, `.git/hooks/`, legacy `.husky/` / `lefthook.yml`). Note what they check — these are **local CI**. Prefer migrating legacy husky/lefthook → `.githooks` + install script.
    - Scan for existing GitHub workflows (`.github/workflows/`). Keep **deploy/release/environment** workflows. Do **not** add or reinstate PR lint/test/build Actions that duplicate hooks.
-   - Identify **gaps**: missing pre-commit/pre-push hooks? Missing deploy/release workflow when deploy target is known? Fill them per Hooks, Workflows & Guardrails below.
+   - Identify **gaps**: missing pre-commit/pre-push hooks? Missing memory drift guard (`scripts/check-memory-drift.sh`)? Missing deploy workflow? Fill them per Hooks, Workflows & Guardrails below. Do not leave the project vulnerable to agent memory drift.
    - If a repo has both local hooks and redundant GitHub PR CI for the same gates, prefer local hooks and remove or avoid the duplicate Actions (cost + drift).
 8. **Align handoff/README** links to `AGENTS.md` if present.
 9. **Initialize task management:** Create `tasks/lessons.md` (empty, with header). Create `tasks/todo.md` if a multi-step objective is active.
@@ -596,12 +662,12 @@ Run this during Bootstrap and whenever the agent suspects environment drift (e.g
 | Surface                            | How                                                                                                                                    | Purpose                                                                                        |
 | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | **Grok Build**                     | `grok plugin install obra/superpowers --trust` + `[plugins] enabled` includes `Superpowers`                                            | Skills, slash commands, specialist agents, plugin hooks                                        |
-| **Grok skills path**               | `~/.agents/skills/*` (via `Superpowers via harness plugin only — do not install addy agent-skills                                      |
-| **OpenCode skills**                | Superpowers plugin in global `opencode.jsonc` + `Superpowers via harness plugin only — do not install addy Superpowers                 |
+| **Grok skills path**               | `~/.agents/skills/*` OS skills only; Superpowers via Grok plugin                                                                       |
+| **OpenCode skills**                | Superpowers plugin in global `opencode.jsonc` + OS skills in `~/.agents/skills`                                                        |
 | **Chrome DevTools MCP (Grok)**     | `grok plugin install ChromeDevTools/chrome-devtools-mcp --trust` (or marketplace) + `[plugins] enabled` includes `chrome-devtools-mcp` | Browser verification tools for both CLI and skills                                             |
 | **Chrome DevTools MCP (OpenCode)** | Global `~/.config/opencode/opencode.jsonc` → `mcp.chrome-devtools` local command `npx -y chrome-devtools-mcp@latest`                   | Same MCP tools in OpenCode                                                                     |
 | **Session lifecycle (Grok)**       | Optional Grok hooks under `~/.grok/hooks/` when useful                                                                                 | Evidence injection is helpful; **Session Start/End protocols in this file remain agent-owned** |
-| **Session lifecycle (OpenCode)**   | Optional global commands under `*(commands removed — use skills)*` (`/start`, `/end`, …)                                               | Same protocols; OpenCode surface is commands + skills, not a required custom plugin stack      |
+| **Session lifecycle (OpenCode)**   | Global skills `~/.agents/skills/{session-start,session-end,…}` + `AGENT_OS_ENFORCEMENT.md`                                             | Same protocols as Grok; no per-repo skill copies; no slash-command files                       |
 
 Repair install if missing (agent runs this during bootstrap / when drift detected — do not ask the Architect to copy files):
 
@@ -610,11 +676,11 @@ Repair install if missing (agent runs this during bootstrap / when drift detecte
 grok plugin install obra/superpowers --trust
 # ensure enabled in ~/.grok/config.toml → [plugins].enabled includes "Superpowers"
 
-# Global skills for OpenCode; skills CLI has no "grok" agent id — Grok uses plugin + ~/.agents/skills
-Superpowers via harness plugin only — do not install addy Superpowers
+# Superpowers: harness plugins only — never install addyosmani/agent-skills
+# OpenCode: superpowers@git+… in global opencode.jsonc
 ```
 
-Verify: `grok inspect` shows agent-skills skills/agents; `opencode debug skill` lists the 24 pack skills; `ls ~/.agents/skills` shows only OS skills; Superpowers via plugin.
+Verify: Superpowers skills visible in harness; `ls ~/.agents/skills` shows **only** OS skills (session-\*, bootstrap, project-boot, opencode-session-hygiene); no addy agent-skills.
 
 ### Autonomous use (no Architect babysitting)
 
@@ -670,28 +736,22 @@ Grok and OpenCode load **skills, hooks, commands, plugins, and MCP differently**
 
 Agents **follow these protocols even when no hook fires**. Hooks/commands are accelerators, not the source of truth.
 
-### What agents set up and maintain (project-tracked, harness-discovered)
+### What agents set up and maintain (harness-native)
 
-**Source of truth lives in the git repo** (not a second copy under the home directory for product work).
+Use each harness’s **native** surfaces. Prefer the lightest setup that keeps outcomes reliable. Avoid stacking custom plugins that re-implement the OS.
 
-| Path (in each product repo)         | Role                                             |
-| ----------------------------------- | ------------------------------------------------ |
-| `~/.agents/skills/`                 | Global skills only (lifecycle + craft pack)      |
-| `*(commands removed — use skills)*` | Global OpenCode slash commands                   |
-| Superpowers plugin                  | OpenCode methodology skills via `opencode.jsonc` |
-| Project `.agents/` / `.agent/`      | **Forbidden / retired** — remove if found        |
+| Concern                     | Grok-native (typical)                                | OpenCode-native (typical)                                                                                                                       |
+| --------------------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Skills                      | Superpowers plugin + OS skills in `~/.agents/skills` | Superpowers plugin + same OS skills                                                                                                             |
+| Lifecycle shortcuts         | Slash skills / plugin commands                       | Skills menu (`session-start`, `session-end`, `spec-driven-development`, …)                                                                      |
+| Session evidence (optional) | `~/.grok/hooks/*` scripts if they help re-ground     | Rely on **Session Start Protocol** in chat + optional commands — **no required custom OpenCode plugin**                                         |
+| Browser MCP                 | Grok `chrome-devtools-mcp` plugin                    | `mcp.chrome-devtools` in `~/.config/opencode/opencode.jsonc`                                                                                    |
+| Model / Google auth         | Provider config for Grok                             | **`opencode-antigravity-auth@latest` only** as the standing OpenCode auth plugin; model prefs in **global** `~/.config/opencode/opencode.jsonc` |
+| Project facts               | **This Project** + `docs/`                           | Same files — not a parallel OpenCode instruction tree                                                                                           |
 
-| Concern           | Grok                                    | OpenCode                                            |
-| ----------------- | --------------------------------------- | --------------------------------------------------- |
-| Craft skills      | Global Superpowers + Superpowers plugin | No project skill trees                              |
-| Workflows         | Global commands / slash from skills     | `*(commands removed — use skills)*` + Grok commands |
-| Session protocols | **AGENTS.md** (optional hooks assist)   | **AGENTS.md** + project commands                    |
-| Browser MCP       | Grok plugin when needed                 | Global or project `mcp.chrome-devtools`             |
-| Google auth       | Grok provider config                    | **`opencode-antigravity-auth@latest` only**         |
+**OpenCode plugin posture:** keep the auth plugin lean. Extra local plugins that force model behavior or re-host Session Start/End are optional experiments, not OS requirements. If something fails, fix config or follow the protocol in this file.
 
-**Global skills only:** craft + lifecycle under `~/.agents/skills`; Superpowers via OpenCode plugin; commands under `*(commands removed — use skills)*` (and Grok `*(commands removed — skills only)*`). Product repos must **not** vendor skill/command trees; root **`AGENTS.md`** is authoritative for product instructions.
-
-**Bootstrap:** verify global Superpowers plugin + `~/.agents/skills` + global commands. **Remove** any leftover project `.agents/`, `.agent/`, vendor submodules, or `.opencode` skill/command symlinks. Do not add project `opencode.jsonc`.
+**Grok hook posture:** optional evidence injection is welcome when present; if hooks are missing, the agent still runs Session Start/End from `AGENTS.md`.
 
 ### Chrome DevTools MCP (when UI work needs it)
 
@@ -785,20 +845,31 @@ Two lanes. **Local-first is the default** for every normal turn.
 
 #### Local-first default (per turn)
 
-- Done for a turn = **verified locally + committed locally**.
-- Do **not** push, create PRs, or merge unless the Architect asked or a mid-session exception applies.
-- Closeout may report `PR/Issue: none (deferred to /end)` when GitOps is intentionally deferred.
-- Nothing is ever lost: every turn's work is committed locally so the next turn (or `/end`) can consolidate.
+- Done for a turn = **verified locally + committed locally** on a named feature/chore branch.
+- Do **not** open PRs or merge unless the Architect asked or a mid-session exception applies.
+- Closeout may report `PR/Issue: none (deferred to /end)` when full GitOps is intentionally deferred.
+- **Commit is not optional memory:** every turn's work is committed so the next turn (or `/end`) can consolidate. **Never `git stash` product WIP** as a handoff mechanism.
 - Explicitly `git add` intent-driven new files; do not leave orphan `??` untracked work. End the turn with a clean intentional `git status`.
+- **Durability tiers (know the risk):**
+  | Tier | Where | Survives other agents / machine loss? |
+  |------|--------|----------------------------------------|
+  | Untracked / stash | Working tree only | No — forbidden as sole handoff |
+  | Committed, local-only branch | This machine | Other agents on same machine **can** see it **if** they inventory branches; lost if branch deleted or disk dies |
+  | **Pushed feature branch** (no PR required) | `origin` | Yes for multi-harness / multi-machine continuity |
+  | Merged to protected | Production line | Yes |
+- **Remote backup (recommended, not full GitOps):** After a coherent multi-file unit is committed, **push the feature branch** (`git push -u origin HEAD`) even when deferring PR/merge to `/end`. That makes WIP visible to every harness and prevents “clean main, ship parallel work” races. Pushing the branch ≠ opening a PR ≠ merging.
+- **One active product unit** per repo unless the Architect explicitly parallelizes. If you must start net-new work while another branch holds unmerged product commits: **Park** that branch in `tasks/todo.md` (status+priority+done-when) **or** finish/integrate it first. Never silently leave valuable WIP only on a local branch while merging unrelated work to protected.
 
 #### Mid-session GitOps exceptions
 
-Push + PR + merge immediately (even without `/end`) only when:
+**Full** push + PR + merge immediately (even without `/end`) only when:
 
 - Hotfix the Architect explicitly asked to ship now
 - Security / P0–P1 production risk the Architect wants landed now
 - Release tag / deploy the Architect already approved this session
 - Long-running session where a logical unit is fully complete **and** the Architect said "push this one now"
+
+**Branch-only push** (no PR) is always allowed for remote backup of WIP — see durability tiers above.
 
 #### GitOps rules (when shipping)
 
@@ -824,7 +895,7 @@ Automated scripts that the system runs to block bad actions before they land. **
 - **Discovery:** At bootstrap, scan `.githooks/`, `scripts/install-githooks.sh`, `.git/hooks/`, and legacy `.husky/` / `lefthook.yml`.
 - **Default framework:** Tracked **`.githooks/`** + **`scripts/install-githooks.sh`**. Stack-agnostic; no npm-only dependency for git hygiene.
 - **Gold-standard gate split (default — always aim for this):**
-  - **`pre-commit` = quality (fast):** lint + format (+ typecheck/analyze if still quick). Target ≤ ~30s. **No** full test suite. **No** full production build unless there is no cheaper quality tool yet (document the gap).
+  - **`pre-commit` = quality + memory (fast):** lint + format + typecheck. MUST include a mechanical drift check (e.g., `scripts/check-memory-drift.sh`) that blocks commits if stack/config files change without corresponding updates to `AGENTS.md` or `docs/`. Target ≤ ~30s. **No** full test suite.
   - **`pre-push` = correctness:** **test + build** (run `test` when the project has tests; always run `build` when the stack has a build). May take longer.
   - Optional **`commit-msg`**: conventional commits only when the project already enforces them.
 - **Scripts:** Prefer `scripts/local-ci-pre-commit.sh` and `scripts/local-ci-pre-push.sh` (or stack equivalents) so hooks stay one-liners and **This Project** can name the same commands agents use.
@@ -840,10 +911,10 @@ Automated scripts that the system runs to block bad actions before they land. **
 
 **Gold standard (default):**
 
-| Hook         | Name        | Runs                                 | Intent                                           |
-| ------------ | ----------- | ------------------------------------ | ------------------------------------------------ |
-| `pre-commit` | Quality     | lint, format, fast analyze/typecheck | Catch style/type issues every commit; keep fast  |
-| `pre-push`   | Correctness | **test + build**                     | Do not share broken behavior or unbuildable code |
+| Hook         | Name             | Runs                             | Intent                                                        |
+| ------------ | ---------------- | -------------------------------- | ------------------------------------------------------------- |
+| `pre-commit` | Quality + Memory | lint, format, check-memory-drift | Catch style/type issues and structural doc drift every commit |
+| `pre-push`   | Correctness      | **test + build**                 | Do not share broken behavior or unbuildable code              |
 
 - Hooks **are** the CI. Map `install` / `dev` / `build` / `test` / `lint` (and local-ci scripts) into **This Project**.
 - **Do not** run full test+build on every commit by default (slow → bypass temptation).
@@ -852,11 +923,15 @@ Automated scripts that the system runs to block bad actions before they land. **
 
 #### GitHub workflows (deploy / release / environment only)
 
-- **Discovery:** At bootstrap, scan `.github/workflows/` for existing Actions.
-- **Allowed on GitHub:** deployment, release tagging, environment promotion, pages/hosting publish, store submission, scheduled rebuilds tied to **shipping** — not PR lint/test/build mirrors of local hooks.
-- **Creation (if missing and deploy target known):** deploy/release workflow (tag push, environment, or `workflow_dispatch`).
-- **Do not create:** `.github/workflows/ci.yml` (or equivalent) that only re-runs lint/test/build already enforced by hooks.
-- **If redundant PR CI already exists:** remove it during bootstrap/stewardship when hooks cover the same gates (unless Architect explicitly wants both).
+**Strict Policy:** All tests, quality checks, and CI verification MUST remain **local** (enforced via `.githooks/`). Do NOT create `.github/workflows/ci.yml` (or equivalent) that mirrors local hooks for PRs. GitHub Actions are strictly reserved for **shipping**.
+
+- **Discovery:** At bootstrap, scan `.github/workflows/` for existing Actions. Remove redundant PR CI if it duplicates local hooks.
+- **Allowed on GitHub:** deployment, release tagging, environment promotion, pages/hosting publish.
+- **Creation (Universal Release Pattern):** When the deploy target is known, create a deployment pipeline (`deploy.yml` or `release.yml`) triggered on tags (e.g., `v*.*.*`) or `workflow_dispatch`. It must follow the **Universal Release Protocol**:
+  1. **Deploy Jobs**: Execute the deployment (e.g., Cloud Build, Vercel, GitHub Pages) and map it to a GitHub Environment (e.g., `environment: name: Web`).
+  2. **Surface All Platforms**: Even if mobile (Android/iOS) or other platforms are distributed manually, create jobs to surface them in GitHub Environments (e.g., `environment: name: Android` → skipped/pending) so the GitHub UI tracks the full product surface area.
+  3. **Finalize Job**: Run a final job that uses the `gh release` CLI to auto-generate or update a **GitHub Release**. It must inject a Markdown table (`| Platform | Status |`) into the release body tracking the outcome of all platforms (e.g., Web ✅, Android ⏩ Skipped).
+     _⚠️ YAML Syntax Warning: If injecting multi-line Markdown into a `run:` block, you MUST use `\n` escaping on a single line (e.g. `NOTES="Line 1\n\nLine2"`) or use proper YAML block scalars (`|`). Unescaped raw newlines inside double-quotes will cause GitHub Actions to fail workflow parsing on every push._
 - **Maintenance:** Keep deploy/release pipelines healthy. Local hook failures → fix root cause; never `--no-verify`.
 
 #### GitHub Issues, PRs, labels, milestones & status (agent-owned hygiene)
@@ -885,7 +960,7 @@ Restored and consolidated from historical Agent OS GitOps practice (labels/miles
 - `scripts/create-pr.sh` — `gh pr create` wrapper; delete remote branch if PR create fails after push.
 - `scripts/finalize-pr.sh <n>` — `gh pr merge <n> --squash --delete-branch`.
 
-Product-heavy repos (e.g. SeamFusionServices) may keep richer scripts (`prepare-commit.sh`, guardrails, release helpers) under **This Project** — the portable pair above is the minimum.
+Product-heavy repos (e.g. large enterprise monorepos) may keep richer scripts (`prepare-commit.sh`, guardrails, release helpers) under **This Project** — the portable pair above is the minimum.
 
 #### OpenCode surfaces (global config + thin project discovery)
 
@@ -899,12 +974,12 @@ Do **not** create or commit project-local OpenCode runtime JSON:
 
 Instructions stay in root **`AGENTS.md`** (OpenCode loads them). Skills and commands are **global only** (no project discovery symlinks):
 
-| Tracked in repo                       | Purpose                                                                               |
-| ------------------------------------- | ------------------------------------------------------------------------------------- |
-| `~/.agents/skills/*/SKILL.md`         | Global skills only (`session-start`, `session-end`, `agent-os-bootstrap`, craft pack) |
-| `*(commands removed — use skills)*`   | OpenCode slash commands (global)                                                      |
-| Superpowers plugin (`opencode.jsonc`) | OpenCode methodology skills — no project symlinks                                     |
-| `scripts/github/*`                    | Agent GitHub/Project V2 CLI (no Actions)                                              |
+| Tracked in repo                       | Purpose                                                                                               |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `~/.agents/skills/*/SKILL.md`         | Global skills only (`session-start`, `session-end`, `agent-os-bootstrap`, `project-boot`, craft pack) |
+| `*(commands removed — use skills)*`   | OpenCode slash commands (global)                                                                      |
+| Superpowers plugin (`opencode.jsonc`) | OpenCode methodology skills — no project symlinks                                                     |
+| `scripts/github/*`                    | Agent GitHub/Project V2 CLI (no Actions)                                                              |
 
 **Gitignore:** ignore accidental local copies of `opencode.json(c)` / project `tui.json(c)`, plus entire `.agents/` / `.agent/` trees and `.opencode/*` runtime except optional README (`state/`, `cache/`, `node_modules/`).
 
@@ -934,16 +1009,16 @@ bash scripts/github/ensure-scopes.sh
 
 **Portable scripts (commit in every product repo):**
 
-| Script                                                    | When agents run it                                                                                              |
-| --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `scripts/github/session-preflight.sh`                     | **Session Start** — open PRs/Issues, branch vs main, board snapshot                                             |
-| `scripts/github/ensure-labels.sh` / `ensure-milestone.sh` | Bootstrap + before create Issue/PR                                                                              |
-| `scripts/github/open-unit.sh`                             | Starting a tracked product/infra unit (Issue + labels + board **In Progress**)                                  |
-| `scripts/github/project-sync.sh`                          | `add <url>` · `status <url> <stage>` · `done <url>`                                                             |
-| `scripts/github/ship-unit.sh`                             | **GitOps ship** — push, PR+labels, board In Review → merge → board **Done**, checkout protected                 |
-| `scripts/github/session-end-hygiene.sh`                   | **Session End** after ship — list remaining open work; `--close-stale-os-prs` for superseded OS-init PRs        |
-| `scripts/github/session-end-return-main.sh`               | **Session End hard gate** — clean tree on protected branch, ff to origin; fail if unmerged feature work remains |
-| `scripts/github/bootstrap.sh`                             | OS install / drift repair                                                                                       |
+| Script                                                    | When agents run it                                                                                                               |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `scripts/github/session-preflight.sh`                     | **Session Start** — open PRs/Issues, branch vs main, board snapshot                                                              |
+| `scripts/github/ensure-labels.sh` / `ensure-milestone.sh` | Bootstrap + before create Issue/PR                                                                                               |
+| `scripts/github/open-unit.sh`                             | Starting a tracked product/infra unit (Issue + labels + board **In Progress**)                                                   |
+| `scripts/github/project-sync.sh`                          | `add <url>` · `status <url> <stage>` · `done <url>`                                                                              |
+| `scripts/github/ship-unit.sh`                             | **GitOps ship** — push, PR+labels, board In Review → merge → board **Done**, checkout protected                                  |
+| `scripts/github/session-end-hygiene.sh`                   | **Session End** after ship — list remaining open work; `--close-stale-os-prs` for superseded OS-init PRs                         |
+| `scripts/github/session-end-return-main.sh`               | **Session End hard gate** — require clean tree on protected branch (`main`), ff to origin; fail if unmerged feature work remains |
+| `scripts/github/bootstrap.sh`                             | OS install / drift repair                                                                                                        |
 
 **Status stages (map names in yml to board options):** `backlog` · `ready` · `in_progress` · `in_review` · `done`.
 
@@ -1282,22 +1357,22 @@ Prefer whole-repo status over session-diff tunnel vision. Run local CI, core wor
 
 ### Instruction surfaces
 
-| Surface                                            | Role                                                        |
-| -------------------------------------------------- | ----------------------------------------------------------- |
-| `AGENTS.md`                                        | Always-on OS + **This Project** + structure index           |
-| `.github/ai-context/AGENT_PRINCIPLES.md`           | Judgement (behavior only)                                   |
-| `.github/ai-context/AGENT_WORKFLOW.md`             | Procedures                                                  |
-| `.github/ai-context/PROJECT_KNOWLEDGE_GRAPH.md`    | Repo map → code + docs + gates                              |
-| `.github/ai-context/dev-journal.md`                | Outcomes (not rules)                                        |
-| `docs/INDEX.md`                                    | Master directory of project docs                            |
-| `docs/{specs,plans,archive}/`                      | Multi-session durable memory                                |
-| `DEVELOPMENT.md` (or equiv.)                       | Machine/script commands                                     |
-| Project guides (FEATURES, STACK, TEST_STRATEGY, …) | Product-specific truth agents maintain                      |
-| Project `.agents/` / `.agent/`                     | **Forbidden / retired** — remove if found                   |
-| Global **Superpowers** pack                        | Lifecycle engineering skills/hooks/commands (machine-level) |
-| Machine session hooks                              | Evidence injection + Decision Gate reminders                |
-| `tasks/lessons.md`                                 | Persistent mistake prevention                               |
-| `tasks/todo.md`                                    | Active objective tracking                                   |
+| Surface                                            | Role                                                         |
+| -------------------------------------------------- | ------------------------------------------------------------ |
+| `AGENTS.md`                                        | Always-on OS + **This Project** + structure index            |
+| `.github/ai-context/AGENT_PRINCIPLES.md`           | Judgement (behavior only)                                    |
+| `.github/ai-context/AGENT_WORKFLOW.md`             | Procedures                                                   |
+| `.github/ai-context/PROJECT_KNOWLEDGE_GRAPH.md`    | Repo map → code + docs + gates                               |
+| `.github/ai-context/dev-journal.md`                | Outcomes (not rules)                                         |
+| `docs/INDEX.md`                                    | Master directory of project docs                             |
+| `docs/{specs,plans,archive}/`                      | Multi-session durable memory                                 |
+| `DEVELOPMENT.md` (or equiv.)                       | Machine/script commands                                      |
+| Project guides (FEATURES, STACK, TEST_STRATEGY, …) | Product-specific truth agents maintain                       |
+| Project `.agents/` / `.agent/`                     | **Forbidden / retired** — remove if found; skills are global |
+| Global **Superpowers** pack                        | Lifecycle engineering skills/hooks/commands (machine-level)  |
+| Machine session hooks                              | Evidence injection + Decision Gate reminders                 |
+| `tasks/lessons.md`                                 | Persistent mistake prevention                                |
+| `tasks/todo.md`                                    | Active objective tracking                                    |
 
 ---
 
@@ -1342,6 +1417,7 @@ Durable judgement. Curate; don't bloat. No product-specific design rules here.
 35. **Living index** — always-on `AGENTS.md` + `docs/INDEX.md` + knowledge graph stay linked to real docs/scripts. Create project docs after bootstrap; sync them on the same branch as code; no orphan or duplicate surfaces.
 36. **Suggestive excellence** — proactively propose high-leverage next steps and activate full capabilities (skills, specialists, browser, gh). Never silent deferral; never unsolicited product redesign.
 37. **Handoff continuity** — Session Start Decision Gate + clean per-turn state + Session End GitOps so work progresses as complete units, not abandoned fragments.
+38. **Multi-agent / multi-harness continuity** — inventory local branches ahead of protected at Session Start; resume or park before parallel ship; prefer pushed feature branches for durable WIP; never treat clean `main` as proof that no work is in flight.
     **Escalate:** release timing, irreversible tradeoffs, subjective product with no precedent, missing credentials, unresolved ambiguity.  
     **Everything else:** research, decide, execute, verify, report.
 
@@ -1359,7 +1435,7 @@ Durable judgement. Curate; don't bloat. No product-specific design rules here.
 
 ## Checklists
 
-**Start (and re-ground before non-trivial turns):** full repo status (all dirty/WIP) · prior session-end warnings · Session Start Decision Gate (continue/finish/promote/park/ask) · branch off protected · `tasks/lessons.md` + `todo.md` + open plans/specs · `docs/INDEX.md` + knowledge graph → whole-product fit · proactive brief · live probes · plan · execute same turn (local-first).
+**Start (and re-ground before non-trivial turns):** full repo status (all dirty/WIP) · prior session-end warnings · Session Start Decision Gate (continue/finish/promote/park/ask) · **local branches ahead of protected** · branch off protected · `tasks/lessons.md` + `todo.md` + open plans/specs · `docs/INDEX.md` + knowledge graph → whole-product fit · proactive brief · live probes · plan · execute same turn (local-first).
 
 **Per-turn complete:** end-to-end for the ask · verify · local commit · intentional git · brief docs/memory · tracked deferrals with status · closeout (PR on `/end` unless exception).
 
@@ -1450,7 +1526,7 @@ Reproduce → Localize → Reduce to minimal case → Fix at root cause → Add 
 - **GitHub:** `.github/workflows/deploy.yml` (Pages deploy/release only) · no PR lint/test Actions · Dependabot present
 - **External services:** SeamFusion Cloud Functions API (`PUBLIC_API_URL`, `PUBLIC_ACADEMY_ID`) · Web3Forms (contact) · WhatsApp deep links
 - **GitHub Project V2:** configure `.github/agent-project.yml` (`project_owner`, `project_number`); agents use `scripts/github/*` (no Actions card-movers)
-- **Harnesses:** Grok Build (CLI/TUI) + OpenCode — same root `AGENTS.md` + global **Superpowers**; harness-native machine glue
+- **Harnesses:** **OpenCode desktop** (default product work) · **Grok Build** from `~/Projects` (Agent OS / machine) · same root `AGENTS.md` + global **Superpowers**
 - **Durable docs:** `docs/INDEX.md` · `docs/specs/` · `docs/plans/` · `docs/archive/` (legacy `docs/superpowers/` if present)
 - **Invariants:** dark glassmorphism + neon design system (`DESIGN_SYSTEM.md`) · do not edit `backup-legacy/` · do not commit video >90MB · validate dynamic email/WhatsApp links · deploy workflow runs from **repo root** (not a nested astro folder)
 
@@ -1473,8 +1549,8 @@ When editing the Gist, the following structural contracts are **protected**. Age
 - One-time vs continuous (enforcement model + cadence map)
 - End-to-end completion & deferred work (status/priority tracking; brief docs)
 - OS Structure & Index + always-on linking contract
-- Session Start Protocol (decision gate, handoff ownership, clean continuity)
-- Local vs GitOps (local-first per turn, mid-session exceptions, `/end` ship path)
+- Session Start Protocol (decision gate, local-branch inventory, multi-harness handoff, clean continuity)
+- Local vs GitOps (local-first per turn, durability tiers, branch remote-backup, mid-session exceptions, `/end` ship path)
 - Per-turn completion + Session End Protocol
 - Documentation System (INDEX, sync protocol, plans/journal, project guides, script/quality standards)
 - Proactive Project Stewardship + Proactive & Suggestive Agents
@@ -1506,9 +1582,12 @@ When refining the portable OS, keep Session Start/End and Local vs GitOps intact
 
 1. Identify the improvement and classify it as universal (would help in _any_ project, not just this one).
 2. Present to the Architect: what changed, why it's universal, the exact diff.
-3. If approved, the agent updates the local `AGENTS.md` OS sections (not `This Project`) and pushes the Gist:
-   ```
-   gh gist edit 5828479245f786c80993b67a6f669aee -f AGENTS.md
+3. If approved, the agent updates the local `AGENTS.md` OS sections (not `This Project`) and updates the Gist by first cloning/pulling to ensure we don't overwrite changes:
+   ```bash
+   # ALWAYS clone or pull first to prevent overwriting other agents' changes
+   gh gist clone 5828479245f786c80993b67a6f669aee /tmp/gist-sync
+   # Update AGENTS.md in /tmp/gist-sync/
+   cd /tmp/gist-sync && git commit -am "Update OS" && git push
    ```
 4. **Never** silently modify the Gist-sourced OS sections of `AGENTS.md` without flagging it to the Architect.
 5. **Never** remove Protected OS sections (Session / Local vs GitOps / Hooks-CI / harness / Gist Sync) as a side effect of another improvement. If a section seems redundant, propose a merge to the Architect — do not drop it unilaterally.
@@ -1525,22 +1604,35 @@ When refining the portable OS, keep Session Start/End and Local vs GitOps intact
 
 This OS is **harness-scoped** so setup stays lean and behavior stays predictable:
 
-| Harness                                      | Role                                                                                |
-| -------------------------------------------- | ----------------------------------------------------------------------------------- |
-| **Grok Build** (`grok` CLI / Grok Build TUI) | Primary CLI agent runtime                                                           |
-| **OpenCode**                                 | IDE / alternate CLI for the **same** root `AGENTS.md` + global **Superpowers** pack |
+| Harness                           | Architect default use                               | Role                                                               |
+| --------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------ |
+| **OpenCode** (desktop / CLI)      | **Product work** — open the **product repo** as cwd | Day-to-day features, bugs, project docs, ship/end for that product |
+| **Grok Build** (`grok` CLI / TUI) | **Agent OS / machine** — open from **`~/Projects`** | Edit this gist, skills, hooks, OpenCode kit, multi-repo OS sync    |
 
-**One instruction surface:** root **`AGENTS.md`**. Both harnesses load the same contract.
+**One instruction surface:** root **`AGENTS.md`** (plus OpenCode always-on `~/.config/opencode/AGENT_OS_ENFORCEMENT.md`). Same contract both harnesses.
 
-**OpenCode Google auth:** `opencode-antigravity-auth` and `~/.config/opencode/antigravity-*` credentials are **OpenCode’s Google/Gemini auth path**. Model ids like `antigravity-gemini-*` come from that plugin — they are part of OpenCode, not a second product harness. Keep them healthy.
+**Source of truth split:**
 
-**Standing global capability on Architect machines:**
+| Concern                    | Source of truth                                                           |
+| -------------------------- | ------------------------------------------------------------------------- |
+| Portable Agent OS contract | Gist `5828479245f786c80993b67a6f669aee` → product `AGENTS.md` OS sections |
+| Product facts              | That repo’s **This Project** + `docs/INDEX.md` + product docs             |
+| OpenCode machine runtime   | Gist `fa4d874490158f7252ca2441227d3343` → `~/.config/opencode/` only      |
+| Session/GitOps skills      | `~/.agents/skills/` (not project-vendored)                                |
+| Methodology                | Superpowers plugin (Grok + OpenCode)                                      |
 
-- **[obra/superpowers](https://github.com/obra/superpowers)** — production engineering skills, hooks, lifecycle commands, specialist agents (see **Agent Skills Pack**).
-- **Chrome DevTools MCP** — both harnesses (Grok plugin + OpenCode `mcp.chrome-devtools`) for real browser/UI evidence.
-- **Session Start/End** — declared in this OS; optional harness hooks/commands may assist; agents own the protocols.
+**OpenCode Google auth:** `opencode-antigravity-auth` and `~/.config/opencode/antigravity-*` are **OpenCode’s Google/Gemini auth path** — not a second product harness. Keep them healthy.
 
-**Durable project memory** lives in the repo: `docs/`, `tasks/`, product docs, `.github/ai-context/`. Methodology for non-trivial work is **this Agent OS composed with Superpowers** (see **Durable project memory**).
+**Standing global capability:**
+
+- **[obra/superpowers](https://github.com/obra/superpowers)** — methodology skills (see **Agent Skills Pack**).
+- **Chrome DevTools MCP** — Grok plugin + OpenCode `mcp.chrome-devtools` for UI evidence.
+- **Session Start/End** — agents own protocols; Grok may inject evidence via `~/.grok/hooks/`; OpenCode relies on skills + enforcement file.
+- **Context7 MCP** (OpenCode) — live library docs when useful.
+
+**Grok note:** project `AGENTS.md` may be truncated in automatic injection (~10k chars). Agents **must still Read** root `AGENTS.md` (PROTOCOL + How to work with this Architect + This Project + Session protocols) before product or OS edits — especially in Grok. OpenCode loads the repo `AGENTS.md` more fully when cwd is the product root.
+
+**Durable project memory** lives in the repo: `docs/`, `tasks/`, product docs, `.github/ai-context/`. Methodology = **this Agent OS composed with Superpowers**.
 
 # Durable project memory (Agent OS–owned)
 

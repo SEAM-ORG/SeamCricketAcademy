@@ -1,5 +1,12 @@
-# Durable memory (legacy path)
+# Legacy path (redirect only)
 
-Same role as `docs/specs/`, `docs/plans/`, and `docs/archive/`.
+**Do not add new plans or specs here.**
 
-Prefer creating new multi-session work under `docs/specs/` and `docs/plans/`. Keep this folder if older plans/specs already live here.
+Canonical durable memory:
+
+- `docs/specs/`
+- `docs/plans/`
+- `docs/archive/`
+- Master directory: `docs/INDEX.md`
+
+This tree remains only so old links do not 404. Prefer consolidating any remaining files into the paths above.

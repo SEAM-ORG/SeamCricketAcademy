@@ -106,6 +106,7 @@ Suggest improvements; on Architect yes (including short yes), execute end-to-end
 
 ## 1) Every session (before product edits)
 
+0. **No silent ignore** — inventory unfinished work classes below; dispose each (see **No silent ignore of unfinished work**).
 1. **Session Start** — do not wait for `/start`.
 2. Reality-check: `git status --short --branch` (+ log) for the **whole repo**.  
    2b. Inventory **local branches ahead of protected** (name · ahead count · tip subject) — multi-agent WIP.
@@ -178,8 +179,38 @@ On `/end`, “end session”, “ship it”, or when opening/merging a PR for th
 - Inventing product work from `~/Projects` / home when the session is OS/machine-scoped
 - Creating a parallel skill/doc/hook when an existing surface covers the job
 - Mirroring OS skills into `~/.grok/skills` or vendoring Superpowers into product repos
+- **Silently ignoring unfinished work** (local branches, unpushed commits, open plans, portfolio loose files, dirty tree) because it is “not this session”
+- Treating Session Start as the only time WIP inventory matters (re-ground mid-session too)
 
 Violation is a **contract failure**, not a style note.
+
+# No silent ignore of unfinished work (hard)
+
+**Unfinished work is always owned** — not only at Session Start, and not only the current branch’s dirty files.
+
+Agents **must never** silently ignore, forget, or deprioritize unfinished work because it is “out of this chat,” “pre-existing,” “not this session,” “not my branch,” “only local,” or “hygiene noise.”
+
+## What counts as unfinished work
+
+| Class                                 | Examples                                                    | Required disposition                                                                                         |
+| ------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| **Dirty tree**                        | Modified / staged / untracked in the active repo            | Finish+commit, or PARK (4 debt fields), or ASK                                                               |
+| **Local branches ahead of protected** | Any branch with commits not in `origin/main` (or protected) | Resume · ship · PARK · delete if **proven supersedable** · or ASK                                            |
+| **Unpushed commits**                  | Local branch ahead of its `origin/*`                        | Push feature branch for multi-harness durability, or PARK why not                                            |
+| **Open plans / todos / debt**         | `tasks/todo.md`, `docs/plans/*`, debt register              | Resume before net-new, or update status honestly                                                             |
+| **Open PRs / CI failures**            | `gh pr list`, preflight                                     | Fix-and-merge, close with comment, or track                                                                  |
+| **Portfolio loose artifacts**         | Files under `~/Projects/` not inside a product git root     | Commit into a real repo, move into product/docs, or PARK with path + done-when — **never invisible orphans** |
+| **Machine OS drift**                  | Skills/hooks/enforcement vs gist SoT                        | Repair same session when OS work is in scope, or PARK                                                        |
+
+## Rules
+
+1. **Inventory is mandatory** at Session Start **and** before each non-trivial turn (re-ground). Mid-session does not exempt you.
+2. **Clean `main` is not proof of idle portfolio.** Local branches, loose files, and open plans can still hold work.
+3. **Superseded chore branches** (historical experiments fully replaced by main) may be **deleted after classification** — that is disposition, not ignore. When unsure whether product value remains → PARK or ASK; if unique assets exist, **recover them onto a branch** before delete.
+4. **Silent ignore is a contract failure** equal to skipping Session Start.
+5. Closeout / Session End must list remaining unfinished work with disposition (or clean zero).
+
+---
 
 # OS Structure & Index (always maintain)
 
@@ -562,6 +593,8 @@ Do this **automatically** at the start of every session — and **re-ground** be
    - **Ask** only when two product units genuinely conflict.
      **Never** open a second feature branch from clean `main` and ship to protected while another local branch holds unmerged product work — that is the multi-agent race failure mode (OpenCode vs Grok, or session A vs session B). `main`/GitHub alone is **not** whole-repo truth.
      3c. **Cross-harness rule:** Grok CLI and OpenCode share the same git working tree. A second harness must run full Session Start (including 3b) before product or GitOps work. Chat memory from the other harness is not ground truth.
+     3d. **Portfolio / non-repo / machine leftovers (mandatory):** When cwd is `~/Projects` or a non-git parent, or when Session Start is for OS/portfolio work: list **loose files** under `~/Projects/` that are not inside a product repo and **local branches ahead of protected in each known product**. Dispose each (commit/track, move, PARK, delete if supersedable). **Never** report “nothing to do” while loose advisories, unpushed branches, or open plans remain unaddressed.
+     3e. **Mid-session re-ground:** Before net-new work mid-session, re-check dirty tree + branch inventory. Session Start is not a one-shot free pass to ignore WIP later.
 4. Review `tasks/lessons.md`, `tasks/todo.md`, open `docs/plans/` + `docs/specs/` (legacy paths if present), and debt register if any — **resume incomplete plans and clear blockers before net-new**. Note status/priority of open deferred items.
 5. If `scripts/github/session-preflight.sh` exists, run it; treat open PRs/Issues/failing Actions as work to resume or track.
 6. Load knowledge graph + `docs/INDEX.md` (if present) + product docs for the objective; map whole-product fit, not only the named file.
@@ -581,7 +614,8 @@ You own the **project's real state**, not only the files you or this session tou
 - Verification and closeout cover **repo health related to the objective** (build/test/docs/hooks as needed), not only the diff hunk you authored.
 - If you find broken, incomplete, or conflicting work outside your narrow edit set, **fix or track it** — never ignore it because "someone else started it" or "it was pre-existing."
 - Narrow surgical edits are still preferred; ownership means **awareness + correct scope**, not rewriting the monorepo every turn.
-- **Unmerged local branches are not stashes and are not optional noise.** They are commits. Resume, integrate, park (tracked), or ship — never pretend they do not exist when starting net-new work from `main`.
+- **Unmerged local branches are not stashes and are not optional noise.** They are commits. Resume, integrate, park (tracked), ship, or delete if proven supersedable — never pretend they do not exist when starting net-new work from `main`.
+- **Silently ignoring unfinished work is forbidden** at any time (not only Session Start). Dirty trees, open plans, portfolio loose files, and unpushed commits are owned until disposed. See **No silent ignore of unfinished work**.
 
 ### Context loss recovery (compaction / truncation)
 

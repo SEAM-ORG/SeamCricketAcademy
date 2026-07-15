@@ -1,6 +1,6 @@
 # Documentation Index
 
-> Master directory for Seam Cricket Academy docs. **Last updated:** 2026-07-13
+> Master directory for Seam Cricket Academy docs. **Last updated:** 2026-07-15
 
 ## Product truth (repo root)
 
@@ -25,12 +25,11 @@
 
 ## Durable plans & specs
 
-| Path                         | Purpose                                               |
-| ---------------------------- | ----------------------------------------------------- |
-| [specs/](specs/)             | Design specs                                          |
-| [plans/](plans/)             | Implementation plans                                  |
-| [archive/](archive/)         | Finished work                                         |
-| [superpowers/](superpowers/) | **Redirect only** — use `docs/{specs,plans,archive}/` |
+| Path                 | Purpose              |
+| -------------------- | -------------------- |
+| [specs/](specs/)     | Design specs         |
+| [plans/](plans/)     | Implementation plans |
+| [archive/](archive/) | Finished work        |
 
 ## Ops
 

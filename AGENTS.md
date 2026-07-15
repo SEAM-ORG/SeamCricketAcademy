@@ -2,13 +2,13 @@
 
 **Skill stack (machine-global only — no duplicates):**
 
-| Layer                  | What                                                   | Where                                                                                                                                                                                           |
-| ---------------------- | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Architect↔Agent OS** | Session Start/End, GitOps, Decision Gate, bootstrap    | root `AGENTS.md` + global skills under `~/.agents/skills/` only: `session-start` (includes product boot), `session-end`, `session-end-gitops`, `agent-os-bootstrap`, `opencode-session-hygiene` |
-| **Superpowers**        | Methodology (brainstorm, plans, TDD, debug, review, …) | Grok plugin `superpowers`; OpenCode plugin `superpowers@git+https://github.com/obra/superpowers.git`                                                                                            |
-| **Hooks**              | Non-skippable session gates                            | `~/.grok/hooks/agent-os-lifecycle.json` + scripts (Grok); OpenCode uses global skills + `AGENT_OS_ENFORCEMENT.md`                                                                               |
+| Layer                  | What                                                         | Where                                                                                                                                                                                           |
+| ---------------------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Architect↔Agent OS** | Session Start/End, GitOps, Decision Gate, bootstrap          | root `AGENTS.md` + global skills under `~/.agents/skills/` only: `session-start` (includes product boot), `session-end`, `session-end-gitops`, `agent-os-bootstrap`, `opencode-session-hygiene` |
+| **Agent Skills**       | Methodology (Define→Ship: spec, plan, TDD, debug, review, …) | `~/.agents/skills/` via `sync-agent-skills.sh` (addyosmani/agent-skills); meta: `using-agent-skills`                                                                                            |
+| **Hooks**              | Non-skippable session gates                                  | `~/.grok/hooks/agent-os-lifecycle.json` + scripts (Grok); OpenCode uses global skills + `AGENT_OS_ENFORCEMENT.md`                                                                               |
 
-**Removed / forbidden:** addyosmani **agent-skills** pack, project `.agents/` / `.agent/` trees, vendor submodules, and **slash-command files** (`~/.config/opencode/command`, project command trees). Invoke skills by name/intent — not `/spec` `/plan` command wrappers.
+**Removed / forbidden:** obra **Superpowers**, project `.agents/` / `.agent/` trees, vendor submodules, and **slash-command files** as required ceremony (`~/.config/opencode/command`, project command trees). Invoke skills by **name/intent** — slash phrases are optional aliases only.
 
 > **⚠️ ATTENTION AGENTS: WHAT THIS IS & HOW TO UPDATE IT**
 >
@@ -64,20 +64,20 @@ Suggest improvements; on Architect yes (including short yes), execute end-to-end
 | 2     | **Extend / update** that surface in the same change                                             |
 | 3     | **Create new** only if the job has no home — then link it from INDEX / layer map / This Project |
 
-**Do not** re-implement Superpowers as OS skills. **Do not** mirror OS skills into `~/.grok/skills/` (Grok loads `~/.agents/skills` via config). **Do not** add project `.agents/`, slash-command trees, or a second always-on OS file beyond the thin OpenCode enforcement pointer.
+**Do not** re-implement agent-skills as duplicate OS skills. **Do not** reinstall agent-skills. **Do not** mirror OS skills into `~/.grok/skills/` (Grok loads `~/.agents/skills` via config). **Do not** add project `.agents/`, slash-command trees, or a second always-on OS file beyond the thin OpenCode enforcement pointer.
 
 **Skill map (keep lean):**
 
 | Need                                   | Use                                                                 |
-| -------------------------------------- | ------------------------------------------------------------------- |
+| -------------------------------------- | ------------------------------------------------------------------- | ------------------------- | ------------------------------------------------------------------------ |
 | Session / product boot / Decision Gate | `session-start`                                                     |
 | Ship / clean handoff                   | `session-end` (+ `session-end-gitops` for portfolio return-to-main) |
 | Install / repair / multi-repo OS sync  | `agent-os-bootstrap`                                                |
 | OpenCode session list hygiene          | `opencode-session-hygiene`                                          |
-| Plan / TDD / debug / verify / review   | **Superpowers** (not new OS skills)                                 |
+| Plan / TDD / debug / verify / review   | **Agent Skills**                                                    | Methodology (Define→Ship) | `~/.agents/skills/` (addyosmani/agent-skills); meta `using-agent-skills` |
 | Product facts                          | **This Project** + `docs/INDEX.md` — not a new top-level guide      |
 
-**Docs:** Prefer `docs/{specs,plans,archive}/` + INDEX. Legacy `docs/superpowers/*` is redirect-only; do not grow it. `.github/ai-context/` holds knowledge graph + journal — not a second copy of AGENTS principles/workflow.
+**Docs:** Prefer `docs/{specs,plans,archive}/` + INDEX. Legacy `docs/superpowers/*` is redirect-only (old plan paths); do not grow it — use `docs/{specs,plans,archive}/`. `.github/ai-context/` holds knowledge graph + journal — not a second copy of AGENTS principles/workflow.
 
 ---
 
@@ -112,7 +112,7 @@ Suggest improvements; on Architect yes (including short yes), execute end-to-end
    2b. Inventory **local branches ahead of protected** (name · ahead count · tip subject) — multi-agent WIP.
 3. **Decision Gate** (state one): `CONTINUE` | `FINISH+COMMIT` | `PROMOTE` | `PARK` (todo.md) | `ASK`.
 4. Never start net-new work on an unexplained dirty tree or while ignoring unmerged product branches; never silently switch branches.
-5. Non-trivial work: use **Superpowers** + OS session skills (no addy Superpowers)
+5. Non-trivial work: use **agent-skills** via `using-agent-skills` + OS session skills (no agent-skills)
 6. Resume incomplete plans/todos/debt **before** net-new work.
 
 ---
@@ -152,7 +152,7 @@ On `/end`, “end session”, “ship it”, or when opening/merging a PR for th
 | Situation                    | Protocol / skill                                                  |
 | ---------------------------- | ----------------------------------------------------------------- |
 | Session start / product boot | Session Start (+ `session-start` skill; no separate project-boot) |
-| Non-trivial work             | Superpowers → pick 1–N skills                                     |
+| Non-trivial work             | `using-agent-skills` → pick 1–N lifecycle skills                  |
 | Before claim done            | That skill’s **verify** step + evidence                           |
 | Ship / end                   | Session End (+ dirty-tree gate)                                   |
 | Gist/OS update               | Gist Sync (clone/push + head verify)                              |
@@ -175,10 +175,10 @@ On `/end`, “end session”, “ship it”, or when opening/merging a PR for th
 - Using `git stash` as the only handoff for product WIP
 - Leaving valuable multi-session WIP **only** local-unpushed when a second harness or session may run
 - Pedantic literal execution of weak prompts when evidence + logic yield a better plan
-- Waiting for the Architect to restate Session Start, Superpowers, docs, or GitOps
+- Waiting for the Architect to restate Session Start, agent-skills, docs, or GitOps
 - Inventing product work from `~/Projects` / home when the session is OS/machine-scoped
 - Creating a parallel skill/doc/hook when an existing surface covers the job
-- Mirroring OS skills into `~/.grok/skills` or vendoring Superpowers into product repos
+- Mirroring OS skills into `~/.grok/skills` or vendoring agent-skills into product repos
 - **Silently ignoring unfinished work** (local branches, unpushed commits, open plans, portfolio loose files, dirty tree) because it is “not this session”
 - Treating Session Start as the only time WIP inventory matters (re-ground mid-session too)
 
@@ -218,22 +218,22 @@ This section is the **map of the Operating System itself** — project-agnostic.
 
 ## Layer map
 
-| Layer                             | Location                                                                                                                          | Role                                                                                                                                                           |
-| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Always-on OS**                  | root `AGENTS.md`                                                                                                                  | Full Architect↔Agent contract (incl. **How to work with this Architect**, **One-time vs continuous**) + **This Project** facts. Single instruction entrypoint. |
-| **Judgement / procedures**        | `.github/ai-context/AGENT_PRINCIPLES.md`, `AGENT_WORKFLOW.md`                                                                     | **Thin stubs** linking to root `AGENTS.md` — do not restate the full OS.                                                                                       |
-| **Repo map**                      | `.github/ai-context/PROJECT_KNOWLEDGE_GRAPH.md`                                                                                   | Domain → code paths → related docs/gates. Load only relevant domains.                                                                                          |
-| **Outcomes journal**              | `.github/ai-context/dev-journal.md`                                                                                               | What happened (not rules). Session outcomes, not standing policy.                                                                                              |
-| **Lessons / mid-flight**          | `tasks/lessons.md`, `tasks/todo.md`                                                                                               | Mistake prevention; active multi-step checklist.                                                                                                               |
-| **Durable product memory**        | `docs/{specs,plans,archive}/`                                                                                                     | Multi-session designs & plans. Legacy `docs/superpowers/*` same role if present.                                                                               |
-| **Project documentation system**  | `docs/INDEX.md` + product guides                                                                                                  | Master directory + stack, features, quality, ops — **created per project after bootstrap**.                                                                    |
-| **Machine commands**              | `DEVELOPMENT.md` (or equivalent)                                                                                                  | Install/run/test/release commands only — no agent ceremony prose.                                                                                              |
-| **Local CI**                      | `.githooks/` + `scripts/install-githooks.sh`                                                                                      | Gold standard: pre-commit=quality; pre-push=test+build.                                                                                                        |
-| **GitHub hygiene**                | `scripts/github/*`, `.github/agent-project.yml`                                                                                   | Issues/PRs/labels/Project V2 via `gh` — no Actions card-movers.                                                                                                |
-| **Project skills**                | _(retired)_ — do **not** create `.agents/` or `.agent/` in product repos                                                          | Skills are machine-global only.                                                                                                                                |
-| **OS skills (global)**            | `~/.agents/skills/` — `session-start`, `session-end`, `session-end-gitops`, `agent-os-bootstrap`, `opencode-session-hygiene` only | Session/GitOps protocols only — **no** methodology duplicates of Superpowers                                                                                   |
-| **Superpowers (Grok + OpenCode)** | Grok plugin `superpowers`; OpenCode `superpowers@git+…` in global `opencode.jsonc`                                                | Methodology skills — not project-vendored                                                                                                                      |
-| **Harness surfaces (machine)**    | Grok plugins/hooks; OpenCode config/commands/MCP                                                                                  | Harness-native glue so agents can follow this OS — not a second instruction tree.                                                                              |
+| Layer                            | Location                                                                                                                     | Role                                                                                                                                                           |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Always-on OS**                 | root `AGENTS.md`                                                                                                             | Full Architect↔Agent contract (incl. **How to work with this Architect**, **One-time vs continuous**) + **This Project** facts. Single instruction entrypoint. |
+| **Judgement / procedures**       | `.github/ai-context/AGENT_PRINCIPLES.md`, `AGENT_WORKFLOW.md`                                                                | **Thin stubs** linking to root `AGENTS.md` — do not restate the full OS.                                                                                       |
+| **Repo map**                     | `.github/ai-context/PROJECT_KNOWLEDGE_GRAPH.md`                                                                              | Domain → code paths → related docs/gates. Load only relevant domains.                                                                                          |
+| **Outcomes journal**             | `.github/ai-context/dev-journal.md`                                                                                          | What happened (not rules). Session outcomes, not standing policy.                                                                                              |
+| **Lessons / mid-flight**         | `tasks/lessons.md`, `tasks/todo.md`                                                                                          | Mistake prevention; active multi-step checklist.                                                                                                               |
+| **Durable product memory**       | `docs/{specs,plans,archive}/`                                                                                                | Multi-session designs & plans. Legacy `docs/superpowers/*` same role if present.                                                                               |
+| **Project documentation system** | `docs/INDEX.md` + product guides                                                                                             | Master directory + stack, features, quality, ops — **created per project after bootstrap**.                                                                    |
+| **Machine commands**             | `DEVELOPMENT.md` (or equivalent)                                                                                             | Install/run/test/release commands only — no agent ceremony prose.                                                                                              |
+| **Local CI**                     | `.githooks/` + `scripts/install-githooks.sh`                                                                                 | Gold standard: pre-commit=quality; pre-push=test+build.                                                                                                        |
+| **GitHub hygiene**               | `scripts/github/*`, `.github/agent-project.yml`                                                                              | Issues/PRs/labels/Project V2 via `gh` — no Actions card-movers.                                                                                                |
+| **Project skills**               | _(retired)_ — do **not** create `.agents/` or `.agent/` in product repos                                                     | Skills are machine-global only.                                                                                                                                |
+| **OS skills (global)**           | `~/.agents/skills/` — `session-start`, `session-end`, `session-end-gitops`, `agent-os-bootstrap`, `opencode-session-hygiene` | Session/GitOps control plane                                                                                                                                   |
+| **Agent Skills (methodology)**   | `~/.agents/skills/` + `using-agent-skills` (addyosmani/agent-skills via `sync-agent-skills.sh`)                              | Full lifecycle methodology — not project-vendored; no agent-skills                                                                                             |
+| **Harness surfaces (machine)**   | Grok plugins/hooks; OpenCode config/commands/MCP                                                                             | Harness-native glue so agents can follow this OS — not a second instruction tree.                                                                              |
 
 ## Always-on index contract (agents maintain)
 
@@ -295,7 +295,7 @@ This OS is **not a one-shot setup checklist**. Setup **establishes** surfaces; *
 | Local CI (`.githooks` + install script)                           | Install hooks when missing                            | Pre-commit / pre-push always; never skip                                  | Tighten gates when bugs escape                          |
 | `docs/INDEX.md` + knowledge graph                                 | Create thin INDEX + graph at bootstrap                | Same-branch updates when docs/code entry points change                    | Prune dead links; merge duplicate docs                  |
 | `docs/{specs,plans,archive}/`                                     | Create dirs at bootstrap                              | Update plan checkboxes; archive when shipped                              | Prefer this layout over ad-hoc doc dumps                |
-| Superpowers (global)                                              | Install for Grok + OpenCode when missing              | Use skills on relevant work without being asked                           | Repair install when discovery fails                     |
+| Agent Skills (global)                                             | `sync-agent-skills.sh` when missing                   | Use skills on relevant work without being asked                           | Repair install when discovery fails                     |
 | Harness surfaces (Grok plugins/hooks; OpenCode auth/MCP/commands) | Minimal native setup so the harness can work          | Keep auth/MCP/commands healthy when used                                  | Lighten or adjust only when outcomes break              |
 | GitHub Issues/PRs/Project V2 hygiene                              | Bootstrap scripts/templates when product uses GitHub  | On `/end` / ship / exception                                              | Board/status alignment when preflight shows drift       |
 | Lessons / standing rules                                          | First `tasks/lessons.md` / write rule when taught     | Review lessons at Session Start; persist new corrections same session     | Promote universal lessons to Gist                       |
@@ -356,20 +356,20 @@ You do **not** need slash commands for normal product work — state the objecti
 
 When you want an explicit control surface (OpenCode global commands + Grok skills/plugin):
 
-| Command                     | What it does                                                  |
-| --------------------------- | ------------------------------------------------------------- |
-| **`/start`**                | Session Start Protocol (repo reality-check + handoff gate)    |
-| **`/boot`**                 | Project boot status (where we are; not full OS install)       |
-| **`/end`**                  | Session End Protocol (consolidate → push → PR → squash merge) |
-| **`/agent-os-bootstrap`**   | Install/repair OS from Gist + Superpowers health              |
-| Superpowers skills (intent) | Methodology — brainstorm / plans / TDD / debug / review       |
-| **`/goal`**                 | Long-running maximum autonomy until objective is verified     |
-| **`/teamwork-preview`**     | Large scopes with parallel subagents                          |
+| Command                   | What it does                                                  |
+| ------------------------- | ------------------------------------------------------------- |
+| **`/start`**              | Session Start Protocol (repo reality-check + handoff gate)    |
+| **`/boot`**               | Project boot status (where we are; not full OS install)       |
+| **`/end`**                | Session End Protocol (consolidate → push → PR → squash merge) |
+| **`/agent-os-bootstrap`** | Install/repair OS from Gist + agent-skills health             |
+| agent-skills (intent)     | Methodology — spec / plan / TDD / debug / review / ship       |
+| **`/goal`**               | Long-running maximum autonomy until objective is verified     |
+| **`/teamwork-preview`**   | Large scopes with parallel subagents                          |
 
 **Harness notes:**
 
-- **OpenCode:** Skills from **Superpowers plugin** (global `opencode.jsonc`) + auto-load `~/.agents/skills/` (global). **No** project `.agents/` trees.
-- **Grok Build:** skills appear as slash commands; superpowers plugin adds short lifecycle commands when enabled.
+- **OpenCode:** Skills from `skills.paths` → `~/.agents/skills/` (global). **No** project `.agents/` trees. **No** agent-skills plugin.
+- **Grok Build:** skills from `~/.agents/skills`; intent-driven lifecycle (slash aliases optional).
 - **`/start` / `/end`** are also protocol phrases in `AGENTS.md` — typing the words works even if a harness has no slash entry.
 
 ## What the agent will do without asking
@@ -392,7 +392,7 @@ When the agent needs you, you get a **structured choice** (recommended option fi
 
 | You open chat from…                        | Meaning                                                                                                                                    |
 | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| **OpenCode desktop inside a product repo** | **Default for product work.** This chat **is** that project. Full Session Start / End / Superpowers / This Project apply.                  |
+| **OpenCode desktop inside a product repo** | **Default for product work.** This chat **is** that project. Full Session Start / End / agent-skills / This Project apply.                 |
 | **Grok Build from `~/Projects` or home**   | **Default for Agent OS / machine / portfolio OS work.** Not a product root — do not invent product work unless the Architect names a repo. |
 | **Grok or OpenCode inside a product repo** | That chat **is** that project (either harness). Same OS contract.                                                                          |
 | **Home / no product folder**               | Project-agnostic only (Gist OS, machine setup) **or** multi-project work the Architect names.                                              |
@@ -460,7 +460,7 @@ When the prompt is silent, infer:
 6. **Preserve working product** — extend what exists; do not redesign surfaces the Architect did not ask about.
 7. **Whole-repo continuity** — dirty trees and open plans are owned work, not noise.
 8. **Suggest, then execute on yes** — offer 1–3 high-leverage next steps; a short yes is enough to proceed.
-9. **Skills and tools are assumed** — use Superpowers, specialists, browser MCP, `gh` when they raise quality; the Architect should not have to name them.
+9. **Skills and tools are assumed** — use agent-skills, specialists, browser MCP, `gh` when they raise quality; the Architect should not have to name them.
 10. **Same OS everywhere** — Gist OS changes sync into known product repos by default; only **This Project** differs per repo.
 
 ## Portfolio context (Architect’s products)
@@ -569,7 +569,7 @@ You are an autonomous entity, not a simple autocomplete. You must leverage your 
 - **Background Tasks (`manage_task`)**: Run long-running servers, builds, or tests in the background while you continue working.
 - **Timers (`schedule`)**: If waiting on a **deploy/release** pipeline (or external review bot), set a timer to check back autonomously instead of ending your turn and waiting for the Architect.
 - **Relentless Execution**: When given a `/goal`, do not stop at the first error. Diagnose, read logs, search the web for solutions, and retry until successful.
-- **Superpowers (mandatory when relevant):** Use the global **obra/superpowers** pack autonomously — skills, Superpowers skills (intent-driven), specialist agents (code-reviewer, test-engineer, security-auditor, web-performance-auditor), hooks, and guards. Map work via Superpowers first when unsure which skill applies. **Do not wait** for the Architect to name a skill or slash command.
+- **Agent Skills (mandatory when relevant):** Use the global **addyosmani/agent-skills** pack autonomously — lifecycle skills (intent-driven via `using-agent-skills`), specialist personas (code-reviewer, test-engineer, security-auditor, web-performance-auditor), and verification gates. Map work via `using-agent-skills` first when unsure. **Do not wait** for the Architect to name a skill or slash command. **Do not** use Superpowers.
 
 ## Session Start Protocol (first actions every session)
 
@@ -599,7 +599,7 @@ Do this **automatically** at the start of every session — and **re-ground** be
 5. If `scripts/github/session-preflight.sh` exists, run it; treat open PRs/Issues/failing Actions as work to resume or track.
 6. Load knowledge graph + `docs/INDEX.md` (if present) + product docs for the objective; map whole-product fit, not only the named file.
 7. Confirm local CI hooks are installed (or install via project script). Never `--no-verify`.
-8. Map work via **Superpowers**; invoke applicable skills and specialist agents without waiting for slash names.
+8. Map work via **`using-agent-skills`**; invoke applicable lifecycle skills and specialist personas without waiting for slash names.
 9. **Continuous health (lightweight):** if INDEX, hooks, skills discovery, or **This Project** paths look broken/missing → re-establish before net-new work (see **One-time vs continuous**). Do not assume last month’s bootstrap still holds.
 10. **Proactive brief (2–5 lines):** status, handoff decision, highest-leverage next step, and any health/opportunity flags (see **Proactive & Suggestive Agents**). Suggest valuable next work the Architect can accept in one line.
 11. Local-first: verify + commit locally each turn; push/PR only on `/end` or ship exception.
@@ -655,7 +655,7 @@ Trigger: Architect says install/init Agent OS, or you find no usable `AGENTS.md`
    - Create a **deploy/release** pipeline only if the deploy target is known (tag push, environment deploy, manual dispatch). Do **not** create GitHub workflows that duplicate local lint/test/build.
    - Assume GitHub-side hygiene (Dependabot, Jules, etc.) may already cover dependency and review essentials — do not re-implement those as Actions CI.
 7. **Materialize Agent OS surfaces:** (same as Brownfield step 3 below)
-8. **Superpowers health:** run **Agent Skills Pack** protocol (global install + project gaps for tests/CI/docs).
+8. **Agent Skills health:** run **Agent Skills Pack** protocol (global install + project gaps for tests/CI/docs).
 9. **Fill This Project** from the scaffolded structure (stack, commands, code map, **doc index**).
 10. **Scaffold project docs:** `docs/INDEX.md` + `docs/{specs,plans,archive}/` + `DEVELOPMENT.md` (commands) + thin STACK/FEATURES/TEST notes when the product has surface area. Knowledge graph links to them.
 11. **Verify** with checklist below (including Agent Skills + doc index).
@@ -677,7 +677,7 @@ Trigger: Architect says install/init Agent OS, or you find no usable `AGENTS.md`
    - **Project documentation system (project-specific, agent-authored):** create `docs/{specs,plans,archive}/`, `docs/INDEX.md`, and thin starters as needed: stack/architecture notes, feature/capability map, test strategy, `DEVELOPMENT.md` machine commands. Prefer one honest thin doc over empty ceremony. Link all of them from **This Project** + knowledge graph + INDEX.
    - Keep a single instruction entrypoint: root `AGENTS.md`. Supported harnesses: **Grok Build** + **OpenCode** only. Do **not** add Claude Code / Cursor / Codex instruction forks or harness dirs.
 4. **Environment Discovery:** Run the protocol below.
-5. **Superpowers health (global + project gaps):** Run **Agent Skills Pack** protocol below — ensure global install for Grok CLI + OpenCode; fill project gaps that skills/hooks/workflows expect (tests, local CI, docs dirs, definition-of-done surfaces).
+5. **Agent Skills health (global + project gaps):** Run **Agent Skills Pack** protocol below — ensure global install for Grok CLI + OpenCode; fill project gaps that skills/hooks/workflows expect (tests, local CI, docs dirs, definition-of-done surfaces).
    5b. **GitHub hygiene + Project V2:** ensure `gh` works with `project`/`read:project` scopes; install `scripts/github/*` + `.github/agent-project.yml` (owner + project number); `bash scripts/github/bootstrap.sh`; thin `create-pr.sh`/`finalize-pr.sh` + PR/Issue templates; labels + infra milestone. **No** Project-sync GitHub Actions — agents own the board via CLI.
 6. **Fill This Project** from evidence: stack, commands, code map, deploy target, hooks (local CI), GitHub deploy workflows, external services, invariants, **product doc paths / INDEX**.
    6b. **Documentation system gap-fill:** If `docs/INDEX.md` missing, create it listing real docs. Ensure knowledge graph points at product docs. Add or update thin `DEVELOPMENT.md`, feature/capability map, and test notes when the repo has non-trivial surface area and those docs are missing or stale. Do not invent a novel doc tree when a clear existing layout works — index and maintain what exists.
@@ -688,7 +688,7 @@ Trigger: Architect says install/init Agent OS, or you find no usable `AGENTS.md`
    - If a repo has both local hooks and redundant GitHub PR CI for the same gates, prefer local hooks and remove or avoid the duplicate Actions (cost + drift).
 8. **Align handoff/README** links to `AGENTS.md` if present.
 9. **Initialize task management:** Create `tasks/lessons.md` (empty, with header). Create `tasks/todo.md` if a multi-step objective is active.
-10. **Verify** with checklist below (including Superpowers checks).
+10. **Verify** with checklist below (including Agent Skills checks).
 11. **Commit** on the chore branch (message without AI authorship language). Local-first — do not push unless `/end` or ship exception.
 12. **Closeout** to Architect: what was installed, Agent Skills status, gaps found and filled, how to prompt, next product step.
 
@@ -713,72 +713,76 @@ Run this during Bootstrap and whenever the agent suspects environment drift (e.g
 
 ---
 
-## Agent Skills Pack (obra/superpowers) — standing global
+## Agent Skills Pack (addyosmani/agent-skills) — standing global
 
-**Canonical pack:** [github.com/obra/superpowers](https://github.com/obra/superpowers)  
-**Status:** Architect-approved **global** engineering skills, hooks, lifecycle commands, specialist agents, and quality guards. Once installed on the machine, agents treat the pack as standing capability — use it when relevant without waiting to be told.
+**Canonical pack:** [github.com/addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)  
+**Status:** Architect-approved **global** engineering skills (Define → Plan → Build → Verify → Review → Ship), specialist personas, and reference checklists. Once installed on the machine, agents treat the pack as standing capability — use it when relevant without waiting to be told.
+
+**Removed:** obra/superpowers (Grok plugin + OpenCode plugin). Do **not** reinstall Superpowers or stack a second meta-router.
 
 ### Install surfaces (machine-level)
 
-| Surface                            | How                                                                                                                                    | Purpose                                                                                        |
-| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| **Grok Build**                     | `grok plugin install obra/superpowers --trust` + `[plugins] enabled` includes `Superpowers`                                            | Skills, slash commands, specialist agents, plugin hooks                                        |
-| **Grok skills path**               | `~/.agents/skills/*` OS skills only; Superpowers via Grok plugin                                                                       |
-| **OpenCode skills**                | Superpowers plugin in global `opencode.jsonc` + OS skills in `~/.agents/skills`                                                        |
-| **Chrome DevTools MCP (Grok)**     | `grok plugin install ChromeDevTools/chrome-devtools-mcp --trust` (or marketplace) + `[plugins] enabled` includes `chrome-devtools-mcp` | Browser verification tools for both CLI and skills                                             |
-| **Chrome DevTools MCP (OpenCode)** | Global `~/.config/opencode/opencode.jsonc` → `mcp.chrome-devtools` local command `npx -y chrome-devtools-mcp@latest`                   | Same MCP tools in OpenCode                                                                     |
-| **Session lifecycle (Grok)**       | Optional Grok hooks under `~/.grok/hooks/` when useful                                                                                 | Evidence injection is helpful; **Session Start/End protocols in this file remain agent-owned** |
-| **Session lifecycle (OpenCode)**   | Global skills `~/.agents/skills/{session-start,session-end,…}` + `AGENT_OS_ENFORCEMENT.md`                                             | Same protocols as Grok; no per-repo skill copies; no slash-command files                       |
+| Surface                            | How                                                                                                  | Purpose                                                                                            |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| **Skill install**                  | `bash ~/.agents/scripts/sync-agent-skills.sh`                                                        | Pulls upstream → `~/.agents/skills/` + personas `~/.agents/agents/` + refs `~/.agents/references/` |
+| **Grok Build**                     | `[skills].paths = ["~/.agents/skills"]` in `~/.grok/config.toml` (no Superpowers plugin)             | Discovers OS + methodology skills                                                                  |
+| **OpenCode**                       | `"skills": { "paths": ["~/.agents/skills"] }` in global `opencode.jsonc` (no Superpowers@git plugin) | Same skill surface as Grok                                                                         |
+| **Meta router**                    | `using-agent-skills` (OS overlay under `~/.agents/os-overlays/`)                                     | Intent → skill mapping + OS composition rules                                                      |
+| **Chrome DevTools MCP (Grok)**     | `chrome-devtools-mcp` plugin enabled                                                                 | Browser verification                                                                               |
+| **Chrome DevTools MCP (OpenCode)** | `mcp.chrome-devtools` → `npx -y chrome-devtools-mcp@latest`                                          | Same MCP tools                                                                                     |
+| **Session lifecycle (Grok)**       | Optional `~/.grok/hooks/`                                                                            | Evidence injection; protocols remain agent-owned                                                   |
+| **Session lifecycle (OpenCode)**   | Global skills + `AGENT_OS_ENFORCEMENT.md`                                                            | Same protocols; no per-repo skill copies                                                           |
 
-Repair install if missing (agent runs this during bootstrap / when drift detected — do not ask the Architect to copy files):
+Repair install if missing (agent runs this during bootstrap / when drift detected):
 
 ```bash
-# Grok plugin (skills + commands + agents + hooks)
-grok plugin install obra/superpowers --trust
-# ensure enabled in ~/.grok/config.toml → [plugins].enabled includes "Superpowers"
-
-# Superpowers: harness plugins only — never install addyosmani/agent-skills
-# OpenCode: superpowers@git+… in global opencode.jsonc
+bash ~/.agents/scripts/sync-agent-skills.sh
+# Expect: ~/.agents/skills has OS control-plane + ~24 methodology skills
+# using-agent-skills present; opencode debug skill lists them
 ```
 
-Verify: Superpowers skills visible in harness; `ls ~/.agents/skills` shows **only** OS skills (session-\*, bootstrap, opencode-session-hygiene); no addy agent-skills.
+Verify: `ls ~/.agents/skills | wc -l` ≥ 25; `using-agent-skills` loads; no `superpowers` in Grok plugins or OpenCode plugin array.
 
 ### Autonomous use (no Architect babysitting)
 
 Agents **must** use the pack without being told skill names:
 
-1. On non-trivial work, map intent → skill(s) using **Superpowers** when unsure.
+1. On non-trivial work, map intent → skill(s) using **`using-agent-skills`** when unsure.
 2. **If a skill applies, invoke and follow it** (process, verification, anti-rationalization tables). Skipping a required workflow (spec / plan / test / review / security when triggered) is a contract failure.
-3. Lifecycle mapping (slash commands when the harness exposes them; otherwise intent-driven):
-   - DEFINE/PLAN → Superpowers `brainstorming` / `writing-plans` (or `using-superpowers`)
-   - BUILD/TEST → Superpowers `test-driven-development` / `subagent-driven-development` / `executing-plans`
-   - VERIFY → Superpowers `verification-before-completion` / `systematic-debugging`
-   - REVIEW → Superpowers `requesting-code-review` / `receiving-code-review`
-   - SHIP/END → OS skills `session-end` / `session-end-gitops` (+ GitOps protocol in AGENTS.md)
-4. Specialist agents: code-reviewer · test-engineer · security-auditor · web-performance-auditor — use for targeted review, not as a substitute for owning the change.
-5. **Hooks / guards:** respect pack hooks and skill verification gates. Never `--no-verify` to skip local CI. Skill "verification" sections are mandatory evidence, not optional prose.
-6. **Compose with Agent OS:** Local-first GitOps, gold-standard local CI, and Architect release authority **win** when a skill's git/CI advice conflicts with this OS. Skills do **not** override Architect taste/intent or authorize product redesigns (**Intent before invention**).
+3. Lifecycle mapping (intent-driven; slash phrases optional):
+   - DEFINE → `interview-me` / `idea-refine` / `spec-driven-development`
+   - PLAN → `planning-and-task-breakdown`
+   - BUILD → `incremental-implementation` + `test-driven-development` (+ UI/API/context/source/doubt skills as triggered)
+   - VERIFY → `test-driven-development` / `browser-testing-with-devtools` / `debugging-and-error-recovery`
+   - REVIEW → `code-review-and-quality` / `code-simplification` / `security-and-hardening` / `performance-optimization`
+   - SHIP product → `shipping-and-launch` (+ `ci-cd-and-automation`, `observability-and-instrumentation`, `documentation-and-adrs` as needed)
+   - SHIP/END session → OS skills `session-end` / `session-end-gitops` (+ GitOps protocol in AGENTS.md)
+4. Specialist personas (`~/.agents/agents/`): code-reviewer · test-engineer · security-auditor · web-performance-auditor — targeted review, not a substitute for owning the change.
+5. **Hooks / guards:** respect skill verification gates and local CI. Never `--no-verify`. Skill "verification" sections are mandatory evidence.
+6. **Compose with Agent OS:** Local-first GitOps, gold-standard local CI, and Architect release authority **win** when a skill's git/CI advice conflicts with this OS. Skills do **not** override Architect taste/intent (**Intent before invention**).
+7. **Artifacts:** prefer `docs/specs/`, `docs/plans/`, `tasks/todo.md` over root-only `SPEC.md` (upstream skill names still apply).
+8. **Adoption:** greenfield = full lifecycle; brownfield = context + characterization tests first (see upstream adoption-guide). Never refactor untested legacy without guards.
 
 ### Bootstrap: fill project / agent gaps
 
 When Architect runs bootstrap / install OS / "set this project up", after OS materialize:
 
-1. Confirm global Superpowers is healthy (install/repair if not).
+1. Confirm global agent-skills is healthy (`sync-agent-skills.sh` if not).
 2. **Project gap analysis against skill expectations** (fix or track in same session):
    - Test runner + at least a thin way to run unit/smoke tests (TDD skill)
    - Local CI hooks gold standard (pre-commit quality / pre-push test+build) — pack `ci-cd-and-automation` informs shape; **hooks remain local CI**, GitHub Actions stay deploy-only per this OS
    - Lint/format tool when stack has one
-   - Durable docs dirs: `docs/{specs,plans,archive}/` (or legacy `docs/superpowers/*`)
+   - Durable docs dirs: `docs/{specs,plans,archive}/` (legacy `docs/superpowers/*` redirect-only)
    - `tasks/lessons.md` + ability to keep `tasks/todo.md` / plan artifacts for multi-step work
    - README or This Project commands for install/dev/build/test/lint
    - Security/secrets baseline (no secrets in git; `.gitignore` for env files)
    - Browser projects: note Chrome DevTools MCP if UI verification matters
 3. Record stack-specific skill notes under **This Project** only when needed (e.g. "tests: `npm test`").
-4. Do **not** vendor-copy skills into each repo — global install only. **Never** create `.agents/`, `.agent/`, `.agents/vendor/`, or project `.opencode/skill(s)` / `command` symlinks. Product-specific workflow notes belong in `AGENTS.md` **This Project** / `docs/`, not skill trees.
+4. Do **not** vendor-copy skills into each repo — global install only. **Never** create `.agents/`, `.agent/`, `.agents/vendor/`, or project `.opencode/skill(s)` / `command` trees. Product-specific workflow notes belong in `AGENTS.md` **This Project** / `docs/`, not skill trees.
 
 ### Methodology note
 
-This OS is the always-on work layer. **Superpowers** (Grok + OpenCode plugins) supplies methodology. OS skills + hooks supply session/GitOps. **No** addy Superpowers. **No** command wrappers.
+This OS is the always-on work layer. **addyosmani/agent-skills** supplies methodology. OS skills + hooks supply session/GitOps. **No Superpowers.** **No** command wrapper trees required.
 
 ## Harness common ground (Grok + OpenCode)
 
@@ -790,7 +794,7 @@ Grok and OpenCode load **skills, hooks, commands, plugins, and MCP differently**
 | ---------------------------------------------- | ------------------------------------------------------------------------------------------ |
 | **One instruction surface**                    | Root `AGENTS.md` is the always-on contract in every product repo                           |
 | **Session Start / End / Local vs GitOps**      | Continuity, ownership, and when GitHub is touched                                          |
-| **Superpowers**                                | Production craft (spec/plan/build/test/review/ship + specialists) available on the machine |
+| **Agent Skills**                               | Production craft (spec/plan/build/test/review/ship + specialists) available on the machine |
 | **Browser evidence when UI matters**           | Chrome DevTools MCP (or equivalent) available to the harness in use                        |
 | **Local CI in the repo**                       | `.githooks/` gold standard; product truth in **This Project**                              |
 | **Auth that works for the model path you use** | e.g. OpenCode Google/Gemini via `opencode-antigravity-auth`                                |
@@ -801,14 +805,14 @@ Agents **follow these protocols even when no hook fires**. Hooks/commands are ac
 
 Use each harness’s **native** surfaces. Prefer the lightest setup that keeps outcomes reliable. Avoid stacking custom plugins that re-implement the OS.
 
-| Concern                     | Grok-native (typical)                                | OpenCode-native (typical)                                                                                                                       |
-| --------------------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| Skills                      | Superpowers plugin + OS skills in `~/.agents/skills` | Superpowers plugin + same OS skills                                                                                                             |
-| Lifecycle shortcuts         | Slash skills / plugin commands                       | Skills menu (`session-start`, `session-end`, `spec-driven-development`, …)                                                                      |
-| Session evidence (optional) | `~/.grok/hooks/*` scripts if they help re-ground     | Rely on **Session Start Protocol** in chat + optional commands — **no required custom OpenCode plugin**                                         |
-| Browser MCP                 | Grok `chrome-devtools-mcp` plugin                    | `mcp.chrome-devtools` in `~/.config/opencode/opencode.jsonc`                                                                                    |
-| Model / Google auth         | Provider config for Grok                             | **`opencode-antigravity-auth@latest` only** as the standing OpenCode auth plugin; model prefs in **global** `~/.config/opencode/opencode.jsonc` |
-| Project facts               | **This Project** + `docs/`                           | Same files — not a parallel OpenCode instruction tree                                                                                           |
+| Concern                     | Grok-native (typical)                            | OpenCode-native (typical)                                                                                                                       |
+| --------------------------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Skills                      | `~/.agents/skills` (OS + agent-skills)           | `skills.paths` → same `~/.agents/skills`                                                                                                        |
+| Lifecycle shortcuts         | Intent + skill names                             | Intent + skill tool (`session-start`, `using-agent-skills`, `spec-driven-development`, …)                                                       |
+| Session evidence (optional) | `~/.grok/hooks/*` scripts if they help re-ground | Rely on **Session Start Protocol** in chat + optional commands — **no required custom OpenCode plugin**                                         |
+| Browser MCP                 | Grok `chrome-devtools-mcp` plugin                | `mcp.chrome-devtools` in `~/.config/opencode/opencode.jsonc`                                                                                    |
+| Model / Google auth         | Provider config for Grok                         | **`opencode-antigravity-auth@latest` only** as the standing OpenCode auth plugin; model prefs in **global** `~/.config/opencode/opencode.jsonc` |
+| Project facts               | **This Project** + `docs/`                       | Same files — not a parallel OpenCode instruction tree                                                                                           |
 
 **OpenCode plugin posture:** keep the auth plugin lean. Extra local plugins that force model behavior or re-host Session Start/End are optional experiments, not OS requirements. If something fails, fix config or follow the protocol in this file.
 
@@ -837,11 +841,11 @@ Wire it the **harness-native** way (Grok plugin enablement and/or OpenCode `mcp`
 [ ] .github/ai-context/PROJECT_KNOWLEDGE_GRAPH.md maps real paths
 [ ] .github/ai-context/dev-journal.md exists
 [ ] docs/INDEX.md exists (or tracked gap with only trivial/no docs yet)
-[ ] docs/{specs,plans,archive}/ present (or legacy superpowers paths)
+[ ] docs/{specs,plans,archive}/ present (or legacy agent-skills paths)
 [ ] DEVELOPMENT.md or equivalent command surface linked from This Project
 [ ] Knowledge graph links domains → docs
-[ ] OS skills present (`session-start/end`, `session-end-gitops`, `agent-os-bootstrap`, `session-start` (product boot), `opencode-session-hygiene`); Superpowers plugins enabled; command dirs empty
-[ ] Superpowers + Superpowers available globally (Grok plugin; OpenCode Superpowers plugin + `~/.agents/skills`; no project `.agents/`)
+[ ] OS skills present (`session-start/end`, `session-end-gitops`, `agent-os-bootstrap`, `session-start` (product boot), `opencode-session-hygiene`); agent-skills plugins enabled; command dirs empty
+[ ] agent-skills + agent-skills available globally (Grok plugin; OpenCode agent-skills plugin + `~/.agents/skills`; no project `.agents/`)
 [ ] Harness surfaces healthy enough to work (skills discoverable; OpenCode auth plugin present; browser MCP if UI work needs it)
 [ ] Chrome DevTools MCP global (Grok plugin `chrome-devtools-mcp`; OpenCode `opencode mcp list` → connected)
 [ ] Project gaps for skills filled or tracked (tests, local CI, docs dirs, canonical commands)
@@ -881,7 +885,7 @@ If any box fails → fix in the same session.
 - Persist taught behavior in durable files **same session**.
 - Model/provider agnostic.
 - **Proactive stewardship + suggestions**: you own the project's complete lifecycle and health, not just the current task. Surface outdated deps, missing tests, broken configs, doc drift, suboptimal patterns, and improvement opportunities — even when the Architect didn't ask. Suggest concrete next steps; activate skills/specialists/browser/gh fully.
-- **Superpowers:** when a skill applies, use it. On bootstrap/OS install, ensure the pack is global and fill project gaps — do not wait for skill names in the prompt.
+- **agent-skills:** when a skill applies, use it. On bootstrap/OS install, ensure the pack is global and fill project gaps — do not wait for skill names in the prompt.
 - **One-time establishes; continuous keeps truth:** bootstrap is not a substitute for Session Start, INDEX/doc sync, ignore health, or Gist drift checks. See **One-time vs continuous**.
 
 ### Core loop
@@ -1035,12 +1039,12 @@ Do **not** create or commit project-local OpenCode runtime JSON:
 
 Instructions stay in root **`AGENTS.md`** (OpenCode loads them). Skills and commands are **global only** (no project discovery symlinks):
 
-| Tracked in repo                       | Purpose                                                                                                               |
-| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `~/.agents/skills/*/SKILL.md`         | Global skills only (`session-start`, `session-end`, `agent-os-bootstrap`, `session-start` (product boot), craft pack) |
-| `*(commands removed — use skills)*`   | OpenCode slash commands (global)                                                                                      |
-| Superpowers plugin (`opencode.jsonc`) | OpenCode methodology skills — no project symlinks                                                                     |
-| `scripts/github/*`                    | Agent GitHub/Project V2 CLI (no Actions)                                                                              |
+| Tracked in repo                        | Purpose                                                                                                               |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `~/.agents/skills/*/SKILL.md`          | Global skills only (`session-start`, `session-end`, `agent-os-bootstrap`, `session-start` (product boot), craft pack) |
+| `*(commands removed — use skills)*`    | OpenCode slash commands (global)                                                                                      |
+| agent-skills plugin (`opencode.jsonc`) | OpenCode methodology skills — no project symlinks                                                                     |
+| `scripts/github/*`                     | Agent GitHub/Project V2 CLI (no Actions)                                                                              |
 
 **Gitignore:** ignore accidental local copies of `opencode.json(c)` / project `tui.json(c)`, plus entire `.agents/` / `.agent/` trees and `.opencode/*` runtime except optional README (`state/`, `cache/`, `node_modules/`).
 
@@ -1342,7 +1346,7 @@ Stewardship is necessary but not sufficient. Agents must **actively suggest** hi
 
 **Capability activation (autonomous):**
 
-- Map work with **Superpowers**; run applicable Superpowers methodology skills + OS session skills without waiting for slash names.
+- Map work with **agent-skills**; run applicable agent-skills methodology skills + OS session skills without waiting for slash names.
 - Use **specialist agents** when they raise quality: code-reviewer, test-engineer, security-auditor, web-performance-auditor — especially before `/end` on non-trivial units.
 - Use **subagents** for parallel research, large refactors, or independent test passes; synthesize before coding further.
 - Use **Chrome DevTools MCP** for real UI/runtime claims; use `gh` for Issues/PRs/Project V2 on GitOps turns.
@@ -1384,7 +1388,7 @@ Every machine **must** have these **global** skills (under `~/.agents/skills/` �
 | `agent-os-bootstrap`           | Install/repair OS from Gist                     |
 | `session-start` (product boot) | Whole-repo boot / status                        |
 
-OpenCode: use global `*(commands removed — use skills)*` and Superpowers + `~/.agents/skills`. **Do not** create project `.agents/` or skill/command symlinks. Missing global skills = incomplete machine setup — repair via `/agent-os-bootstrap` (global health), not by vendoring into the repo.
+OpenCode: use global `*(commands removed — use skills)*` and agent-skills + `~/.agents/skills`. **Do not** create project `.agents/` or skill/command symlinks. Missing global skills = incomplete machine setup — repair via `/agent-os-bootstrap` (global health), not by vendoring into the repo.
 
 ### Session End Protocol (only on `/end`, "end session", "ship it", or equivalent)
 
@@ -1414,7 +1418,7 @@ Taste + function · stack-fit modern tools · root cause · security · a11y bas
 
 ### Stay on the rails
 
-Prefer whole-repo status over session-diff tunnel vision. Run local CI, core work, and applicable **Superpowers** without waiting for slash names. Close deferrals with a fix or a tracked item. Use hooks (no `--no-verify`). Keep mid-session work local-first unless an exception applies. Stay off the protected branch without Architect approval. Keep public git human. Handle money/user error paths explicitly. Keep secrets out of commits. One always-on OS file. Explain dirty handoffs. Link new docs/scripts from INDEX/graph. Treat release tags as durable. Refine Protected OS sections rather than dropping them. Product design follows Architect intent.
+Prefer whole-repo status over session-diff tunnel vision. Run local CI, core work, and applicable **agent-skills** without waiting for slash names. Close deferrals with a fix or a tracked item. Use hooks (no `--no-verify`). Keep mid-session work local-first unless an exception applies. Stay off the protected branch without Architect approval. Keep public git human. Handle money/user error paths explicitly. Keep secrets out of commits. One always-on OS file. Explain dirty handoffs. Link new docs/scripts from INDEX/graph. Treat release tags as durable. Refine Protected OS sections rather than dropping them. Product design follows Architect intent.
 
 ### Instruction surfaces
 
@@ -1430,7 +1434,7 @@ Prefer whole-repo status over session-diff tunnel vision. Run local CI, core wor
 | `DEVELOPMENT.md` (or equiv.)                       | Machine/script commands                                      |
 | Project guides (FEATURES, STACK, TEST_STRATEGY, …) | Product-specific truth agents maintain                       |
 | Project `.agents/` / `.agent/`                     | **Forbidden / retired** — remove if found; skills are global |
-| Global **Superpowers** pack                        | Lifecycle engineering skills/hooks/commands (machine-level)  |
+| Global **agent-skills** pack                       | Lifecycle engineering skills/hooks/commands (machine-level)  |
 | Machine session hooks                              | Evidence injection + Decision Gate reminders                 |
 | `tasks/lessons.md`                                 | Persistent mistake prevention                                |
 | `tasks/todo.md`                                    | Active objective tracking                                    |
@@ -1469,12 +1473,12 @@ Durable judgement. Curate; don't bloat. No product-specific design rules here.
 26. **Context self-preservation** — `AGENTS.md` is your OS. Re-read it at every session start and after any context loss (compaction, truncation, long conversations). Never operate from memory alone when the source of truth is one file-read away.
 27. **Gold-standard local CI** — pre-commit = quality (fast lint/format); pre-push = correctness (test + build). Do not invert or collapse both into one slow commit hook.
 28. **Whole-project ownership & continuity** — own the project's real state, not only staged files or this session's diff. Re-check status before planning/implementing; bridge sessions and agents without disconnection. Verify and fix/track beyond your narrow edit set when the tree demands it.
-29. **Harness scope** — runtimes for this OS: **Grok Build (CLI/TUI)** and **OpenCode**. Same root `AGENTS.md` + global **Superpowers** pack for both. One always-on instruction file: `AGENTS.md`.
+29. **Harness scope** — runtimes for this OS: **Grok Build (CLI/TUI)** and **OpenCode**. Same root `AGENTS.md` + global **agent-skills** pack for both. One always-on instruction file: `AGENTS.md`.
 30. **Agent OS autonomy + durable docs** — for non-trivial product work, agents run Research → Plan → Implement → Verify from this OS and may persist specs/plans under `docs/` (or legacy `docs/superpowers/` paths if already present) without Architect slash commands. Taste/design pivots need Architect intent.
 31. **Intent before invention** — do not invent redesigns (scroll-snap, brutalism, rebrands, layout systems) from skills or partial assets when the Architect did not ask. Prefer stack defaults and preserve working product work; escalate taste with one structured question.
 32. **Local-first vs session-end GitOps** — default every turn stops at verified + committed **locally**. Push/PR/merge only on `/end` / ship or documented mid-session exceptions. Never strand the Architect mid-session with unexpected remote noise; never lose work by leaving it uncommitted.
 33. **Gist protocol preservation** — when editing the canonical Gist OS, **add or refine** Session Start/End, Local vs GitOps, Hooks/local CI, harness scope, Agent Skills Pack, and related structural sections — **do not delete or "slim" them** without an Architect-approved explicit diff. Accidental protocol loss is a contract failure.
-34. **Superpowers autonomy** — use obra/superpowers globally (skills, hooks, lifecycle commands, specialist agents, guards) without waiting for Architect to name them. On bootstrap, repair global install and fill project gaps. Skills never override Architect intent, Local-vs-GitOps, or release authority.
+34. **Agent Skills autonomy** — use addyosmani/agent-skills globally (lifecycle skills, personas, verification gates) via `using-agent-skills` without waiting for Architect to name them. On bootstrap, repair global install and fill project gaps. Skills never override Architect intent, Local-vs-GitOps, or release authority. Superpowers is forbidden.
 35. **Living index** — always-on `AGENTS.md` + `docs/INDEX.md` + knowledge graph stay linked to real docs/scripts. Create project docs after bootstrap; sync them on the same branch as code; no orphan or duplicate surfaces.
 36. **Suggestive excellence** — proactively propose high-leverage next steps and activate full capabilities (skills, specialists, browser, gh). Never silent deferral; never unsolicited product redesign.
 37. **Handoff continuity** — Session Start Decision Gate + clean per-turn state + Session End GitOps so work progresses as complete units, not abandoned fragments.
@@ -1587,7 +1591,7 @@ Reproduce → Localize → Reduce to minimal case → Fix at root cause → Add 
 - **GitHub:** `.github/workflows/deploy.yml` (Pages deploy/release only) · no PR lint/test Actions · Dependabot present
 - **External services:** SeamFusion Cloud Functions API (`PUBLIC_API_URL`, `PUBLIC_ACADEMY_ID`) · Web3Forms (contact) · WhatsApp deep links
 - **GitHub Project V2:** configure `.github/agent-project.yml` (`project_owner`, `project_number`); agents use `scripts/github/*` (no Actions card-movers)
-- **Harnesses:** **OpenCode desktop** (default product work) · **Grok Build** from `~/Projects` (Agent OS / machine) · same root `AGENTS.md` + global **Superpowers**
+- **Harnesses:** **OpenCode desktop** (default product work) · **Grok Build** from `~/Projects` (Agent OS / machine) · same root `AGENTS.md` + global **agent-skills**
 - **Durable docs:** `docs/INDEX.md` · `docs/specs/` · `docs/plans/` · `docs/archive/` (legacy `docs/superpowers/` if present)
 - **Invariants:** dark glassmorphism + neon design system (`DESIGN_SYSTEM.md`) · do not edit `backup-legacy/` · do not commit video >90MB · validate dynamic email/WhatsApp links · deploy workflow runs from **repo root** (not a nested astro folder)
 
@@ -1621,7 +1625,7 @@ When editing the Gist, the following structural contracts are **protected**. Age
 - GitHub Issues/PRs/labels/milestones/status hygiene (agent-owned on GitOps)
 - GitHub Project V2 sync via `gh` + `scripts/github/*` (no Actions card-movers)
 - Hooks / local CI gold standard + deploy-only GitHub Actions policy
-- Agent Skills Pack (Superpowers methodology + lean OS session skills only; extend-existing-first)
+- Agent Skills Pack (addyosmani/agent-skills methodology + OS session skills; extend-existing-first)
 - Harness common ground (outcomes shared; harness-native setup agent-maintained; OpenCode auth plugin lean)
 - Chrome DevTools MCP available when UI work needs evidence
 - Harness scope (Grok Build CLI + OpenCode for same AGENTS.md)
@@ -1680,33 +1684,33 @@ This OS is **harness-scoped** so setup stays lean and behavior stays predictable
 | Product facts              | That repo’s **This Project** + `docs/INDEX.md` + product docs             |
 | OpenCode machine runtime   | Gist `fa4d874490158f7252ca2441227d3343` → `~/.config/opencode/` only      |
 | Session/GitOps skills      | `~/.agents/skills/` (not project-vendored)                                |
-| Methodology                | Superpowers plugin (Grok + OpenCode)                                      |
+| Methodology                | addyosmani/agent-skills in `~/.agents/skills` (both harnesses)            |
 
 **OpenCode Google auth:** `opencode-antigravity-auth` and `~/.config/opencode/antigravity-*` are **OpenCode’s Google/Gemini auth path** — not a second product harness. Keep them healthy.
 
 **Standing global capability:**
 
-- **[obra/superpowers](https://github.com/obra/superpowers)** — methodology skills (see **Agent Skills Pack**).
+- **[addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)** — methodology skills (see **Agent Skills Pack**).
 - **Chrome DevTools MCP** — Grok plugin + OpenCode `mcp.chrome-devtools` for UI evidence.
 - **Session Start/End** — agents own protocols; Grok may inject evidence via `~/.grok/hooks/`; OpenCode relies on skills + enforcement file.
 - **Context7 MCP** (OpenCode) — live library docs when useful.
 
 **Grok note:** project `AGENTS.md` may be truncated in automatic injection (~10k chars). Agents **must still Read** root `AGENTS.md` (PROTOCOL + How to work with this Architect + This Project + Session protocols) before product or OS edits — especially in Grok. OpenCode loads the repo `AGENTS.md` more fully when cwd is the product root.
 
-**Durable project memory** lives in the repo: `docs/`, `tasks/`, product docs, `.github/ai-context/`. Methodology = **this Agent OS composed with Superpowers**.
+**Durable project memory** lives in the repo: `docs/`, `tasks/`, product docs, `.github/ai-context/`. Methodology = **this Agent OS composed with agent-skills**.
 
 # Durable project memory (Agent OS–owned)
 
-**Default methodology** for non-trivial product work: **this Agent OS** (Research → Plan → Implement → Verify) **composed with** the global **Superpowers** pack (spec/plan/build/test/review/ship skills as they apply).  
+**Default methodology** for non-trivial product work: **this Agent OS** (Research → Plan → Implement → Verify) **composed with** the global **agent-skills** pack (spec/plan/build/test/review/ship skills as they apply).  
 Architect states intent only. Agents execute **autonomously** — slash commands are optional accelerators, not required ceremony.
 
-| Layer                                       | Owns                                                                                        |
-| ------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Agent OS (`AGENTS.md`)                      | Always-on contract (ownership, GitOps, local CI, continuity, harness)                       |
-| Durable project docs                        | Specs/plans/lessons that survive sessions and update as agents work                         |
-| Local CI (`.githooks/`)                     | Quality / correctness gates                                                                 |
-| **Superpowers** (global)                    | Lifecycle skills, hooks, guards — use autonomously; product design follows Architect intent |
-| Optional tooling (e.g. Chrome DevTools MCP) | Only when installed and relevant                                                            |
+| Layer                                       | Owns                                                                                          |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Agent OS (`AGENTS.md`)                      | Always-on contract (ownership, GitOps, local CI, continuity, harness)                         |
+| Durable project docs                        | Specs/plans/lessons that survive sessions and update as agents work                           |
+| Local CI (`.githooks/`)                     | Quality / correctness gates                                                                   |
+| **agent-skills** (global)                   | Lifecycle skills, personas, gates — use autonomously; product design follows Architect intent |
+| Optional tooling (e.g. Chrome DevTools MCP) | Only when installed and relevant                                                              |
 
 ## Intent before invention
 
@@ -1761,7 +1765,7 @@ One-line/docs/chore with no design ambiguity. Closeout: "trivial — no new plan
 
 ## Methodology defaults (logical inference)
 
-- **Work layer** = Agent OS + global Superpowers + durable repo files. Keep that stack healthy on bootstrap and when drift shows up.
+- **Work layer** = Agent OS + global agent-skills + durable repo files. Keep that stack healthy on bootstrap and when drift shows up.
 - **Skills raise quality** (spec/plan/test/review/ship, specialists, browser evidence); they do not invent product design or requirements the Architect did not state.
 - **Done** means applicable verification ran and evidence is in the closeout — not that the code merely compiles in your head.
 - **Preserve product language** (brand, layout, stack defaults) until the Architect sets new taste (**Intent before invention**).

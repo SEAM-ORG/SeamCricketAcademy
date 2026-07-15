@@ -10,3 +10,5 @@ Canonical durable memory:
 - Master directory: `docs/INDEX.md`
 
 This tree remains only so old links do not 404. Prefer consolidating any remaining files into the paths above.
+
+Methodology pack is machine-global **addyosmani/agent-skills** (`~/.agents/skills`), not this tree.

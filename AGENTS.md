@@ -184,6 +184,34 @@ On `/end`, “end session”, “ship it”, or when opening/merging a PR for th
 
 Violation is a **contract failure**, not a style note.
 
+# No silent ignore of unfinished work (hard)
+
+**Unfinished work is always owned** — not only at Session Start, and not only the current branch’s dirty files.
+
+Agents **must never** silently ignore, forget, or deprioritize unfinished work because it is “out of this chat,” “pre-existing,” “not this session,” “not my branch,” “only local,” or “hygiene noise.”
+
+## What counts as unfinished work
+
+| Class                                 | Examples                                                    | Required disposition                                                                                         |
+| ------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| **Dirty tree**                        | Modified / staged / untracked in the active repo            | Finish+commit, or PARK (4 debt fields), or ASK                                                               |
+| **Local branches ahead of protected** | Any branch with commits not in `origin/main` (or protected) | Resume · ship · PARK · delete if **proven supersedable** · or ASK                                            |
+| **Unpushed commits**                  | Local branch ahead of its `origin/*`                        | Push feature branch for multi-harness durability, or PARK why not                                            |
+| **Open plans / todos / debt**         | `tasks/todo.md`, `docs/plans/*`, debt register              | Resume before net-new, or update status honestly                                                             |
+| **Open PRs / CI failures**            | `gh pr list`, preflight                                     | Fix-and-merge, close with comment, or track                                                                  |
+| **Portfolio loose artifacts**         | Files under `~/Projects/` not inside a product git root     | Commit into a real repo, move into product/docs, or PARK with path + done-when — **never invisible orphans** |
+| **Machine OS drift**                  | Skills/hooks/enforcement vs gist SoT                        | Repair same session when OS work is in scope, or PARK                                                        |
+
+## Rules
+
+1. **Inventory is mandatory** at Session Start **and** before each non-trivial turn (re-ground). Mid-session does not exempt you.
+2. **Clean `main` is not proof of idle portfolio.** Local branches, loose files, and open plans can still hold work.
+3. **Superseded chore branches** (historical experiments fully replaced by main) may be **deleted after classification** — that is disposition, not ignore. When unsure whether product value remains → PARK or ASK; if unique assets exist, **recover them onto a branch** before delete.
+4. **Silent ignore is a contract failure** equal to skipping Session Start.
+5. Closeout / Session End must list remaining unfinished work with disposition (or clean zero).
+
+---
+
 # OS Structure & Index (always maintain)
 
 This section is the **map of the Operating System itself** — project-agnostic. After bootstrap, agents fill **project-specific** docs (stack, features, tests, scripts) and keep every link here honest. **Place + purpose + discoverability** for every durable artifact; delete or archive superseded files in the **same** change.

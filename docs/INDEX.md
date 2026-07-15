@@ -25,12 +25,12 @@
 
 ## Durable plans & specs
 
-| Path                         | Purpose                                 |
-| ---------------------------- | --------------------------------------- |
-| [specs/](specs/)             | Design specs                            |
-| [plans/](plans/)             | Implementation plans                    |
-| [archive/](archive/)         | Finished work                           |
-| [superpowers/](superpowers/) | Legacy durable-memory paths (same role) |
+| Path                         | Purpose                                               |
+| ---------------------------- | ----------------------------------------------------- |
+| [specs/](specs/)             | Design specs                                          |
+| [plans/](plans/)             | Implementation plans                                  |
+| [archive/](archive/)         | Finished work                                         |
+| [superpowers/](superpowers/) | **Redirect only** — use `docs/{specs,plans,archive}/` |
 
 ## Ops
 

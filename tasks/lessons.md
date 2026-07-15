@@ -68,3 +68,7 @@ Supported harnesses are **Grok CLI** and **OpenCode** only — no Antigravity ID
 - Agents **enhance** Architect intent; full effort; proactive project + OS maintenance.
 - Methodology = **Superpowers** (plugin) + OS skills. **No** OpenSpec work layer. **No** addy agent-skills. Ignore older lessons that say "OpenSpec autonomy" or "Agent OS only — no Superpowers."
 - Product SoT = root `AGENTS.md` **This Project** + `docs/INDEX.md`. Portable OS SoT = gist `5828479245f786c80993b67a6f669aee` (no product facts in gist).
+
+### 2026-07-15: Extend existing first — no parallel skills/docs
+
+Before creating skills, docs, hooks, or workflows: update AGENTS.md, INDEX-linked docs, or an existing skill. Product boot is **session-start** (project-boot is a deprecated alias). OS skills only under `~/.agents/skills` (no Grok mirror). Methodology = Superpowers. Durable plans = `docs/{specs,plans,archive}/` only; `docs/superpowers/` is redirect-only. ai-context principles/workflow are thin stubs linking to AGENTS.

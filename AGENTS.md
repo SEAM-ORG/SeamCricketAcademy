@@ -40,6 +40,7 @@ You operate under **Architect↔Agent OS**. These protocols override convenience
 | Non-trivial ask                          | `using-agent-skills` → follow that skill’s verify                                                                                                  |
 | Multi-step / multi-file / research-heavy | **Subagent-first** — fan out via harness Task/`task`/`spawn_subagent`; main agent orchestrates + synthesizes (do **not** wait for “use subagents”) |
 | Writing code                             | **ponytail** ladder (default full) after the task is legitimate                                                                                    |
+| JS/TS/JSON/CSS/HTML/Astro/Vue            | **Biome** format+lint (not Prettier/ESLint) — `bash ~/.config/agent-quality/format.sh --changed` · `check.sh`                                      |
 | Any change                               | Verify with evidence · same-branch memory · local commit · never bypass hooks                                                                      |
 | Product open / re-ground                 | `session-start` + preflight (exit 2 = clear blockers first)                                                                                        |
 | Ship / end session                       | `session-end` (GitOps + health)                                                                                                                    |
@@ -1183,6 +1184,21 @@ Automated scripts that the system runs to block bad actions before they land. **
 - **Maintenance:** Hook failure → fix root cause. **Never** `--no-verify`.
 - **Project-agnostic rule:** Commands vary; **split is constant**: commit=quality, push=test+build.
 
+#### Format & lint — Biome-first (machine-global + project)
+
+**JS/TS/JSON/CSS/HTML/Astro/Vue** use **[Biome](https://biomejs.dev)** for format **and** lint. **Do not** reintroduce Prettier or ESLint for those surfaces when Biome covers them.
+
+| Layer              | Location                                                               | Role                                                                                                          |
+| ------------------ | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Machine gate       | `~/.config/agent-quality/{check,format}.sh` + `biome.json`             | Pre-commit quality for all products; global defaults when a repo has no `biome.json`                          |
+| Global CLI         | `biome` (`npm i -g @biomejs/biome@2.5.4` or brew)                      | Agents + hooks resolve: project `node_modules/.bin/biome` → PATH → npx pin                                    |
+| Project            | `biome.json` / `biome.jsonc` + optional `@biomejs/biome` devDependency | Product rules (Tailwind CSS `css.parser.tailwindDirectives`, brownfield warns, monorepo nested `root: false`) |
+| Agents (proactive) | Before claim-done / commit                                             | `bash ~/.config/agent-quality/format.sh --changed` then `check.sh --changed` (or `npx biome check --write .`) |
+
+**Still language-native (not Biome):** Dart/Flutter → `fvm dart format` + analyze · Python → `ruff` · Go → `gofmt` · Markdown/YAML docs (human/review). Type-aware TS still uses `tsc` / project typecheck where required.
+
+**Bootstrap / greenfield:** install global Biome + agent-quality; add project `biome.json` (copy/extend global); wire pre-commit to `agent-quality/check.sh`; remove `.prettierrc*` / ESLint format stacks for Biome-covered files.
+
 #### Local CI (hooks — primary quality gate)
 
 **Policy:** All quality/correctness verification runs **locally via git hooks**, not as GitHub Actions on every PR (cost + drift). Dependabot, Jules, etc. cover GitHub-side essentials.
@@ -1508,7 +1524,7 @@ Names may vary; **roles** must be covered and indexed:
 #### Code quality & tests (standards)
 
 - Discover real gates from package manifests / Makefile / hooks / README — never invent a foreign stack.
-- Gold-standard local CI: **pre-commit = quality** (fast lint/format/analyze); **pre-push = correctness** (test + build). Document gaps under **This Project** instead of stuffing full test+build into every commit.
+- Gold-standard local CI: **pre-commit = quality** (fast lint/format/analyze via **Biome** for JS/TS family + language-native for Dart/Python/Go); **pre-push = correctness** (test + build). Document gaps under **This Project** instead of stuffing full test+build into every commit.
 - Prefer high-value tests (security, money, tenancy, critical journeys) over vanity coverage.
 - UI claims need runtime evidence (browser MCP when relevant).
 - On failure: stop-the-line → root cause → fix or track — never `--no-verify`.
@@ -1813,6 +1829,7 @@ When editing the Gist, the following structural contracts are **protected**. Age
 - Documentation System (INDEX, sync protocol, plans/journal, project guides, script/quality standards)
 - Proactive Project Stewardship + Proactive & Suggestive Agents
 - Subagent-first orchestration (model-agnostic hard mandate)
+- Format & lint — Biome-first (machine-global agent-quality + project biome.json)
 - How to work with this Architect (personal operating contract + portfolio context)
 - Solo Architect↔Agent team (Architect + agent; agent owns routine work)
 - Relationship protocol + Autonomy Decision Table

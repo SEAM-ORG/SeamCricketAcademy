@@ -31,6 +31,48 @@
 
 You operate under **Architect↔Agent OS**. These protocols override convenience, speed, and “quick one-liner” instincts. **Ignoring them is a contract failure.**
 
+## Always-on card (every turn — keep this short)
+
+**Load order:** this card → skill for the task → full AGENTS only when needed (session start, health, ship). Do **not** re-read the entire OS every message.
+
+| When                     | Do                                                                            |
+| ------------------------ | ----------------------------------------------------------------------------- |
+| Non-trivial ask          | `using-agent-skills` → follow that skill’s verify                             |
+| Writing code             | **ponytail** ladder (default full) after the task is legitimate               |
+| Any change               | Verify with evidence · same-branch memory · local commit · never bypass hooks |
+| Product open / re-ground | `session-start` + preflight (exit 2 = clear blockers first)                   |
+| Ship / end session       | `session-end` (GitOps + health)                                               |
+
+**Solo operator:** finish end-to-end this session. No “later.” HOLD only if externally blocked, with **recovery** branch/PR/path. Remove only after rehome/replace with equal-or-better + justification.
+
+### Turn-end closeout (required template — fill briefly)
+
+```
+## Closeout
+- **Summary:** <1–3 lines what changed for the user/product>
+- **Status:** done | in-progress | blocked
+- **Evidence:** <test/build/runtime/read-back command or result>
+- **Git:** <branch · commit hash or “clean” · uncommitted if any>
+- **Health:** clear | blockers disposed: … | HOLD+recovery: …
+- **Memory:** INDEX/This Project/lessons/docs updated? yes/n/a
+- **Next:** <one concrete next step or “ready for Architect”>
+```
+
+Omit empty lines only if truly n/a. **Do not** write a novel. **Do not** skip the template.
+
+### Session-end closeout (when `/end` / ship)
+
+```
+## Session End
+- **Summary:** …
+- **Status:** shipped | partial+HOLD
+- **Evidence:** …
+- **PRs:** <merged URLs or none>
+- **Health:** each open PR/CI item disposed or HOLD+recovery
+- **Main:** on protected, clean, ff origin? yes/no
+- **Next session:** first step
+```
+
 Canonical OS: gist `saadev0/5828479245f786c80993b67a6f669aee` → root `AGENTS.md`.
 
 ## Harness routing (Architect default)
@@ -1492,7 +1534,7 @@ Stewardship is necessary but not sufficient. Agents must **actively suggest** hi
 3. Commit on a properly named branch (**local only** by default)
 4. End-of-turn `git status` intentionally clean; any incomplete scope is **tracked** with status/priority (todo/plan/debt) — not left implicit
 5. Memory/docs sync if behavior changed (INDEX/graph/This Project briefs); update todo/plan/debt statuses
-6. Closeout (**brief**): **summary · status · evidence · git · deferred/blockers (if any) · related debt · suggested next**
+6. Closeout: fill **Always-on card → Turn-end closeout template** (required, brief)
 
 ### Required project-tracked skills (every product repo)
 
@@ -1519,7 +1561,7 @@ A session is **never** complete just because code changed locally. When there is
 4. Checkout protected branch; delete merged local branch residue when safe
 5. Run `bash scripts/github/session-end-hygiene.sh` (add `--close-stale-os-prs` when obsolete agent-os-init PRs are superseded by main). Hygiene **must** end by invoking `session-end-return-main.sh`.
 6. **Hard gate (non-optional):** `bash scripts/github/session-end-return-main.sh` exits 0 — workspace is on protected branch, **clean**, and (when `origin` exists) **not ahead** of `origin/<protected>`. Fail the session-end claim if this gate fails.
-7. Final closeout: **summary · status · evidence · PR/issue links (merged) · Project V2 status · remaining open work · next-session first step**. (NOTE: Agents MUST review and merge PRs themselves. Never hand open PRs back to the Architect.)
+7. Final closeout: fill **Session End template** (Always-on card). Agents merge/dispose PRs themselves — never hand open PRs to the Architect without disposition.
 
 **Ready for next session means:** `git status -sb` shows protected branch, clean tree, tracking origin (or local-only with intentional clean main). Never end Session End on a feature branch without an open PR URL + written justification.
 
@@ -1619,6 +1661,15 @@ Durable judgement. Curate; don't bloat. No product-specific design rules here.
 
 ## Checklists
 
+### Progressive load (anti-overwhelm)
+
+| Layer                              | When to load                              |
+| ---------------------------------- | ----------------------------------------- |
+| Always-on card + closeout template | **Every turn**                            |
+| Session Start / End skills         | Open product · ship                       |
+| Full AGENTS sections               | Ambiguity, OS edit, first day on repo     |
+| One methodology skill              | Current phase only (`using-agent-skills`) |
+
 **Start (and re-ground before non-trivial turns):** full repo status (all dirty/WIP) · prior session-end warnings · Session Start Decision Gate (continue/finish/promote/park/ask) · **local branches ahead of protected** · branch off protected · `tasks/lessons.md` + `todo.md` + open plans/specs · `docs/INDEX.md` + knowledge graph → whole-product fit · proactive brief · live probes · plan · execute same turn (local-first).
 
 **Per-turn complete:** end-to-end for the ask · verify · local commit · intentional git · brief docs/memory · tracked deferrals with status · closeout (PR on `/end` unless exception).
@@ -1678,10 +1729,10 @@ Reproduce → Localize → Reduce to minimal case → Fix at root cause → Add 
 | Proactive health improvements (deps, tests, docs, patterns)                       | Budget/timeline tradeoffs for large improvements        |
 | Modernizing code touched during work                                              | Full-project rewrites or stack migrations               |
 
-## Templates
+## Templates (canonical — also in Always-on card + ENFORCEMENT)
 
-**Per-turn closeout (brief):** Summary · Status · Evidence · Git · Deferred/blockers (if any) · Related debt · Next  
-**Session-end closeout (brief):** Summary · Status · Evidence · PR/Issue links · Open debt/todos (status) · Next-session first step  
+**Per-turn** and **Session End** closeout blocks are defined under **Always-on card** at the top of PROTOCOL ENFORCEMENT (and in OpenCode `AGENT_OS_ENFORCEMENT.md`). Agents must **fill the template**, not invent a free-form wall of text.
+
 **Bug:** Repro · Expected/actual · Root cause · Fix · Guard added · Verification · Risk  
 **Handoff:** Branch/issue/PR · files to read · ledger · in/out scope · STOP · gates · report-back
 

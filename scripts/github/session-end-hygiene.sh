@@ -21,7 +21,7 @@ done < <(gh pr list -R "$REPO" --state open --limit 30 2>/dev/null || true)
 if [[ "$OPEN_PRS" -eq 0 ]]; then
   echo "  (none)"
 else
-  blocker "$OPEN_PRS open PR(s) — dispose before claiming session complete (merge/close/PARK with 4 fields after attempt)"
+  blocker "$OPEN_PRS open PR(s) — dispose before claiming complete (merge/rehome+close/fix; HOLD+recovery only if externally blocked)"
 fi
 echo
 echo "=== open Issues remaining ==="
@@ -86,7 +86,7 @@ if [[ "$BLOCKERS" -gt 0 ]]; then
   echo "================================================================="
   echo "HEALTH GATE: $BLOCKERS blocker class(es) still open after return-to-main."
   echo "Session End is NOT complete until each is disposed (merge/close/PARK+4 fields)."
-  echo "Forbidden closeout: 'pre-existing', 'not this ship', report-only hygiene."
+  echo "Forbidden closeout: 'pre-existing', 'later', 'not this ship', report-only, lost work."
   echo "================================================================="
   exit 2
 fi

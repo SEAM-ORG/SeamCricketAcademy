@@ -111,18 +111,19 @@ Suggest improvements; on Architect yes (including short yes), execute end-to-end
    2b. Inventory **local branches ahead of protected** (name · ahead count · tip subject) — multi-agent WIP.
 3. **Decision Gate** (state one): `CONTINUE` | `FINISH+COMMIT` | `PROMOTE` | `PARK` (todo.md) | `ASK`.
 4. Never start net-new work on an unexplained dirty tree or while ignoring unmerged product branches; never silently switch branches.
-5. Non-trivial work: use **agent-skills** via `using-agent-skills` + OS session skills (no Superpowers)
+5. Non-trivial work: **must** route via `using-agent-skills` and invoke applicable skills (no Superpowers; do not wait for skill names)
 6. Resume incomplete plans/todos/debt **before** net-new work.
 
 ---
 
 ## 2) Every turn that changes code / docs / config
 
-1. Implement → **verify with evidence** (test / build / runtime / read-back) → only then claim done.
-2. **“Seems right” is never done.** No evidence = not finished.
-3. Local commit on a **feature branch** when the unit is clean. **Never** `--no-verify`.
-4. Same-branch updates for INDEX / This Project / lessons when surfaces change.
-5. Prefer complete the objective **now**; only stop with tracked deferral fields above.
+1. **Skill route first** (non-trivial): `using-agent-skills` → invoke applicable skill(s); follow process + that skill’s **verify**. Do not wait for the Architect to name a skill.
+2. Implement → **verify with evidence** (test / build / runtime / read-back) → only then claim done.
+3. **“Seems right” is never done.** No evidence = not finished.
+4. **Memory same change (no silent drift):** update `docs/INDEX.md`, **This Project**, `tasks/todo.md` / `tasks/lessons.md`, product docs, knowledge graph, and journal when reality changed. Prune dead links; archive or delete superseded docs. If a surface is missing, broken, or irrelevant → fix or PARK (4 debt fields) same turn.
+5. Local commit on a **feature branch** when the unit is clean. **Never** `--no-verify`. Pre-commit = quality + **`scripts/check-memory-drift.sh`** (blocks source/config without memory).
+6. Prefer complete the objective **now**; only stop with tracked deferral fields above.
 
 ---
 
@@ -148,20 +149,23 @@ On `/end`, “end session”, “ship it”, or when opening/merging a PR for th
 
 ## 5) Skills (protocols, not kitchen sink)
 
-| Situation                    | Protocol / skill                                 |
-| ---------------------------- | ------------------------------------------------ |
-| Session start / product boot | `session-start` only (session-start removed)     |
-| Non-trivial work             | `using-agent-skills` → pick 1–N lifecycle skills |
-| Before claim done            | That skill’s **verify** step + evidence          |
-| Ship / end                   | Session End (+ dirty-tree gate)                  |
-| Gist/OS update               | Gist Sync (clone/push + head verify)             |
-| Compaction                   | Re-read AGENTS.md + Decision Gate                |
+| Situation                    | Protocol / skill                                                              |
+| ---------------------------- | ----------------------------------------------------------------------------- |
+| Session start / product boot | `session-start` (mandatory; no wait for `/start`)                             |
+| Non-trivial work             | `using-agent-skills` → pick 1–N lifecycle skills (**must** use if applicable) |
+| Before claim done            | Skill **verify** + evidence + memory surfaces honest                          |
+| Ship / end                   | `session-end` (GitOps + return-to-main)                                       |
+| OS install / repair          | `agent-os-bootstrap`                                                          |
+| Gist/OS update               | Gist Sync (clone/push + head verify)                                          |
+| Compaction                   | Re-read AGENTS.md + Decision Gate + `using-agent-skills`                      |
 
 ---
 
 ## Anti-patterns (forbidden unless project-critical + justified)
 
 - Skipping Session Start on product work
+- Skipping skill routing (`using-agent-skills`) on non-trivial work
+- Shipping code without same-branch memory/doc updates when behavior or surfaces changed
 - Claiming done without verification evidence
 - Postponing without tracked debt fields
 - Prepending Gist description into `AGENTS.md`
@@ -650,7 +654,7 @@ Trigger: Architect says install/init Agent OS, or you find no usable `AGENTS.md`
 4. **Branch:** `git checkout -b chore/agent-os-init`
 5. **Environment setup:** Run **Environment Discovery** (below).
 6. **Wire development infrastructure:**
-   - Create **local CI** via **`.githooks/`** + **`scripts/install-githooks.sh`** using the **gold standard**: pre-commit = quality + memory (`scripts/check-memory-drift.sh`); pre-push = test+build. Not GitHub PR CI. **Default framework: `.githooks` (not husky)**.
+   - Create **local CI** via **`.githooks/`** + **`scripts/install-githooks.sh`** using the **gold standard**: pre-commit = quality + memory (`scripts/check-memory-drift.sh` — blocks silent doc drift); pre-push = test+build. Not GitHub PR CI. **Default framework: `.githooks` (not husky)**.
    - Create a **deploy/release** pipeline only if the deploy target is known (tag push, environment deploy, manual dispatch). Do **not** create GitHub workflows that duplicate local lint/test/build.
    - Assume GitHub-side hygiene (Dependabot, Jules, etc.) may already cover dependency and review essentials — do not re-implement those as Actions CI.
 7. **Materialize Agent OS surfaces:** (same as Brownfield step 3 below)
@@ -852,7 +856,7 @@ Wire it the **harness-native** way (Grok plugin enablement and/or OpenCode `mcp`
 [ ] Session start commands work (git available)
 [ ] Environment requirements met (correct node/python/flutter/etc. version active)
 [ ] Project build/test commands discovered and noted under This Project
-[ ] Local CI via git hooks is wired to gold standard (pre-commit=quality; pre-push=test+build)
+[ ] Local CI via git hooks is wired to gold standard (pre-commit=quality + `scripts/check-memory-drift.sh`; pre-push=test+build)
 [ ] Canonical lint/test/build commands named under This Project (gaps documented if a tool is missing)
 [ ] No redundant GitHub PR CI for lint/test/build (Dependabot/Jules/etc. OK; deploy Actions OK)
 [ ] Deploy/release GitHub workflow exists only when deploy target is known

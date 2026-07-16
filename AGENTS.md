@@ -94,7 +94,7 @@ Suggest improvements; on Architect yes (including short yes), execute end-to-end
 
 **Forbidden without that tracking:**
 
-- “We’ll do it later” / “out of scope for this chat” with no todo/plan/debt entry
+- “We’ll do it later” / “repair later” / “out of scope for this chat” — **no later owner exists**; finish now or HOLD+recovery
 - Thin status-only turns when work was requested
 - Shipping half-done features and calling them done
 - Skipping verify, docs, INDEX, hooks, or Gist hygiene to “save tokens”
@@ -111,9 +111,9 @@ Suggest improvements; on Architect yes (including short yes), execute end-to-end
 2. Reality-check: `git status --short --branch` (+ log) for the **whole repo**.  
    2b. Inventory **local branches ahead of protected** (name · ahead count · tip subject) — multi-agent WIP.
    2c. **Health gate:** `bash scripts/github/session-preflight.sh` — exit 2 → dispose open PRs / red main CI / WIP **before** net-new.
-3. **Decision Gate** (state one): `CONTINUE` only if health clear | `FINISH+COMMIT` | `PROMOTE` | `PARK` (todo.md, 4 fields after attempt) | `ASK`.
+3. **Decision Gate** (state one): `CONTINUE` only if health clear | `FINISH+COMMIT` | `PROMOTE` | `HOLD` (recovery path + 4 fields; external block only) | `ASK`.
 4. Never start net-new work on an unexplained dirty tree, open undirected PRs, or red protected CI; never silently switch branches.
-5. Non-trivial work: **must** route via `using-agent-skills` and invoke applicable skills (no Superpowers; do not wait for skill names)
+5. Non-trivial work: **must** route via `using-agent-skills` (+ **ponytail** on code writes); no Superpowers; no “later”
 6. Resume incomplete plans/todos/debt **and health blockers** before net-new work.
 
 ---
@@ -123,7 +123,7 @@ Suggest improvements; on Architect yes (including short yes), execute end-to-end
 1. **Skill route first** (non-trivial): `using-agent-skills` → invoke applicable skill(s); follow process + that skill’s **verify**. Do not wait for the Architect to name a skill.
 2. Implement → **verify with evidence** (test / build / runtime / read-back) → only then claim done.
 3. **“Seems right” is never done.** No evidence = not finished.
-4. **Memory same change (no silent drift):** update `docs/INDEX.md`, **This Project**, `tasks/todo.md` / `tasks/lessons.md`, product docs, knowledge graph, and journal when reality changed. Prune dead links; archive or delete superseded docs. If a surface is missing, broken, or irrelevant → fix or PARK (4 debt fields) same turn.
+4. **Memory same change (no silent drift):** update `docs/INDEX.md`, **This Project**, `tasks/todo.md` / `tasks/lessons.md`, product docs, knowledge graph, and journal when reality changed. Prune dead links; archive or delete superseded docs. If a surface is missing, broken, or irrelevant → fix same turn, or rehome value and replace with better; HOLD+recovery only if externally blocked.
 5. Local commit on a **feature branch** when the unit is clean. **Never** `--no-verify`. Pre-commit = quality + **`scripts/check-memory-drift.sh`** (blocks source/config without memory).
 6. Prefer complete the objective **now**; only stop with tracked deferral fields above.
 
@@ -188,6 +188,9 @@ On `/end`, “end session”, “ship it”, or when opening/merging a PR for th
 - Treating Session Start as the only time WIP inventory matters (re-ground mid-session too)
 - Treating open PRs / failed Actions / Dependabot as “advisory hygiene” or “not this ship”
 - Claiming Session End complete while health gate still fails (exit 2) without disposition
+- “Repair later” / “next session” when you are the only operator
+- Deleting or closing work without rehoming value into a better successor + justification
+- HOLD/PARK without recovery branch, PR, or path (chat-only memory)
 
 Violation is a **contract failure**, not a style note.
 
@@ -199,15 +202,15 @@ Agents **must never** silently ignore, forget, or deprioritize unfinished work b
 
 ## What counts as unfinished work
 
-| Class                                 | Examples                                                    | Required disposition                                                                                         |
-| ------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| **Dirty tree**                        | Modified / staged / untracked in the active repo            | Finish+commit, or PARK (4 debt fields), or ASK                                                               |
-| **Local branches ahead of protected** | Any branch with commits not in `origin/main` (or protected) | Resume · ship · PARK · delete if **proven supersedable** · or ASK                                            |
-| **Unpushed commits**                  | Local branch ahead of its `origin/*`                        | Push feature branch for multi-harness durability, or PARK why not                                            |
-| **Open plans / todos / debt**         | `tasks/todo.md`, `docs/plans/*`, debt register              | Resume before net-new, or update status honestly                                                             |
-| **Open PRs / CI failures**            | `gh pr list`, preflight (exit 2 = blockers)                 | **Fix-and-merge · close+comment · PARK(4 fields after attempt)** — never report-only                         |
-| **Portfolio loose artifacts**         | Files under `~/Projects/` not inside a product git root     | Commit into a real repo, move into product/docs, or PARK with path + done-when — **never invisible orphans** |
-| **Machine OS drift**                  | Skills/hooks/enforcement vs gist SoT                        | Repair same session when OS work is in scope, or PARK                                                        |
+| Class                                 | Examples                                                    | Required disposition                                                                                                                    |
+| ------------------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| **Dirty tree**                        | Modified / staged / untracked in the active repo            | Finish+commit, or PARK (4 debt fields), or ASK                                                                                          |
+| **Local branches ahead of protected** | Any branch with commits not in `origin/main` (or protected) | Resume · ship · PARK · delete if **proven supersedable** · or ASK                                                                       |
+| **Unpushed commits**                  | Local branch ahead of its `origin/*`                        | Push feature branch for multi-harness durability, or PARK why not                                                                       |
+| **Open plans / todos / debt**         | `tasks/todo.md`, `docs/plans/*`, debt register              | Resume before net-new, or update status honestly                                                                                        |
+| **Open PRs / CI failures**            | `gh pr list`, preflight (exit 2 = blockers)                 | **Fix-and-merge · rehome useful commits then close+reason · HOLD+recovery only if externally blocked** — never report-only or lost work |
+| **Portfolio loose artifacts**         | Files under `~/Projects/` not inside a product git root     | Commit into a real repo, move into product/docs, or PARK with path + done-when — **never invisible orphans**                            |
+| **Machine OS drift**                  | Skills/hooks/enforcement vs gist SoT                        | Repair same session when OS work is in scope, or PARK                                                                                   |
 
 ## Rules
 
@@ -218,6 +221,57 @@ Agents **must never** silently ignore, forget, or deprioritize unfinished work b
 5. Closeout / Session End must list remaining unfinished work with disposition (or clean zero).
 
 ---
+
+# Solo end-to-end ownership + value preservation (hard)
+
+**Team = Architect + agent only.** There is no teammate, no “ops person,” no “next agent who will care.” If a step is needed for the product or OS to stay healthy, **this agent finishes it in this session** or leaves an **owned recovery artifact** that still preserves every bit of value.
+
+## End-to-end (no “later”)
+
+| Forbidden                                                                 | Required                                                                               |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| “Repair later”, “we’ll fix on next session”, “out of scope for this chat” | Do it **now** end-to-end, or HOLD with recovery (below) only if **externally blocked** |
+| Assuming another human/agent will pick up                                 | You are the only operator                                                              |
+| Partial ship that drops unfinished value on the floor                     | Finish, rehome onto a branch/PR/docs, or integrate before delete                       |
+| Closeout that lists open work with no disposition                         | Every item: done · merged · replaced · or HOLD with recovery path                      |
+
+**Externally blocked** means only: missing Architect credential/secret, Architect explicit scope cut, or infrastructure outage you cannot fix. Preference, fatigue, token cost, or “not this PR” is **not** a block.
+
+## HOLD (replaces lazy PARK)
+
+Use the word **HOLD** (or `parked` in `tasks/todo.md` status) **only** when work remains **owned and recoverable**. A HOLD must include **all** of:
+
+| Field             | Meaning                                                                                        |
+| ----------------- | ---------------------------------------------------------------------------------------------- |
+| **status**        | `hold` / `blocked`                                                                             |
+| **priority**      | P0–P3                                                                                          |
+| **justification** | External blocker only (secret, Architect cut, outage) — not convenience                        |
+| **done-when**     | Concrete acceptance the **agent** can execute when unblocked                                   |
+| **recovery**      | Branch name and/or PR URL and/or exact path where the value lives — **never only chat memory** |
+
+**HOLD is not disposal.** Value must still exist on disk/remote. Prefer **finish same session**. Prefer **push the feature branch** so no second harness loses the unit.
+
+## Value preservation (improve, never strip)
+
+When removing, closing, deleting, or “simplifying”:
+
+1. **Inventory value** still in the thing (commits, docs, UX, data, config, tests).
+2. **Rehome or replace** with something **equal or better** (merge useful commits, port docs into INDEX paths, supersede feature with clearer design).
+3. **Justify** in commit/PR body or `tasks/lessons.md`: what improved, what moved where.
+4. **Only then** delete/close.
+
+| Forbidden                                                            | Required                                                     |
+| -------------------------------------------------------------------- | ------------------------------------------------------------ |
+| Delete “dead” code/docs/PRs because messy                            | Recover useful parts first; then remove with reason          |
+| Close PR as “stale” without merging useful commits                   | Cherry-pick / restack / rewrite into better unit, then close |
+| Ponytail/minimalism that drops validation, tests, a11y, health gates | Minimal **and** safe — Agent OS gates win                    |
+| “Superseded” without pointing to the successor                       | Link successor commit/PR/doc path                            |
+
+**Net product value after the change must be ≥ before** for anything removed. Shrinking code is good only when behavior and recovery paths are preserved or improved.
+
+## Machine / OS install
+
+Bootstrap, Ponytail, hooks, skills, gist sync, memory-drift, preflight: **install/repair in the same session** when drift is detected. Never leave “repair later” in a closeout. If install fails, HOLD with recovery (exact command + error log path), not silence.
 
 # Project health blockers (hard — not advisory)
 
@@ -231,7 +285,7 @@ When an agent **touches a product repo** (Session Start, re-ground, or any non-t
 | Forbidden closeout / brief language     | Required instead                                                         |
 | --------------------------------------- | ------------------------------------------------------------------------ |
 | “pre-existing open PRs”                 | Each PR: merge / fix-and-merge / close+comment+reason                    |
-| “not from this ship / session”          | Still owned — fix or PARK with 4 debt fields **after attempt**           |
+| “not from this ship / session”          | Still owned — fix/rehome **now** or HOLD+recovery if externally blocked  |
 | “hygiene report only” / “for awareness” | Disposition per item                                                     |
 | “Dependabot later”                      | Triage same session (merge green, rebase, or close duplicate/superseded) |
 | “old Actions noise”                     | Reproduce on current protected branch; fix or evidence of supersession   |
@@ -250,15 +304,15 @@ When an agent **touches a product repo** (Session Start, re-ground, or any non-t
 
 ## Cadence
 
-| When                  | Action                                                                                                                   |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Session Start         | Run preflight; **clear blockers before Architect net-new**                                                               |
-| Mid-session re-ground | Re-run if long session or before parallel work                                                                           |
-| Session End           | `session-end-hygiene.sh` — exit `2` if open PR/main-CI blockers remain; claim complete only after dispose or honest PARK |
+| When                  | Action                                                                                                                                       |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Session Start         | Run preflight; **clear blockers before Architect net-new**                                                                                   |
+| Mid-session re-ground | Re-run if long session or before parallel work                                                                                               |
+| Session End           | `session-end-hygiene.sh` — exit `2` if open PR/main-CI blockers remain; claim complete only after dispose or HOLD+recovery (value preserved) |
 
 ## Solo team implication
 
-The Architect will not “handle GitHub later.” Bot PRs, red deploys, and open agent PRs are **your** job when you open the repo — equal priority to the named task until the health gate is clear or items are honestly PARKed.
+The Architect will not “handle GitHub later.” Bot PRs, red deploys, and open agent PRs are **your** job when you open the repo — clear them end-to-end (or HOLD+recovery if externally blocked). Never strip value when closing; rehome first.
 
 # OS Structure & Index (always maintain)
 

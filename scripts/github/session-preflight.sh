@@ -108,8 +108,8 @@ if [[ "$BLOCKERS" -gt 0 ]]; then
   echo "================================================================="
   echo "HEALTH GATE FAILED: $BLOCKERS blocker class(es)."
   echo "Agent MUST dispose every BLOCKER before net-new product work."
-  echo "Disposition: fix-and-merge | close+comment | ship | PARK(4 fields only after real attempt)."
-  echo "Forbidden: 'pre-existing', 'not this session', 'hygiene report only', silent ignore."
+  echo "Disposition: fix-and-merge | rehome value then close+reason | ship | HOLD+recovery (external block only). Never lose work."
+  echo "Forbidden: 'pre-existing', 'later', 'not this session', report-only, delete without rehome."
   echo "================================================================="
   exit 2
 fi

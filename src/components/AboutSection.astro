@@ -7,15 +7,15 @@ let sections = academy.about.sections;
 
 // Override with CMS content if available
 try {
-    const content = await fetchWebsiteContent();
-    if (content?.about) {
-        const about = content.about as Record<string, unknown>;
-        if (Array.isArray(about.sections) && about.sections.length > 0) {
-            sections = about.sections as typeof sections;
-        }
+  const content = await fetchWebsiteContent();
+  if (content?.about) {
+    const about = content.about as Record<string, unknown>;
+    if (Array.isArray(about.sections) && about.sections.length > 0) {
+      sections = about.sections as typeof sections;
     }
+  }
 } catch {
-    // Silent — static data already loaded
+  // Silent — static data already loaded
 }
 ---
 <div class="grid md:grid-cols-2 gap-10">

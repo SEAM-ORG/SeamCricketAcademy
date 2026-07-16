@@ -43,9 +43,7 @@ export interface AcademyData {
  * Fetch public academy data at build time.
  * Returns null if the API is unreachable or env vars are missing.
  */
-export async function fetchAcademyData(
-  sections?: Section[]
-): Promise<AcademyData | null> {
+export async function fetchAcademyData(sections?: Section[]): Promise<AcademyData | null> {
   const apiUrl = getApiUrl();
   const academyId = getAcademyId();
 
@@ -57,10 +55,9 @@ export async function fetchAcademyData(
       params.set('sections', sections.join(','));
     }
 
-    const res = await fetch(
-      `${apiUrl}/getPublicAcademyData?${params}`,
-      { signal: AbortSignal.timeout(10_000) }
-    );
+    const res = await fetch(`${apiUrl}/getPublicAcademyData?${params}`, {
+      signal: AbortSignal.timeout(10_000),
+    });
 
     if (!res.ok) return null;
     return (await res.json()) as AcademyData;

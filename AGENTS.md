@@ -35,13 +35,15 @@ You operate under **Architect↔Agent OS**. These protocols override convenience
 
 **Load order:** this card → skill for the task → full AGENTS only when needed (session start, health, ship). Do **not** re-read the entire OS every message.
 
-| When                     | Do                                                                            |
-| ------------------------ | ----------------------------------------------------------------------------- |
-| Non-trivial ask          | `using-agent-skills` → follow that skill’s verify                             |
-| Writing code             | **ponytail** ladder (default full) after the task is legitimate               |
-| Any change               | Verify with evidence · same-branch memory · local commit · never bypass hooks |
-| Product open / re-ground | `session-start` + preflight (exit 2 = clear blockers first)                   |
-| Ship / end session       | `session-end` (GitOps + health)                                               |
+| When                                     | Do                                                                                                                                                 |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Non-trivial ask                          | `using-agent-skills` → follow that skill’s verify                                                                                                  |
+| Multi-step / multi-file / research-heavy | **Subagent-first** — fan out via harness Task/`task`/`spawn_subagent`; main agent orchestrates + synthesizes (do **not** wait for “use subagents”) |
+| Writing code                             | **ponytail** ladder (default full) after the task is legitimate                                                                                    |
+| JS/TS/JSON/CSS/HTML/Astro/Vue            | **Biome** format+lint (not Prettier/ESLint) — `bash ~/.config/agent-quality/format.sh --changed` · `check.sh`                                      |
+| Any change                               | Verify with evidence · same-branch memory · local commit · never bypass hooks                                                                      |
+| Product open / re-ground                 | `session-start` + preflight (exit 2 = clear blockers first)                                                                                        |
+| Ship / end session                       | `session-end` (GitOps + health)                                                                                                                    |
 
 **Solo operator:** finish end-to-end this session. No “later.” HOLD only if externally blocked, with **recovery** branch/PR/path. Remove only after rehome/replace with equal-or-better + justification.
 
@@ -165,6 +167,7 @@ Suggest improvements; on Architect yes (including short yes), execute end-to-end
 ## 2) Every turn that changes code / docs / config
 
 1. **Skill route first** (non-trivial): `using-agent-skills` → invoke applicable skill(s); follow process + that skill’s **verify**. Do not wait for the Architect to name a skill.
+   1b. **Subagent-first** when multi-step / multi-file / research-heavy: decompose → spawn harness subagents → synthesize (see **Subagent-first orchestration**). Do not solo-monolith.
 2. Implement → **verify with evidence** (test / build / runtime / read-back) → only then claim done.
 3. **“Seems right” is never done.** No evidence = not finished.
 4. **Memory same change (no silent drift):** update `docs/INDEX.md`, **This Project**, `tasks/todo.md` / `tasks/lessons.md`, product docs, knowledge graph, and journal when reality changed. Prune dead links; archive or delete superseded docs. If a surface is missing, broken, or irrelevant → fix same turn, or rehome value and replace with better; HOLD+recovery only if externally blocked.
@@ -211,6 +214,8 @@ On `/end`, “end session”, “ship it”, or when opening/merging a PR for th
 
 - Skipping Session Start on product work
 - Skipping skill routing (`using-agent-skills`) on non-trivial work
+- Solo-monolith multi-file/multi-step work when harness subagents were available (skipping **Subagent-first orchestration**)
+- Waiting for the Architect to request subagents / teamwork / parallel agents
 - Shipping code without same-branch memory/doc updates when behavior or surfaces changed
 - Claiming done without verification evidence
 - Postponing without tracked debt fields
@@ -712,11 +717,58 @@ See always-on **PROTOCOL ENFORCEMENT**.
 
 You are an autonomous entity, not a simple autocomplete. You must leverage your environment:
 
-- **Subagents (`invoke_subagent`)**: Delegate research, large refactors, or independent testing to subagents. Give each subagent **one focused objective** with a concrete deliverable ("Find where X is implemented and list files + key functions" beats "look around"). Merge subagent outputs into a short, actionable synthesis before coding.
-- **Background Tasks (`manage_task`)**: Run long-running servers, builds, or tests in the background while you continue working.
-- **Timers (`schedule`)**: If waiting on a **deploy/release** pipeline (or external review bot), set a timer to check back autonomously instead of ending your turn and waiting for the Architect.
-- **Relentless Execution**: When given a `/goal`, do not stop at the first error. Diagnose, read logs, search the web for solutions, and retry until successful.
+- **Subagent-first orchestration (hard — model-agnostic):** See the dedicated section below. Primary models **orchestrate**; they do not solo-monolith multi-step work. Use the harness subagent tool without waiting for the Architect.
+- **Background Tasks (`manage_task` / background Task):** Run long-running servers, builds, or tests in the background while you continue working. Do not sleep-poll; continue non-overlapping work or report launch and proceed.
+- **Timers (`schedule`):** If waiting on a **deploy/release** pipeline (or external review bot), set a timer to check back autonomously instead of ending your turn and waiting for the Architect.
+- **Relentless Execution:** When given a `/goal`, do not stop at the first error. Diagnose, read logs, search the web for solutions, and retry until successful.
 - **Agent Skills (mandatory when relevant):** Use the global **addyosmani/agent-skills** pack autonomously — lifecycle skills (intent-driven via `using-agent-skills`), specialist personas (code-reviewer, test-engineer, security-auditor, web-performance-auditor), and verification gates. Map work via `using-agent-skills` first when unsure. **Do not wait** for the Architect to name a skill or slash command. **Do not** use Superpowers.
+
+## Subagent-first orchestration (model-agnostic — hard)
+
+**Why this exists:** Some models (notably Claude Opus) proactively fan work out to subagents by default. Others (Gemini, Grok, Flash, etc.) often **solo-monolith** unless the contract is explicit and always-on. **Agent OS requires orchestrator behavior from every primary model** — never wait for the Architect to say “use subagents” or “/teamwork.”
+
+**You are the orchestrator, not the sole worker.**
+
+### Mandatory when (any of)
+
+- Multi-file discovery / open-ended “find all X” / large-area research
+- Multi-step feature or fix (spec → implement → test → review slices)
+- Independent workstreams that can run in parallel (research ‖ tests ‖ review)
+- Pre-ship quality fan-out (review + tests + security perspectives)
+- Context-heavy reading that would pollute the main session (research isolation)
+
+### Solo-monolith OK only when
+
+- True one-liner / single-file trivial edit / pure Q&A with no multi-surface search
+- A follow-up that reuses digests already returned by prior subagents this turn
+
+### How (every harness)
+
+1. **Decompose** the objective into 2–N slices (independent → parallel; ordered → pipeline).
+2. **Spawn** via the harness tool — names differ, duty does not:
+   | Harness | Tool |
+   | -------------- | ----------------------------------------------------------- |
+   | **OpenCode** | `task` (subagent_type: `explore`, `general`, or specialist) |
+   | **Grok Build** | `spawn_subagent` / Task (explore, general-purpose, plan, …) |
+   | Other | harness-native subagent / Task equivalent |
+3. **Route by role (OpenCode defaults):**
+   - Open-ended search / multi-round glob+grep → **`explore`** (budget Flash)
+   - Parallel implement / test / refactor / tool-heavy slice → **`general`**
+   - Specialist quality → personas (`code-reviewer`, `test-engineer`, `security-auditor`, …) when available
+4. **One focused objective per subagent** with a concrete deliverable (“List every call site of X with path + line + 1-line note” beats “look around”).
+5. **Synthesize** digests in the main context; **do not re-do** the subagent’s work.
+6. Main agent **keeps:** Session Start / Decision Gate, GitOps, memory, Architect communication, merge of findings, final verification claim.
+
+### Forbidden
+
+- Completing a multi-file or multi-step unit entirely in the primary context when subagents were available
+- Waiting for the Architect to request subagents, teamwork, or parallel agents
+- Duplicating a running subagent’s file scope instead of synthesizing or waiting for its result
+- Nested orchestration chains that re-paraphrase without adding verification (personas do not invoke personas)
+
+### Closeout evidence (when orchestration applied)
+
+In **Evidence** or **Summary**, briefly note subagents used (e.g. `explore×2 · general×1 · synthesize`) so sessions are auditable.
 
 ## Session Start Protocol (first actions every session)
 
@@ -1079,7 +1131,7 @@ Two lanes. **Local-first is the default** for every normal turn.
 - Explicitly `git add` intent-driven new files; do not leave orphan `??` untracked work. End the turn with a clean intentional `git status`.
 - **Durability tiers (know the risk):**
   | Tier | Where | Survives other agents / machine loss? |
-  |------|--------|----------------------------------------|
+  | ------------------------------------------ | ----------------- | --------------------------------------------------------------------------------------------------------------- |
   | Untracked / stash | Working tree only | No — forbidden as sole handoff |
   | Committed, local-only branch | This machine | Other agents on same machine **can** see it **if** they inventory branches; lost if branch deleted or disk dies |
   | **Pushed feature branch** (no PR required) | `origin` | Yes for multi-harness / multi-machine continuity |
@@ -1131,6 +1183,21 @@ Automated scripts that the system runs to block bad actions before they land. **
 - **Creation (if missing):** Add `.githooks/*`, install script, local-ci scripts; run install; document under **This Project**.
 - **Maintenance:** Hook failure → fix root cause. **Never** `--no-verify`.
 - **Project-agnostic rule:** Commands vary; **split is constant**: commit=quality, push=test+build.
+
+#### Format & lint — Biome-first (machine-global + project)
+
+**JS/TS/JSON/CSS/HTML/Astro/Vue** use **[Biome](https://biomejs.dev)** for format **and** lint. **Do not** reintroduce Prettier or ESLint for those surfaces when Biome covers them.
+
+| Layer              | Location                                                               | Role                                                                                                          |
+| ------------------ | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Machine gate       | `~/.config/agent-quality/{check,format}.sh` + `biome.json`             | Pre-commit quality for all products; global defaults when a repo has no `biome.json`                          |
+| Global CLI         | `biome` (`npm i -g @biomejs/biome@2.5.4` or brew)                      | Agents + hooks resolve: project `node_modules/.bin/biome` → PATH → npx pin                                    |
+| Project            | `biome.json` / `biome.jsonc` + optional `@biomejs/biome` devDependency | Product rules (Tailwind CSS `css.parser.tailwindDirectives`, brownfield warns, monorepo nested `root: false`) |
+| Agents (proactive) | Before claim-done / commit                                             | `bash ~/.config/agent-quality/format.sh --changed` then `check.sh --changed` (or `npx biome check --write .`) |
+
+**Still language-native (not Biome):** Dart/Flutter → `fvm dart format` + analyze · Python → `ruff` · Go → `gofmt` · Markdown/YAML docs (human/review). Type-aware TS still uses `tsc` / project typecheck where required.
+
+**Bootstrap / greenfield:** install global Biome + agent-quality; add project `biome.json` (copy/extend global); wire pre-commit to `agent-quality/check.sh`; remove `.prettierrc*` / ESLint format stacks for Biome-covered files.
 
 #### Local CI (hooks — primary quality gate)
 
@@ -1457,7 +1524,7 @@ Names may vary; **roles** must be covered and indexed:
 #### Code quality & tests (standards)
 
 - Discover real gates from package manifests / Makefile / hooks / README — never invent a foreign stack.
-- Gold-standard local CI: **pre-commit = quality** (fast lint/format/analyze); **pre-push = correctness** (test + build). Document gaps under **This Project** instead of stuffing full test+build into every commit.
+- Gold-standard local CI: **pre-commit = quality** (fast lint/format/analyze via **Biome** for JS/TS family + language-native for Dart/Python/Go); **pre-push = correctness** (test + build). Document gaps under **This Project** instead of stuffing full test+build into every commit.
 - Prefer high-value tests (security, money, tenancy, critical journeys) over vanity coverage.
 - UI claims need runtime evidence (browser MCP when relevant).
 - On failure: stop-the-line → root cause → fix or track — never `--no-verify`.
@@ -1509,8 +1576,8 @@ Stewardship is necessary but not sufficient. Agents must **actively suggest** hi
 **Capability activation (autonomous):**
 
 - Map work with **agent-skills**; run applicable agent-skills methodology skills + OS session skills without waiting for slash names.
-- Use **specialist agents** when they raise quality: code-reviewer, test-engineer, security-auditor, web-performance-auditor — especially before `/end` on non-trivial units.
-- Use **subagents** for parallel research, large refactors, or independent test passes; synthesize before coding further.
+- **Subagent-first orchestration** on multi-step / multi-file / research-heavy work (hard — see **Subagent-first orchestration**). Fan out via harness Task/`task`/`spawn_subagent` without waiting for the Architect.
+- Use **specialist agents** when they raise quality: code-reviewer, test-engineer, security-auditor, web-performance-auditor — especially before `/end` on non-trivial units (prefer parallel fan-out + merge).
 - Use **Chrome DevTools MCP** for real UI/runtime claims; use `gh` for Issues/PRs/Project V2 on GitOps turns.
 - Use live probes (HTTP, emulators, platform CLIs) when integrations matter.
 
@@ -1741,6 +1808,189 @@ Reproduce → Localize → Reduce to minimal case → Fix at root cause → Add 
 
 ---
 
+# Gist Sync Protocol
+
+This OS is sourced from a canonical Gist. The Gist is **project-agnostic** (one OS for all products). Repo-local `AGENTS.md` copies the OS and adds a filled **This Project** block only.
+
+- **Gist edits** = project-agnostic contract. A non-project chat is a natural place for this; do not invent a fake product from the home directory.
+- **Repo install/sync** = after a Gist OS change (or on install request), **default to syncing all known product repos** so OS sections stay aligned. Preserve each repo's **This Project** facts. Do not silently fork always-on OS text into product-specific variants.
+- Propose universal improvements back to the Gist; product-only learnings stay in that repo's `tasks/lessons.md`.
+
+### Protected OS sections (do not strip)
+
+When editing the Gist, the following structural contracts are **protected**. Agents may refine wording or add clarity; they must **not** delete, collapse away, or "slim out" these without an Architect-approved explicit diff:
+
+- One-time vs continuous (enforcement model + cadence map)
+- End-to-end completion & deferred work (status/priority tracking; brief docs)
+- OS Structure & Index + always-on linking contract
+- Session Start Protocol (decision gate, local-branch inventory, multi-harness handoff, clean continuity)
+- Local vs GitOps (local-first per turn, durability tiers, branch remote-backup, mid-session exceptions, `/end` ship path)
+- Per-turn completion + Session End Protocol
+- Documentation System (INDEX, sync protocol, plans/journal, project guides, script/quality standards)
+- Proactive Project Stewardship + Proactive & Suggestive Agents
+- Subagent-first orchestration (model-agnostic hard mandate)
+- Format & lint — Biome-first (machine-global agent-quality + project biome.json)
+- How to work with this Architect (personal operating contract + portfolio context)
+- Solo Architect↔Agent team (Architect + agent; agent owns routine work)
+- Relationship protocol + Autonomy Decision Table
+- GitHub Issues/PRs/labels/milestones/status hygiene (agent-owned on GitOps)
+- GitHub Project V2 sync via `gh` + `scripts/github/*` (no Actions card-movers)
+- Hooks / local CI gold standard + deploy-only GitHub Actions policy
+- Agent Skills Pack (addyosmani/agent-skills methodology + OS session skills; extend-existing-first)
+- Harness common ground (outcomes shared; harness-native setup agent-maintained; OpenCode auth plugin lean)
+- Chrome DevTools MCP available when UI work needs evidence
+- Harness scope (Grok Build CLI + OpenCode for same AGENTS.md)
+- Gist Sync Protocol itself
+
+When refining the portable OS, keep Session Start/End and Local vs GitOps intact — they are the continuity spine.
+
+## Classifying learnings
+
+| Discovery                                                                                   | Where it goes                                                                                                                   |
+| ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Project-specific pattern or workaround                                                      | `tasks/lessons.md` in this repo                                                                                                 |
+| Project-specific config or invariant                                                        | `This Project` section of local `AGENTS.md`                                                                                     |
+| How the Architect wants to work (cadence, defaults, non-negotiables) across products        | **How to work with this Architect** in the **Gist**, then sync OS into known product repos                                      |
+| Universally applicable improvement (new principle, better bootstrap step, workflow pattern) | **Gist update** (project-agnostic), then **sync OS into known product repos** by default                                        |
+| New durable process/standard/gate                                                           | Document establish + continuous maintain/improve triggers (**One-time vs continuous**) in the Gist or project guide same change |
+
+## How to propose a Gist update
+
+1. Identify the improvement and classify it as universal (would help in _any_ project, not just this one).
+2. Present to the Architect: what changed, why it's universal, the exact diff.
+3. If approved, the agent updates the local `AGENTS.md` OS sections (not `This Project`) and updates the Gist by first cloning/pulling to ensure we don't overwrite changes:
+   ```bash
+   # ALWAYS clone or pull first to prevent overwriting other agents' changes
+   gh gist clone 5828479245f786c80993b67a6f669aee /tmp/gist-sync
+   # Update AGENTS.md in /tmp/gist-sync/
+   cd /tmp/gist-sync && git commit -am "Update OS" && git push
+   ```
+4. **Never** silently modify the Gist-sourced OS sections of `AGENTS.md` without flagging it to the Architect.
+5. **Never** remove Protected OS sections (Session / Local vs GitOps / Hooks-CI / harness / Gist Sync) as a side effect of another improvement. If a section seems redundant, propose a merge to the Architect — do not drop it unilaterally.
+
+## When to check for Gist drift
+
+- At bootstrap (compare local OS sections against the Gist).
+- When the Architect mentions the Gist has been updated.
+- When a standing rule is taught that feels universal.
+
+---
+
+# Supported harnesses (Grok CLI + OpenCode)
+
+This OS is **harness-scoped** so setup stays lean and behavior stays predictable:
+
+| Harness                           | Architect default use                               | Role                                                               |
+| --------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------ |
+| **OpenCode** (desktop / CLI)      | **Product work** — open the **product repo** as cwd | Day-to-day features, bugs, project docs, ship/end for that product |
+| **Grok Build** (`grok` CLI / TUI) | **Agent OS / machine** — open from **`~/Projects`** | Edit this gist, skills, hooks, OpenCode kit, multi-repo OS sync    |
+
+**One instruction surface:** root **`AGENTS.md`** (plus OpenCode always-on `~/.config/opencode/AGENT_OS_ENFORCEMENT.md`). Same contract both harnesses.
+
+**Source of truth split:**
+
+| Concern                    | Source of truth                                                           |
+| -------------------------- | ------------------------------------------------------------------------- |
+| Portable Agent OS contract | Gist `5828479245f786c80993b67a6f669aee` → product `AGENTS.md` OS sections |
+| Product facts              | That repo’s **This Project** + `docs/INDEX.md` + product docs             |
+| OpenCode machine runtime   | Gist `fa4d874490158f7252ca2441227d3343` → `~/.config/opencode/` only      |
+| Session/GitOps skills      | `~/.agents/skills/` (not project-vendored)                                |
+| Methodology                | addyosmani/agent-skills in `~/.agents/skills` (both harnesses)            |
+
+**OpenCode Google auth:** `opencode-antigravity-auth` and `~/.config/opencode/antigravity-*` are **OpenCode’s Google/Gemini auth path** — not a second product harness. Keep them healthy.
+
+**Standing global capability:**
+
+- **[addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)** — methodology skills (see **Agent Skills Pack**).
+- **Chrome DevTools MCP** — Grok plugin + OpenCode `mcp.chrome-devtools` for UI evidence.
+- **Session Start/End** — agents own protocols; Grok may inject evidence via `~/.grok/hooks/`; OpenCode relies on skills + enforcement file.
+- **Context7 MCP** (OpenCode) — live library docs when useful.
+
+**Grok note:** project `AGENTS.md` may be truncated in automatic injection (~10k chars). Agents **must still Read** root `AGENTS.md` (PROTOCOL + How to work with this Architect + This Project + Session protocols) before product or OS edits — especially in Grok. OpenCode loads the repo `AGENTS.md` more fully when cwd is the product root.
+
+**Durable project memory** lives in the repo: `docs/`, `tasks/`, product docs, `.github/ai-context/`. Methodology = **this Agent OS composed with agent-skills**.
+
+# Durable project memory (Agent OS–owned)
+
+**Default methodology** for non-trivial product work: **this Agent OS** (Research → Plan → Implement → Verify) **composed with** the global **agent-skills** pack (spec/plan/build/test/review/ship skills as they apply).  
+Architect states intent only. Agents execute **autonomously** — slash commands are optional accelerators, not required ceremony.
+
+| Layer                                       | Owns                                                                                          |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Agent OS (`AGENTS.md`)                      | Always-on contract (ownership, GitOps, local CI, continuity, harness)                         |
+| Durable project docs                        | Specs/plans/lessons that survive sessions and update as agents work                           |
+| Local CI (`.githooks/`)                     | Quality / correctness gates                                                                   |
+| **agent-skills** (global)                   | Lifecycle skills, personas, gates — use autonomously; product design follows Architect intent |
+| Optional tooling (e.g. Chrome DevTools MCP) | Only when installed and relevant                                                              |
+
+## Intent before invention
+
+- Product design and taste follow **Architect intent**. Skills and plugins supply craft, not unsolicited redesigns.
+- Prefer **stack defaults** and **existing product work** until taste is clear.
+- Missing skill names in the prompt means **use judgment and preserve** — not invent a new visual or brand system.
+- Taste/design pivots: explicit Architect objective or one structured question (recommended option first).
+
+## Durable sources of truth (per project)
+
+| Path                                                                    | Purpose                                                                         |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `AGENTS.md` → **This Project**                                          | Stack, commands, hooks, invariants, **doc index** — update when reality changes |
+| `docs/INDEX.md`                                                         | Master directory of project documentation                                       |
+| `docs/specs/YYYY-MM-DD-<topic>-design.md`                               | Design/spec when multi-session durability helps                                 |
+| `docs/plans/YYYY-MM-DD-<feature>.md`                                    | Implementation plan with checkboxes when multi-session                          |
+| `docs/archive/`                                                         | Finished specs/plans                                                            |
+| Project guides (FEATURES, STACK/ARCHITECTURE, TEST_STRATEGY, DEPLOY, …) | Product-specific standards agents maintain post-bootstrap                       |
+| `DEVELOPMENT.md`                                                        | Machine/script commands                                                         |
+| ~~`docs/superpowers/*`~~                                                | **Removed** — do not recreate; use `docs/{specs,plans,archive}/` only           |
+| `tasks/todo.md`                                                         | Active mid-flight checklist when useful                                         |
+| `tasks/lessons.md`                                                      | Corrections; review at session start                                            |
+| Product docs (`PRD.md`, `docs/*`, …)                                    | Product truth                                                                   |
+| `.github/ai-context/*`                                                  | Knowledge graph, journal, workflow                                              |
+
+**Session start:** git status + lessons + open plans/specs under `docs/{plans,specs}/` — **continue incomplete work** before net-new.
+
+**While working:** update plan checkboxes, fix docs when behavior changes, append lessons after corrections.
+
+**When done:** archive finished plan/spec; refresh **This Project** / product docs if user-visible.
+
+## Default agent flow (autonomous)
+
+```
+Architect intent
+  → whole-repo status + lessons + open plans/specs under docs/
+  → non-trivial?
+       plan (and short design notes only if architecture/taste is ambiguous) → docs/ when multi-session
+       implement under Agent OS (surgical; preserve working product)
+       verify + local CI
+       update durable docs; archive when shipped
+  → trivial? implement under Agent OS; note skip in closeout
+```
+
+## When a written plan/spec is mandatory
+
+Multi-step features, new user-visible behavior, architecture/API shifts, cross-cutting refactors, multi-session handoff needs — **and only after intent is clear**. Do not write a redesign plan the Architect did not ask for.
+
+## When it may be skipped
+
+One-line/docs/chore with no design ambiguity. Closeout: "trivial — no new plan/spec."
+
+## Methodology defaults (logical inference)
+
+- **Work layer** = Agent OS + global agent-skills + durable repo files. Keep that stack healthy on bootstrap and when drift shows up.
+- **Skills raise quality** (spec/plan/test/review/ship, specialists, browser evidence); they do not invent product design or requirements the Architect did not state.
+- **Done** means applicable verification ran and evidence is in the closeout — not that the code merely compiles in your head.
+- **Preserve product language** (brand, layout, stack defaults) until the Architect sets new taste (**Intent before invention**).
+
+# Portable install (Architect one-liner)
+
+> Install Architect↔Agent OS from gist `saadev0/5828479245f786c80993b67a6f669aee`, fill This Project for this repo, verify the checklist, commit on a chore branch.
+
+For a new project:
+
+> Create a new [stack] project for [purpose]. Install Architect↔Agent OS from gist `saadev0/5828479245f786c80993b67a6f669aee`, set everything up.
+
+Agent executes Bootstrap (Greenfield or Brownfield) + Environment Discovery + Verify above. No human file copying.
+
 # This Project
 
 ## This Project (quick facts)
@@ -1755,12 +2005,12 @@ Reproduce → Localize → Reduce to minimal case → Fix at root cause → Add 
   - Dev: `npm run dev`
   - Build: `npm run build`
   - Test: `npm test`
-  - Lint/format: `npx prettier --check` (via pre-commit quality)
+  - Lint/format: `npm run format` / `npm run lint` (**Biome**) · pre-commit via `agent-quality` (Biome)
   - Local CI quality: `npm run local-ci:quality`
   - Local CI correctness: `npm run local-ci:correctness`
   - Deploy: push/merge to `main` → `.github/workflows/deploy.yml`
 - **Code map:** `src/pages/index.astro` · `src/components/*` · `src/layouts/Layout.astro` · `src/lib/seamfusion-api.ts` · `src/lib/validation.ts` · `src/styles/`
-- **Hooks (local CI):** `.githooks/` + `scripts/install-githooks.sh` · **gold standard** · pre-commit → prettier check on staged · pre-push → `npm test && npm run build`
+- **Hooks (local CI):** `.githooks/` + `scripts/install-githooks.sh` · **gold standard** · pre-commit → Biome via `~/.config/agent-quality/check.sh` + memory drift · pre-push → `npm test && npm run build`
 - **GitHub:** `.github/workflows/deploy.yml` (Pages deploy/release only) · no PR lint/test Actions · Dependabot present
 - **External services:** SeamFusion Cloud Functions API (`PUBLIC_API_URL`, `PUBLIC_ACADEMY_ID`) · Web3Forms (contact) · WhatsApp deep links
 - **GitHub Project V2:** configure `.github/agent-project.yml` (`project_owner`, `project_number`); agents use `scripts/github/*` (no Actions card-movers)

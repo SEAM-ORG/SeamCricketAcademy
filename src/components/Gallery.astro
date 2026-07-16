@@ -3,37 +3,39 @@ import { fetchAcademyData } from '../lib/seamfusion-api';
 
 // Static fallback — always available even if API is down
 const staticGallery = [
-    { type: 'image', src: '/assets/gallery/20250629_075038.jpg' },
-    { type: 'video', src: '/assets/gallery/20250629_074943.mp4' },
-    { type: 'image', src: '/assets/gallery/20250629_075531.jpg' },
-    { type: 'image', src: '/assets/gallery/20250803_083502.jpg' },
-    { type: 'image', src: '/assets/gallery/20250824_080455.jpg' },
-    { type: 'image', src: '/assets/gallery/20250824_080537.jpg' },
-    { type: 'video', src: '/assets/gallery/20250824_090103.mp4' },
-    { type: 'image', src: '/assets/gallery/20250824_090447.jpg' },
-    { type: 'image', src: '/assets/gallery/20250824_090459.jpg' },
-    { type: 'image', src: '/assets/gallery/20250824_090502.jpg' },
-    { type: 'image', src: '/assets/gallery/IMG_E0121.JPG' },
+  { type: 'image', src: '/assets/gallery/20250629_075038.jpg' },
+  { type: 'video', src: '/assets/gallery/20250629_074943.mp4' },
+  { type: 'image', src: '/assets/gallery/20250629_075531.jpg' },
+  { type: 'image', src: '/assets/gallery/20250803_083502.jpg' },
+  { type: 'image', src: '/assets/gallery/20250824_080455.jpg' },
+  { type: 'image', src: '/assets/gallery/20250824_080537.jpg' },
+  { type: 'video', src: '/assets/gallery/20250824_090103.mp4' },
+  { type: 'image', src: '/assets/gallery/20250824_090447.jpg' },
+  { type: 'image', src: '/assets/gallery/20250824_090459.jpg' },
+  { type: 'image', src: '/assets/gallery/20250824_090502.jpg' },
+  { type: 'image', src: '/assets/gallery/IMG_E0121.JPG' },
 ];
 
 // Try live gallery from SeamFusion app, fall back to static
 let galleryMedia = staticGallery;
 try {
-    const apiData = await fetchAcademyData(['gallery']);
-    if (apiData?.gallery && Array.isArray(apiData.gallery) && apiData.gallery.length > 0) {
-        // Merge: API gallery items first, then static items as supplement
-        const apiItems = apiData.gallery.map((item: Record<string, unknown>) => ({
-            type: (item.type as string) || 'image',
-            src: (item.url as string) || (item.thumbnailUrl as string) || '',
-        })).filter((item: { src: string }) => item.src); // Only items with valid URLs
+  const apiData = await fetchAcademyData(['gallery']);
+  if (apiData?.gallery && Array.isArray(apiData.gallery) && apiData.gallery.length > 0) {
+    // Merge: API gallery items first, then static items as supplement
+    const apiItems = apiData.gallery
+      .map((item: Record<string, unknown>) => ({
+        type: (item.type as string) || 'image',
+        src: (item.url as string) || (item.thumbnailUrl as string) || '',
+      }))
+      .filter((item: { src: string }) => item.src); // Only items with valid URLs
 
-        // Use API items if available, otherwise keep static
-        if (apiItems.length > 0) {
-            galleryMedia = apiItems;
-        }
+    // Use API items if available, otherwise keep static
+    if (apiItems.length > 0) {
+      galleryMedia = apiItems;
     }
+  }
 } catch {
-    // Silent — static gallery already loaded
+  // Silent — static gallery already loaded
 }
 ---
 

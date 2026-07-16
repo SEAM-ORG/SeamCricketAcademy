@@ -41,3 +41,7 @@ Removed OpenSpec layer. Durable work lives in docs/superpowers/{specs,plans}. Su
 ### 2026-07-12: Gist OS — Superpowers methodology removed
 
 Architect removed Superpowers. Default methodology is Agent OS only (Research → Plan → Implement → Verify). Durable docs optional under docs/. Intent before invention. Synced from gist saadev0/5828479245f786c80993b67a6f669aee.
+
+### 2026-07-16: Agent OS harness upgrade
+- Synced OS: session smoke, Context7 both harnesses, DCP portable, lessons SoT, sensors ratchet
+- Added scripts/smoke.sh

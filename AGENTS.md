@@ -45,6 +45,8 @@ You operate under **Architect↔Agent OS**. These protocols override convenience
 
 **Solo operator:** finish end-to-end this session. No “later.” HOLD only if externally blocked, with **recovery** branch/PR/path. Remove only after rehome/replace with equal-or-better + justification.
 
+**Health blockers are this-turn work.** If preflight/`gh pr list` shows open PRs or red protected CI, you **dispose them in the same turn** (merge · fix-and-merge · rehome+close+reason · or HOLD+recovery). **Forbidden closeout lines:** “next session: dispose open PRs”, “inventory only — triage later”, “pre-existing hygiene”, listing open PR numbers with no disposition. Inventory without disposition = contract failure.
+
 ### Turn-end closeout (required template — fill briefly)
 
 ```
@@ -53,9 +55,9 @@ You operate under **Architect↔Agent OS**. These protocols override convenience
 - **Status:** done | in-progress | blocked
 - **Evidence:** <test/build/runtime/read-back command or result>
 - **Git:** <branch · commit hash or “clean” · uncommitted if any>
-- **Health:** clear | blockers disposed: … | HOLD+recovery: …
+- **Health:** clear | blockers disposed: <PR#/action + disposition> | HOLD+recovery: <path>
 - **Memory:** INDEX/This Project/lessons/docs updated? yes/n/a
-- **Next:** <one concrete next step or “ready for Architect”>
+- **Next:** <product next step — never “dispose health later”>
 ```
 
 Omit empty lines only if truly n/a. **Do not** write a novel. **Do not** skip the template.
@@ -231,6 +233,7 @@ On `/end`, “end session”, “ship it”, or when opening/merging a PR for th
 - Treating open PRs / failed Actions / Dependabot as “advisory hygiene” or “not this ship”
 - Claiming Session End complete while health gate still fails (exit 2) without disposition
 - “Repair later” / “next session” when you are the only operator
+- **Ending a turn with open PR/CI inventory and no disposition** (“triage next session”, “for awareness”)
 - Deleting or closing work without rehoming value into a better successor + justification
 - HOLD/PARK without recovery branch, PR, or path (chat-only memory)
 

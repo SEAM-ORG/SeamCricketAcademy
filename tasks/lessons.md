@@ -85,3 +85,7 @@ Agents must inventory and dispose dirty trees, local branches ahead of protected
 ## 2026-07-16 — astro 7.0.9
 
 - Bumped to ^7.0.9 (Dependabot #55 rehome).
+
+## 2026-07-16 — anti later health handoff
+
+- Health blockers (open PRs/red protected CI) are this-turn dispose; inventory-only closeout is forbidden.

@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # check-memory-drift.sh — pre-commit memory gate (Architect↔Agent OS gold standard)
 # Blocks commits that change product reality without updating durable memory surfaces.
-# Portable: copy or invoke from any product repo.
 set -euo pipefail
 
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
@@ -13,7 +12,6 @@ if [[ -z "${STAGED_FILES//[$'\n' ]/}" ]]; then
   exit 0
 fi
 
-# Memory / durable-doc surfaces (any one counts as "memory updated")
 is_memory_path() {
   local f="$1"
   case "$f" in
@@ -25,7 +23,6 @@ is_memory_path() {
   return 1
 }
 
-# Pure tooling / tests / self — do not alone require memory
 is_exempt_path() {
   local f="$1"
   case "$f" in
@@ -33,24 +30,22 @@ is_exempt_path() {
       return 0 ;;
     *test*|*_test.dart|*.test.ts|*.test.js|*.spec.ts|*.spec.js)
       return 0 ;;
-    test/*|tests/*|**/test/**|**/tests/**)
+    test/*|tests/*)
       return 0 ;;
     *.lock|package-lock.json|pubspec.lock|yarn.lock|pnpm-lock.yaml)
       return 0 ;;
     *.md)
-      # Doc-only commits are memory by definition
       return 0 ;;
   esac
   return 1
 }
 
-# Structural / stack config — always need memory
 is_structural() {
   local f="$1"
   local base
   base="$(basename "$f")"
   case "$base" in
-    package.json|package-lock.json|pubspec.yaml|pubspec.lock|Cargo.toml|go.mod|Gemfile|Podfile|build.gradle|settings.gradle|astro.config.*|vite.config.*|tsconfig*.json|tailwind.config.*|firebase.json|firestore.rules|firestore.indexes.json|storage.rules|trigger.yaml|shorebird.yaml|.env.example|CNAME)
+    package.json|package-lock.json|pubspec.yaml|pubspec.lock|Cargo.toml|go.mod|Gemfile|Podfile|build.gradle|settings.gradle|astro.config.mjs|vite.config.ts|vite.config.js|tsconfig.json|firebase.json|firestore.rules|firestore.indexes.json|storage.rules|trigger.yaml|shorebird.yaml|.env.example|CNAME)
       return 0 ;;
   esac
   case "$f" in
@@ -60,14 +55,12 @@ is_structural() {
   return 1
 }
 
-# Product source — behavior that should not silently diverge from docs
 is_source() {
   local f="$1"
   case "$f" in
     src/*|lib/*|app/*|pages/*|components/*|functions/src/*|firebase/functions/src/*|web/*)
       return 0 ;;
   esac
-  # Dart under lib already covered; feature code in packages
   case "$f" in
     *.dart|*.astro|*.tsx|*.ts|*.jsx|*.js|*.vue|*.svelte)
       case "$f" in
@@ -97,7 +90,6 @@ while IFS= read -r f; do
   fi
 done <<< "$STAGED_FILES"
 
-# Doc-only or memory-only commits: ok
 if [[ -z "$STRUCTURAL" && -z "$SOURCE" ]]; then
   exit 0
 fi
@@ -118,7 +110,8 @@ if [[ -n "$SOURCE" ]]; then
   printf '%s' "$SOURCE" | head -15 | sed 's/^/  - /'
   COUNT=$(printf '%s' "$SOURCE" | grep -c . || true)
   if [[ "${COUNT:-0}" -gt 15 ]]; then
-    echo "  ... +$((COUNT - 15) more"
+    extra=$((COUNT - 15))
+    echo "  ... +${extra} more"
   fi
 fi
 echo

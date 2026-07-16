@@ -1,13 +1,13 @@
 ---
-import academy from "../data/academy.json";
-import { fetchWebsiteContent } from "../lib/seamfusion-api";
-import SummerCampPromo from "./SummerCampPromo.astro";
+import academy from '../data/academy.json';
+import { fetchWebsiteContent } from '../lib/seamfusion-api';
+import SummerCampPromo from './SummerCampPromo.astro';
 
 // Static defaults (match the original hardcoded HTML)
-let titleMain = "Seam Cricket";
-let titleAccent = "Academy";
+let titleMain = 'Seam Cricket';
+let titleAccent = 'Academy';
 let subtitle =
-  "Nurturing passion, discipline, and skill through high-quality cricket coaching tailored for every age and skill level.";
+  'Nurturing passion, discipline, and skill through high-quality cricket coaching tailored for every age and skill level.';
 
 // Override with CMS content if available
 try {
@@ -20,10 +20,10 @@ try {
       const words = hero.title.trim().split(/\s+/);
       if (words.length > 1) {
         titleAccent = words.pop()!;
-        titleMain = words.join(" ");
+        titleMain = words.join(' ');
       } else {
         titleMain = hero.title;
-        titleAccent = "";
+        titleAccent = '';
       }
     }
   }

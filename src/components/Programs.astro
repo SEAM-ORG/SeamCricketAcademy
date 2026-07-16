@@ -1,6 +1,6 @@
 ---
 // Merged service cards with all details where applicable
-import { programs } from "../data/programs";
+import { programs } from '../data/programs';
 
 const { newBatches, regularPrograms } = programs.reduce(
   (acc, p) => {
@@ -11,7 +11,7 @@ const { newBatches, regularPrograms } = programs.reduce(
     }
     return acc;
   },
-  { newBatches: [] as typeof programs, regularPrograms: [] as typeof programs }
+  { newBatches: [] as typeof programs, regularPrograms: [] as typeof programs },
 );
 ---
 

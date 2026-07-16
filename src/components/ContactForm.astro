@@ -1,8 +1,8 @@
 ---
-import academy from "../data/academy.json";
-import { programs } from "../data/programs";
-import { fetchWebsiteContent } from "../lib/seamfusion-api";
-import { isValidEmail, isValidWhatsApp } from "../lib/validation";
+import academy from '../data/academy.json';
+import { programs } from '../data/programs';
+import { fetchWebsiteContent } from '../lib/seamfusion-api';
+import { isValidEmail, isValidWhatsApp } from '../lib/validation';
 
 // Contact info — static defaults from academy.json
 let contactAddress = academy.contact.address;
@@ -13,17 +13,17 @@ let contactWhatsapp = academy.contact.whatsapp;
 
 // Override with CMS content if available
 try {
-    const content = await fetchWebsiteContent();
-    if (content?.contact) {
-        const c = content.contact as Record<string, string>;
-        if (c.address) contactAddress = c.address;
-        if (c.email && isValidEmail(c.email)) contactEmail = c.email;
-        if (c.timings) contactTimings = c.timings;
-        if (c.phone) contactPhone = c.phone;
-        if (c.whatsapp && isValidWhatsApp(c.whatsapp)) contactWhatsapp = c.whatsapp;
-    }
+  const content = await fetchWebsiteContent();
+  if (content?.contact) {
+    const c = content.contact as Record<string, string>;
+    if (c.address) contactAddress = c.address;
+    if (c.email && isValidEmail(c.email)) contactEmail = c.email;
+    if (c.timings) contactTimings = c.timings;
+    if (c.phone) contactPhone = c.phone;
+    if (c.whatsapp && isValidWhatsApp(c.whatsapp)) contactWhatsapp = c.whatsapp;
+  }
 } catch {
-    // Silent — static data already loaded
+  // Silent — static data already loaded
 }
 ---
 

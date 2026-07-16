@@ -5,19 +5,20 @@ import { fetchAcademyData } from '../lib/seamfusion-api';
 // Try live data from SeamFusion app, fall back to static academy.json
 let trainers = academy.trainers;
 try {
-    const apiData = await fetchAcademyData(['coaches']);
-    if (apiData?.coaches && Array.isArray(apiData.coaches) && apiData.coaches.length > 0) {
-        trainers = apiData.coaches.map((c: Record<string, unknown>) => ({
-            name: (c.displayName as string) || 'Coach',
-            title: Array.isArray(c.specializations) && c.specializations.length > 0
-                ? String(c.specializations[0])
-                : 'Coach',
-            bio: (c.bio as string) || '',
-            image: (c.photoUrl as string) || '/assets/images/player-placeholder.jpg',
-        }));
-    }
+  const apiData = await fetchAcademyData(['coaches']);
+  if (apiData?.coaches && Array.isArray(apiData.coaches) && apiData.coaches.length > 0) {
+    trainers = apiData.coaches.map((c: Record<string, unknown>) => ({
+      name: (c.displayName as string) || 'Coach',
+      title:
+        Array.isArray(c.specializations) && c.specializations.length > 0
+          ? String(c.specializations[0])
+          : 'Coach',
+      bio: (c.bio as string) || '',
+      image: (c.photoUrl as string) || '/assets/images/player-placeholder.jpg',
+    }));
+  }
 } catch {
-    // Silent — static data already loaded
+  // Silent — static data already loaded
 }
 ---
 <div class="space-y-12">

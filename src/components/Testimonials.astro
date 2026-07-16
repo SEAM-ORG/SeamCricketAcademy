@@ -7,12 +7,16 @@ let testimonials = academy.testimonials;
 
 // Override with CMS content if available
 try {
-    const content = await fetchWebsiteContent();
-    if (content?.testimonials && Array.isArray(content.testimonials) && (content.testimonials as unknown[]).length > 0) {
-        testimonials = content.testimonials as typeof testimonials;
-    }
+  const content = await fetchWebsiteContent();
+  if (
+    content?.testimonials &&
+    Array.isArray(content.testimonials) &&
+    (content.testimonials as unknown[]).length > 0
+  ) {
+    testimonials = content.testimonials as typeof testimonials;
+  }
 } catch {
-    // Silent — static data already loaded
+  // Silent — static data already loaded
 }
 ---
 <div class="relative">

@@ -93,3 +93,7 @@ Agents must inventory and dispose dirty trees, local branches ahead of protected
 ## 2026-07-16 — Subagent-first (OS)
 
 - Universal OS: primary models must fan out via harness Task/task/spawn_subagent for multi-step/multi-file work. Soft “use subagents” was model-biased toward Opus; hard mandate is model-agnostic.
+
+## 2026-07-16 — Biome format/lint
+
+- JS/TS/JSON/CSS/HTML/Astro use **Biome** (not Prettier/ESLint). Machine gate: `~/.config/agent-quality/`. Dart stays `fvm dart format`.

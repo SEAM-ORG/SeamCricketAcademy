@@ -2,15 +2,19 @@
 
 @theme {
   --color-void: #030305;
-  --color-depth: #0A0A0F;
-  --color-neon: #FFD700; /* Gold */
-  --color-green: #22C55E; /* Green */
+  --color-depth: #0a0a0f;
+  --color-neon: #ffd700; /* Gold */
+  --color-green: #22c55e; /* Green */
   --color-surface: rgba(255, 255, 255, 0.03);
 
-  --font-sans: 'Outfit', 'Inter', system-ui, sans-serif;
+  --font-sans: "Outfit", "Inter", system-ui, sans-serif;
 
   --image-hero-glow: radial-gradient(circle at 50% -20%, rgba(255, 215, 0, 0.15), rgba(0, 0, 0, 0));
-  --image-card-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
+  --image-card-gradient: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.01) 100%
+  );
 
   --shadow-neon: 0 0 30px rgba(255, 215, 0, 0.15);
   --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
@@ -32,14 +36,22 @@
     overflow-x: hidden;
     overscroll-behavior-x: none;
     background-image:
-      /* Stadium Light Glow (Top Center) */
+/* Stadium Light Glow (Top Center) */
       radial-gradient(circle at 50% -10%, rgba(255, 215, 0, 0.12) 0%, transparent 60%),
       /* Subtle Cricket Net / Hex Pattern */
       radial-gradient(circle at 100% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 50%),
       linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
       linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-    background-size: 100% 100%, 100% 100%, 50px 50px, 50px 50px;
-    background-position: 0 0, 0 0, center 1px, center 1px;
+    background-size:
+      100% 100%,
+      100% 100%,
+      50px 50px,
+      50px 50px;
+    background-position:
+      0 0,
+      0 0,
+      center 1px,
+      center 1px;
   }
 
   /* Snap sections */
@@ -101,18 +113,23 @@
 
 /* Before pseudo-element - softer top highlight */
 .glass-panel::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent 10%, rgba(255, 255, 255, 0.15) 50%, transparent 90%);
+  background: linear-gradient(
+    90deg,
+    transparent 10%,
+    rgba(255, 255, 255, 0.15) 50%,
+    transparent 90%
+  );
 }
 
 @utility text-neon-gradient {
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-  background-image: linear-gradient(to right, #D4AF37, #FFD700, #D4AF37);
+  background-image: linear-gradient(to right, #d4af37, #ffd700, #d4af37);
 }

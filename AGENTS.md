@@ -1988,12 +1988,12 @@ Agent executes Bootstrap (Greenfield or Brownfield) + Environment Discovery + Ve
   - Dev: `npm run dev`
   - Build: `npm run build`
   - Test: `npm test`
-  - Lint/format: `npx prettier --check` (via pre-commit quality)
+  - Lint/format: `npm run format` / `npm run lint` (**Biome**) · pre-commit via `agent-quality` (Biome)
   - Local CI quality: `npm run local-ci:quality`
   - Local CI correctness: `npm run local-ci:correctness`
   - Deploy: push/merge to `main` → `.github/workflows/deploy.yml`
 - **Code map:** `src/pages/index.astro` · `src/components/*` · `src/layouts/Layout.astro` · `src/lib/seamfusion-api.ts` · `src/lib/validation.ts` · `src/styles/`
-- **Hooks (local CI):** `.githooks/` + `scripts/install-githooks.sh` · **gold standard** · pre-commit → prettier check on staged · pre-push → `npm test && npm run build`
+- **Hooks (local CI):** `.githooks/` + `scripts/install-githooks.sh` · **gold standard** · pre-commit → Biome via `~/.config/agent-quality/check.sh` + memory drift · pre-push → `npm test && npm run build`
 - **GitHub:** `.github/workflows/deploy.yml` (Pages deploy/release only) · no PR lint/test Actions · Dependabot present
 - **External services:** SeamFusion Cloud Functions API (`PUBLIC_API_URL`, `PUBLIC_ACADEMY_ID`) · Web3Forms (contact) · WhatsApp deep links
 - **GitHub Project V2:** configure `.github/agent-project.yml` (`project_owner`, `project_number`); agents use `scripts/github/*` (no Actions card-movers)

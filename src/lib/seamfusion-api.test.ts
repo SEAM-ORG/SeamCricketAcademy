@@ -1,5 +1,5 @@
-import { test, describe, before, after, mock } from 'node:test';
 import assert from 'node:assert';
+import { after, before, describe, mock, test } from 'node:test';
 
 // Mock process.env before importing the module
 process.env.PUBLIC_API_URL = 'https://api.example.com';
@@ -57,7 +57,9 @@ describe('fetchAcademyData', () => {
       const result = await fetchAcademyData();
       assert.strictEqual(result, null);
       assert.strictEqual(consoleSpy.mock.callCount(), 1);
-      assert.ok((consoleSpy.mock.calls[0].arguments[0] as string).includes('[SeamFusion] API fetch failed'));
+      assert.ok(
+        (consoleSpy.mock.calls[0].arguments[0] as string).includes('[SeamFusion] API fetch failed'),
+      );
     } finally {
       console.warn = originalWarn;
     }

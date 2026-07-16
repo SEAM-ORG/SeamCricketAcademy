@@ -2,7 +2,8 @@
  * Validates if a string is a basic email format.
  */
 export function isValidEmail(email: string): boolean {
-  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+  const emailRegex =
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
   return emailRegex.test(email);
 }
 
@@ -24,7 +25,10 @@ export function isValidWhatsApp(url: string): boolean {
 /**
  * Checks if a string is safe to be used in a URL (prevents javascript: etc.)
  */
-export function isSafeUrl(url: string, allowedProtocols: string[] = ['https:', 'mailto:', 'tel:']): boolean {
+export function isSafeUrl(
+  url: string,
+  allowedProtocols: string[] = ['https:', 'mailto:', 'tel:'],
+): boolean {
   try {
     const parsed = new URL(url);
     return allowedProtocols.includes(parsed.protocol);

@@ -1,144 +1,144 @@
 {
-    "hero": {
-        "title": "Welcome to Seam Cricket Academy",
-        "subtitle": "Nurturing passion, discipline, and skill through high-quality cricket coaching tailored for every age and skill level.",
-        "ctaText": "Train Hard. Play Smart. Rise Higher.",
-        "ctaLink": "#contact"
+  "hero": {
+    "title": "Welcome to Seam Cricket Academy",
+    "subtitle": "Nurturing passion, discipline, and skill through high-quality cricket coaching tailored for every age and skill level.",
+    "ctaText": "Train Hard. Play Smart. Rise Higher.",
+    "ctaLink": "#contact"
+  },
+  "playerFeature": {
+    "title": "🌟 Player of the Month",
+    "name": "Anant Channa (Under-16)",
+    "description": "Recognized for outstanding performance in practice matches and consistent dedication during drills and coaching sessions.",
+    "image": "./assets/images/player-placeholder.jpg"
+  },
+  "about": {
+    "sections": [
+      {
+        "title": "Who We Are",
+        "content": "Founded by passionate cricketers, Seam Cricket Academy is built on a vision to create a dynamic environment where talent is nurtured, technique is honed, and confidence is built. With experienced coaches and a strong emphasis on personal attention, we believe in developing well-rounded cricketers."
+      },
+      {
+        "title": "Our Philosophy",
+        "content": "At Seam, we go beyond just technique. We instill discipline, focus, and a love for the game in each student creating not just better players, but better sportspeople."
+      }
+    ],
+    "features": [
+      "1-on-1 personalized training",
+      "Certified and passionate coaches",
+      "Professional-grade net and pitch facilities",
+      "Bowling Machine",
+      "Programs for children and adults",
+      "Side-arm throwdown sessions for sharp batting practice"
+    ]
+  },
+  "testimonials": [
+    {
+      "quote": "\"Seam cricket academy has provided the best cricketing experience around the city.Their moto is to promote and give the best level cricket.They even encourage by making us play with club level cricketer. Overall my kid who was naughty and lazy now have some goals and aim and the big credit goes to coaches Mr.Patrick , Mr.Vinodh and Mr.Anish\"",
+      "author": "- Fouzia Humman S. Parent of U-14 Player"
     },
-    "playerFeature": {
-        "title": "🌟 Player of the Month",
-        "name": "Anant Channa (Under-16)",
-        "description": "Recognized for outstanding performance in practice matches and consistent dedication during drills and coaching sessions.",
-        "image": "./assets/images/player-placeholder.jpg"
+    {
+      "quote": "\"Great setup and wonderful coaches. Special thanks to Vinod and Anish Sir. My son has been growing up as a better bowler.\"",
+      "author": "- Jyotsana Jain., Parent of U-19 Player"
     },
-    "about": {
-        "sections": [
-            {
-                "title": "Who We Are",
-                "content": "Founded by passionate cricketers, Seam Cricket Academy is built on a vision to create a dynamic environment where talent is nurtured, technique is honed, and confidence is built. With experienced coaches and a strong emphasis on personal attention, we believe in developing well-rounded cricketers."
-            },
-            {
-                "title": "Our Philosophy",
-                "content": "At Seam, we go beyond just technique. We instill discipline, focus, and a love for the game in each student creating not just better players, but better sportspeople."
-            }
-        ],
-        "features": [
-            "1-on-1 personalized training",
-            "Certified and passionate coaches",
-            "Professional-grade net and pitch facilities",
-            "Bowling Machine",
-            "Programs for children and adults",
-            "Side-arm throwdown sessions for sharp batting practice"
-        ]
-    },
-    "testimonials": [
-        {
-            "quote": "\"Seam cricket academy has provided the best cricketing experience around the city.Their moto is to promote and give the best level cricket.They even encourage by making us play with club level cricketer. Overall my kid who was naughty and lazy now have some goals and aim and the big credit goes to coaches Mr.Patrick , Mr.Vinodh and Mr.Anish\"",
-            "author": "- Fouzia Humman S. Parent of U-14 Player"
-        },
-        {
-            "quote": "\"Great setup and wonderful coaches. Special thanks to Vinod and Anish Sir. My son has been growing up as a better bowler.\"",
-            "author": "- Jyotsana Jain., Parent of U-19 Player"
-        },
-        {
-            "quote": "\"Joined Seam Cricket Academy recently after a long gap from playing cricket, and I’m really glad I did. The atmosphere is friendly, and the coaches – Patrick sir, Vinodh sir, and Anish sir – are very supportive and encouraging. Each session is well-structured with a good mix of fitness, technique, game awareness, and net practice, which is really helping me to get back into the game with confidence. It’s a great place to train, learn, and enjoy the game, and I genuinely look forward to every session. Highly recommended!\"",
-            "author": "- Akshai S, Adult Program Member"
-        }
-    ],
-    "services": [
-        {
-            "title": "1-on-1 Training Sessions",
-            "desc": "Personalized sessions focused on individual development."
-        },
-        {
-            "title": "Adult 1-on-1 Sessions",
-            "desc": "Perfect for adults looking to get back into the game or improve fitness and form."
-        },
-        {
-            "title": "Cricket Net Rentals",
-            "desc": "Fast-paced astro turf pitches available for practice."
-        },
-        {
-            "title": "Side-Arm Throw Down Sessions",
-            "desc": "High-intensity throwdown sessions for serious batting drills.",
-            "timing": "Flexible"
-        },
-        {
-            "title": "Bowling Machine Sessions",
-            "desc": "High-intensity bowling machine sessions for batting aspirants."
-        },
-        {
-            "title": "Annual Camp (For Kids 5+ yrs)",
-            "desc": "A structured 10-month program for young aspiring cricketers."
-        },
-        {
-            "title": "Summer Coaching Camp",
-            "desc": "A focused 2-month camp (April & May) with skill drills and match play."
-        }
-    ],
-    "trainers": [
-        {
-            "name": "Mr. Vinodh C",
-            "title": "Founder & Coach",
-            "bio": "A seasoned cricketer with over 20 years of experience in competitive Karnataka cricket, Vinodh C has played for and captained leading league teams across Bengaluru. As the driving force behind Seam Cricket Academy, he brings unmatched passion and leadership to the academy’s mission. His ability to inspire, mentor, and push players to go beyond their limits is what makes him a true game-changer for budding cricketers.",
-            "image": "/assets/images/Vinodh Pic.jpg"
-        },
-        {
-            "name": "Mr. Patrick Das",
-            "title": "Head Coach",
-            "bio": "With over 20 years of professional cricketing experience across Karnataka, Coach Patrick Das is a stalwart in the coaching fraternity. He has served as Head Coach at some of the most reputed cricket schools in Bengaluru, building a legacy of discipline and excellence. Currently, he also serves as the Physical Director at Florence Public School, where he continues to mentor young athletes.",
-            "image": "/assets/images/Patrick Pic.jpg"
-        },
-        {
-            "name": "Mr. Anish John",
-            "title": "Co-Founder & Coach",
-            "bio": "A calm, intelligent cricketer and respected coach, Anish John has represented top clubs across every major division in the Bengaluru cricket circuit. With over 20 years of playing experience, he brings a deep understanding of the game’s technical and mental aspects. Known for his composed demeanor and thoughtful training methods, Coach Anish believes in building confident, self-aware players who excel on and off the field.",
-            "image": "/assets/images/Anish Pic.jpg"
-        }
-    ],
-    "tariff": [
-        {
-            "age": "5 yrs - 17 yrs",
-            "program": "Children Weekend",
-            "timing": "Saturday: 3:30 PM - 5:30 PM\nSunday: 7:00 AM - 9:00 AM",
-            "period": "June to March"
-        },
-        {
-            "age": "5 yrs - 17 yrs",
-            "program": "Children Weekday",
-            "timing": "Monday to Friday: 6:30 PM - 8:30 PM",
-            "period": "NA"
-        },
-        {
-            "age": "18 yrs and above",
-            "program": "Adult Coaching",
-            "timing": "Monday to Friday: 7:00 AM - 9:00 AM",
-            "period": "NA"
-        },
-        {
-            "age": "18 yrs and above",
-            "program": "1:1 Adult Program",
-            "timing": "Flexible Timings",
-            "period": "NA"
-        },
-        {
-            "age": "NA",
-            "program": "Net Booking: Pay per hour",
-            "timing": "NA",
-            "period": "NA"
-        },
-        {
-            "age": "NA",
-            "program": "Nets with Bowling Machine",
-            "timing": "Flexible",
-            "period": "NA"
-        }
-    ],
-    "contact": {
-        "address": "1st Cross, Horamavu Agara Rd, Vadarapalya, Bengaluru, Karnataka 560113",
-        "phone": "+91 8951191375",
-        "email": "seamcricketacademy@gmail.com",
-        "timings": "Sunday to Saturday | 7:00 AM – 9:00 AM",
-        "whatsapp": "https://wa.me/918951191375"
+    {
+      "quote": "\"Joined Seam Cricket Academy recently after a long gap from playing cricket, and I’m really glad I did. The atmosphere is friendly, and the coaches – Patrick sir, Vinodh sir, and Anish sir – are very supportive and encouraging. Each session is well-structured with a good mix of fitness, technique, game awareness, and net practice, which is really helping me to get back into the game with confidence. It’s a great place to train, learn, and enjoy the game, and I genuinely look forward to every session. Highly recommended!\"",
+      "author": "- Akshai S, Adult Program Member"
     }
+  ],
+  "services": [
+    {
+      "title": "1-on-1 Training Sessions",
+      "desc": "Personalized sessions focused on individual development."
+    },
+    {
+      "title": "Adult 1-on-1 Sessions",
+      "desc": "Perfect for adults looking to get back into the game or improve fitness and form."
+    },
+    {
+      "title": "Cricket Net Rentals",
+      "desc": "Fast-paced astro turf pitches available for practice."
+    },
+    {
+      "title": "Side-Arm Throw Down Sessions",
+      "desc": "High-intensity throwdown sessions for serious batting drills.",
+      "timing": "Flexible"
+    },
+    {
+      "title": "Bowling Machine Sessions",
+      "desc": "High-intensity bowling machine sessions for batting aspirants."
+    },
+    {
+      "title": "Annual Camp (For Kids 5+ yrs)",
+      "desc": "A structured 10-month program for young aspiring cricketers."
+    },
+    {
+      "title": "Summer Coaching Camp",
+      "desc": "A focused 2-month camp (April & May) with skill drills and match play."
+    }
+  ],
+  "trainers": [
+    {
+      "name": "Mr. Vinodh C",
+      "title": "Founder & Coach",
+      "bio": "A seasoned cricketer with over 20 years of experience in competitive Karnataka cricket, Vinodh C has played for and captained leading league teams across Bengaluru. As the driving force behind Seam Cricket Academy, he brings unmatched passion and leadership to the academy’s mission. His ability to inspire, mentor, and push players to go beyond their limits is what makes him a true game-changer for budding cricketers.",
+      "image": "/assets/images/Vinodh Pic.jpg"
+    },
+    {
+      "name": "Mr. Patrick Das",
+      "title": "Head Coach",
+      "bio": "With over 20 years of professional cricketing experience across Karnataka, Coach Patrick Das is a stalwart in the coaching fraternity. He has served as Head Coach at some of the most reputed cricket schools in Bengaluru, building a legacy of discipline and excellence. Currently, he also serves as the Physical Director at Florence Public School, where he continues to mentor young athletes.",
+      "image": "/assets/images/Patrick Pic.jpg"
+    },
+    {
+      "name": "Mr. Anish John",
+      "title": "Co-Founder & Coach",
+      "bio": "A calm, intelligent cricketer and respected coach, Anish John has represented top clubs across every major division in the Bengaluru cricket circuit. With over 20 years of playing experience, he brings a deep understanding of the game’s technical and mental aspects. Known for his composed demeanor and thoughtful training methods, Coach Anish believes in building confident, self-aware players who excel on and off the field.",
+      "image": "/assets/images/Anish Pic.jpg"
+    }
+  ],
+  "tariff": [
+    {
+      "age": "5 yrs - 17 yrs",
+      "program": "Children Weekend",
+      "timing": "Saturday: 3:30 PM - 5:30 PM\nSunday: 7:00 AM - 9:00 AM",
+      "period": "June to March"
+    },
+    {
+      "age": "5 yrs - 17 yrs",
+      "program": "Children Weekday",
+      "timing": "Monday to Friday: 6:30 PM - 8:30 PM",
+      "period": "NA"
+    },
+    {
+      "age": "18 yrs and above",
+      "program": "Adult Coaching",
+      "timing": "Monday to Friday: 7:00 AM - 9:00 AM",
+      "period": "NA"
+    },
+    {
+      "age": "18 yrs and above",
+      "program": "1:1 Adult Program",
+      "timing": "Flexible Timings",
+      "period": "NA"
+    },
+    {
+      "age": "NA",
+      "program": "Net Booking: Pay per hour",
+      "timing": "NA",
+      "period": "NA"
+    },
+    {
+      "age": "NA",
+      "program": "Nets with Bowling Machine",
+      "timing": "Flexible",
+      "period": "NA"
+    }
+  ],
+  "contact": {
+    "address": "1st Cross, Horamavu Agara Rd, Vadarapalya, Bengaluru, Karnataka 560113",
+    "phone": "+91 8951191375",
+    "email": "seamcricketacademy@gmail.com",
+    "timings": "Sunday to Saturday | 7:00 AM – 9:00 AM",
+    "whatsapp": "https://wa.me/918951191375"
+  }
 }

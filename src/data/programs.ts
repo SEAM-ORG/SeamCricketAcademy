@@ -1,112 +1,112 @@
 export const programs = [
-    // --- New Batches (Top Priority) ---
-    {
-        title: "Children Weekday",
-        desc: "Regular training sessions on Mondays, Wednesdays, and Fridays.",
-        ageGroup: "5 yrs - 17 yrs",
-        timing: "Mon, Wed, Fri: 5:15 PM - 7:00 PM",
-        period: "Year Round",
-        icon: "🌙",
-        featured: false,
-        newBatch: true
-    },
-    {
-        title: "Arts & Dance",
-        desc: "Exciting new programs to explore rhythm, movement, and creativity.",
-        ageGroup: "All Ages",
-        timing: "Flexible Timings",
-        icon: "🎭",
-        featured: false,
-        newBatch: true
-    },
-    {
-        title: "Adult Weekday Batches",
-        desc: "Evening training sessions for adults.",
-        timing: "Mon, Wed, Fri: 7:00 PM - 8:30 PM",
-        icon: "🏆",
-        featured: false,
-        newBatch: true
-    },
-    {
-        title: "Open Net and Practice Matches",
-        desc: "Book open net sessions or join practice matches to sharpen your game in a competitive environment.",
-        timing: "Flexible",
-        icon: "🏏",
-        featured: false,
-        newBatch: true
-    },
+  // --- New Batches (Top Priority) ---
+  {
+    title: 'Children Weekday',
+    desc: 'Regular training sessions on Mondays, Wednesdays, and Fridays.',
+    ageGroup: '5 yrs - 17 yrs',
+    timing: 'Mon, Wed, Fri: 5:15 PM - 7:00 PM',
+    period: 'Year Round',
+    icon: '🌙',
+    featured: false,
+    newBatch: true,
+  },
+  {
+    title: 'Arts & Dance',
+    desc: 'Exciting new programs to explore rhythm, movement, and creativity.',
+    ageGroup: 'All Ages',
+    timing: 'Flexible Timings',
+    icon: '🎭',
+    featured: false,
+    newBatch: true,
+  },
+  {
+    title: 'Adult Weekday Batches',
+    desc: 'Evening training sessions for adults.',
+    timing: 'Mon, Wed, Fri: 7:00 PM - 8:30 PM',
+    icon: '🏆',
+    featured: false,
+    newBatch: true,
+  },
+  {
+    title: 'Open Net and Practice Matches',
+    desc: 'Book open net sessions or join practice matches to sharpen your game in a competitive environment.',
+    timing: 'Flexible',
+    icon: '🏏',
+    featured: false,
+    newBatch: true,
+  },
 
-    // --- Featured / Popular Programs ---
-    {
-        title: "Children Weekend",
-        desc: "Structured weekend coaching program for young cricketers.",
-        ageGroup: "5 yrs - 17 yrs",
-        timing: "Sat: 3:30 PM - 5:30 PM • Sun: 7:00 AM - 9:00 AM",
-        period: "June to March",
-        icon: "🏏",
-        featured: true
-    },
-    {
-        title: "1-on-1 Training Sessions",
-        desc: "Personalized sessions focused on individual development.",
-        timing: "Flexible",
-        icon: "🎯",
-        featured: true
-    },
-    {
-        title: "Annual Camp (For Kids 5+ yrs)",
-        desc: "A structured 10-month program for young aspiring cricketers.",
-        ageGroup: "5 yrs and above",
-        period: "10 Months",
-        icon: "📅",
-        featured: true
-    },
-    {
-        title: "Summer Coaching Camp",
-        desc: "A focused 2-month camp with skill drills and match play.",
-        period: "April & May",
-        icon: "☀️",
-        featured: true
-    },
+  // --- Featured / Popular Programs ---
+  {
+    title: 'Children Weekend',
+    desc: 'Structured weekend coaching program for young cricketers.',
+    ageGroup: '5 yrs - 17 yrs',
+    timing: 'Sat: 3:30 PM - 5:30 PM • Sun: 7:00 AM - 9:00 AM',
+    period: 'June to March',
+    icon: '🏏',
+    featured: true,
+  },
+  {
+    title: '1-on-1 Training Sessions',
+    desc: 'Personalized sessions focused on individual development.',
+    timing: 'Flexible',
+    icon: '🎯',
+    featured: true,
+  },
+  {
+    title: 'Annual Camp (For Kids 5+ yrs)',
+    desc: 'A structured 10-month program for young aspiring cricketers.',
+    ageGroup: '5 yrs and above',
+    period: '10 Months',
+    icon: '📅',
+    featured: true,
+  },
+  {
+    title: 'Summer Coaching Camp',
+    desc: 'A focused 2-month camp with skill drills and match play.',
+    period: 'April & May',
+    icon: '☀️',
+    featured: true,
+  },
 
-    // --- Standard Programs ---
-    {
-        title: "Adult Coaching",
-        desc: "Morning sessions for adults looking to improve their game.",
-        ageGroup: "18 yrs and above",
-        timing: "Mon-Fri: 7:00 AM - 9:00 AM",
-        period: "Year Round",
-        icon: "💪",
-        featured: false
-    },
-    {
-        title: "Adult 1-on-1 Sessions",
-        desc: "Perfect for adults looking to get back into the game or improve fitness and form.",
-        ageGroup: "18 yrs and above",
-        timing: "Flexible",
-        icon: "🏃",
-        featured: false
-    },
-    {
-        title: "Cricket Net Rentals",
-        desc: "Fast-paced astro turf pitches available for practice. Net Booking (Pay per hour) and Bowling Machine options available.",
-        timing: "Pay Per Hour",
-        icon: "🥅",
-        featured: false
-    },
-    {
-        title: "Side-Arm Throw Down Sessions",
-        desc: "High-intensity throwdown sessions for serious batting drills.",
-        timing: "Flexible",
-        icon: "⚡",
-        featured: false
-    },
-    {
-        title: "Bowling Machine Sessions",
-        desc: "High-intensity bowling machine sessions for batting aspirants.",
-        timing: "Flexible",
-        icon: "/assets/images/bowling_machine_emoji.png",
-        isImage: true,
-        featured: false
-    }
+  // --- Standard Programs ---
+  {
+    title: 'Adult Coaching',
+    desc: 'Morning sessions for adults looking to improve their game.',
+    ageGroup: '18 yrs and above',
+    timing: 'Mon-Fri: 7:00 AM - 9:00 AM',
+    period: 'Year Round',
+    icon: '💪',
+    featured: false,
+  },
+  {
+    title: 'Adult 1-on-1 Sessions',
+    desc: 'Perfect for adults looking to get back into the game or improve fitness and form.',
+    ageGroup: '18 yrs and above',
+    timing: 'Flexible',
+    icon: '🏃',
+    featured: false,
+  },
+  {
+    title: 'Cricket Net Rentals',
+    desc: 'Fast-paced astro turf pitches available for practice. Net Booking (Pay per hour) and Bowling Machine options available.',
+    timing: 'Pay Per Hour',
+    icon: '🥅',
+    featured: false,
+  },
+  {
+    title: 'Side-Arm Throw Down Sessions',
+    desc: 'High-intensity throwdown sessions for serious batting drills.',
+    timing: 'Flexible',
+    icon: '⚡',
+    featured: false,
+  },
+  {
+    title: 'Bowling Machine Sessions',
+    desc: 'High-intensity bowling machine sessions for batting aspirants.',
+    timing: 'Flexible',
+    icon: '/assets/images/bowling_machine_emoji.png',
+    isImage: true,
+    featured: false,
+  },
 ];

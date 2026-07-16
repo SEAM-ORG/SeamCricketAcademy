@@ -8,14 +8,14 @@ let playerDescription = academy.playerFeature.description;
 
 // Override with CMS content if available
 try {
-    const content = await fetchWebsiteContent();
-    if (content?.playerFeature) {
-        const pf = content.playerFeature as Record<string, string>;
-        if (pf.name) playerName = pf.name;
-        if (pf.description) playerDescription = pf.description;
-    }
+  const content = await fetchWebsiteContent();
+  if (content?.playerFeature) {
+    const pf = content.playerFeature as Record<string, string>;
+    if (pf.name) playerName = pf.name;
+    if (pf.description) playerDescription = pf.description;
+  }
 } catch {
-    // Silent — static data already loaded
+  // Silent — static data already loaded
 }
 ---
 <div class="relative">

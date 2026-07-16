@@ -109,10 +109,11 @@ Suggest improvements; on Architect yes (including short yes), execute end-to-end
 1. **Session Start** — do not wait for `/start`.
 2. Reality-check: `git status --short --branch` (+ log) for the **whole repo**.  
    2b. Inventory **local branches ahead of protected** (name · ahead count · tip subject) — multi-agent WIP.
-3. **Decision Gate** (state one): `CONTINUE` | `FINISH+COMMIT` | `PROMOTE` | `PARK` (todo.md) | `ASK`.
-4. Never start net-new work on an unexplained dirty tree or while ignoring unmerged product branches; never silently switch branches.
+   2c. **Health gate:** `bash scripts/github/session-preflight.sh` — exit 2 → dispose open PRs / red main CI / WIP **before** net-new.
+3. **Decision Gate** (state one): `CONTINUE` only if health clear | `FINISH+COMMIT` | `PROMOTE` | `PARK` (todo.md, 4 fields after attempt) | `ASK`.
+4. Never start net-new work on an unexplained dirty tree, open undirected PRs, or red protected CI; never silently switch branches.
 5. Non-trivial work: **must** route via `using-agent-skills` and invoke applicable skills (no Superpowers; do not wait for skill names)
-6. Resume incomplete plans/todos/debt **before** net-new work.
+6. Resume incomplete plans/todos/debt **and health blockers** before net-new work.
 
 ---
 
@@ -184,6 +185,8 @@ On `/end`, “end session”, “ship it”, or when opening/merging a PR for th
 - Mirroring OS skills into `~/.grok/skills` or vendoring agent-skills into product repos
 - **Silently ignoring unfinished work** (local branches, unpushed commits, open plans, portfolio loose files, dirty tree) because it is “not this session”
 - Treating Session Start as the only time WIP inventory matters (re-ground mid-session too)
+- Treating open PRs / failed Actions / Dependabot as “advisory hygiene” or “not this ship”
+- Claiming Session End complete while health gate still fails (exit 2) without disposition
 
 Violation is a **contract failure**, not a style note.
 
@@ -201,7 +204,7 @@ Agents **must never** silently ignore, forget, or deprioritize unfinished work b
 | **Local branches ahead of protected** | Any branch with commits not in `origin/main` (or protected) | Resume · ship · PARK · delete if **proven supersedable** · or ASK                                            |
 | **Unpushed commits**                  | Local branch ahead of its `origin/*`                        | Push feature branch for multi-harness durability, or PARK why not                                            |
 | **Open plans / todos / debt**         | `tasks/todo.md`, `docs/plans/*`, debt register              | Resume before net-new, or update status honestly                                                             |
-| **Open PRs / CI failures**            | `gh pr list`, preflight                                     | Fix-and-merge, close with comment, or track                                                                  |
+| **Open PRs / CI failures**            | `gh pr list`, preflight (exit 2 = blockers)                 | **Fix-and-merge · close+comment · PARK(4 fields after attempt)** — never report-only                         |
 | **Portfolio loose artifacts**         | Files under `~/Projects/` not inside a product git root     | Commit into a real repo, move into product/docs, or PARK with path + done-when — **never invisible orphans** |
 | **Machine OS drift**                  | Skills/hooks/enforcement vs gist SoT                        | Repair same session when OS work is in scope, or PARK                                                        |
 
@@ -214,6 +217,47 @@ Agents **must never** silently ignore, forget, or deprioritize unfinished work b
 5. Closeout / Session End must list remaining unfinished work with disposition (or clean zero).
 
 ---
+
+# Project health blockers (hard — not advisory)
+
+When an agent **touches a product repo** (Session Start, re-ground, or any non-trivial turn), **repo health is in scope**. There is no other teammate. Reports without disposition are a **contract failure**.
+
+## Rule
+
+**List → dispose → then net-new.**  
+`scripts/github/session-preflight.sh` is a **health gate**: exit `2` = blockers. Agents must not treat its output as optional reading.
+
+| Forbidden closeout / brief language     | Required instead                                                         |
+| --------------------------------------- | ------------------------------------------------------------------------ |
+| “pre-existing open PRs”                 | Each PR: merge / fix-and-merge / close+comment+reason                    |
+| “not from this ship / session”          | Still owned — fix or PARK with 4 debt fields **after attempt**           |
+| “hygiene report only” / “for awareness” | Disposition per item                                                     |
+| “Dependabot later”                      | Triage same session (merge green, rebase, or close duplicate/superseded) |
+| “old Actions noise”                     | Reproduce on current protected branch; fix or evidence of supersession   |
+
+## Blocker classes (block net-new until disposed)
+
+| Class                             | Source                                       | Disposition (same session preferred)                               |
+| --------------------------------- | -------------------------------------------- | ------------------------------------------------------------------ |
+| Open PRs (all authors)            | `gh pr list` / preflight                     | Fix-and-merge · rebase+merge · close with comment                  |
+| Failed Actions on protected       | `gh run list --branch main --status failure` | Fix root cause · re-run green · or supersession note with evidence |
+| Local branches ahead of protected | preflight                                    | Resume · ship · PARK · delete if proven supersedable               |
+| Dirty tree / unpushed             | git                                          | Commit/push or PARK                                                |
+| Open plans/todos with status open | `tasks/` · `docs/plans`                      | Resume before net-new                                              |
+
+**“Track” alone is not disposition.** Tracking must be `tasks/todo.md` with **status · priority · justification · done-when**, and only after a real attempt (e.g. conflict too large, needs Architect secret).
+
+## Cadence
+
+| When                  | Action                                                                                                                   |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Session Start         | Run preflight; **clear blockers before Architect net-new**                                                               |
+| Mid-session re-ground | Re-run if long session or before parallel work                                                                           |
+| Session End           | `session-end-hygiene.sh` — exit `2` if open PR/main-CI blockers remain; claim complete only after dispose or honest PARK |
+
+## Solo team implication
+
+The Architect will not “handle GitHub later.” Bot PRs, red deploys, and open agent PRs are **your** job when you open the repo — equal priority to the named task until the health gate is clear or items are honestly PARKed.
 
 # OS Structure & Index (always maintain)
 
@@ -300,7 +344,7 @@ This OS is **not a one-shot setup checklist**. Setup **establishes** surfaces; *
 | `docs/{specs,plans,archive}/`                                     | Create dirs at bootstrap                              | Update plan checkboxes; archive when shipped                              | Prefer this layout over ad-hoc doc dumps                |
 | Agent Skills (global)                                             | `sync-agent-skills.sh` when missing                   | Use skills on relevant work without being asked                           | Repair install when discovery fails                     |
 | Harness surfaces (Grok plugins/hooks; OpenCode auth/MCP/commands) | Minimal native setup so the harness can work          | Keep auth/MCP/commands healthy when used                                  | Lighten or adjust only when outcomes break              |
-| GitHub Issues/PRs/Project V2 hygiene                              | Bootstrap scripts/templates when product uses GitHub  | On `/end` / ship / exception                                              | Board/status alignment when preflight shows drift       |
+| GitHub Issues/PRs/Project V2 hygiene                              | Bootstrap scripts/templates when product uses GitHub  | **Session Start + Session End** (health gate, not advisory)               | Clear blockers; board alignment                         |
 | Lessons / standing rules                                          | First `tasks/lessons.md` / write rule when taught     | Review lessons at Session Start; persist new corrections same session     | Promote universal lessons to Gist                       |
 | Tracking / ignore / visible surfaces                              | Baseline `.gitignore` + hook install                  | No tracked secrets; no tracked-but-ignored; no orphan intent files        | Fix ignore rules when build outputs or tools change     |
 | Verify Agent OS healthy                                           | Full checklist after bootstrap                        | Spot-check at Session Start when something smells wrong                   | Expand checklist when a new failure mode appears        |
@@ -599,7 +643,7 @@ Do this **automatically** at the start of every session — and **re-ground** be
      3d. **Portfolio / non-repo / machine leftovers (mandatory):** When cwd is `~/Projects` or a non-git parent, or when Session Start is for OS/portfolio work: list **loose files** under `~/Projects/` that are not inside a product repo and **local branches ahead of protected in each known product**. Dispose each (commit/track, move, PARK, delete if supersedable). **Never** report “nothing to do” while loose advisories, unpushed branches, or open plans remain unaddressed.
      3e. **Mid-session re-ground:** Before net-new work mid-session, re-check dirty tree + branch inventory. Session Start is not a one-shot free pass to ignore WIP later.
 4. Review `tasks/lessons.md`, `tasks/todo.md`, open `docs/plans/` + `docs/specs/` (legacy paths if present), and debt register if any — **resume incomplete plans and clear blockers before net-new**. Note status/priority of open deferred items.
-5. If `scripts/github/session-preflight.sh` exists, run it; treat open PRs/Issues/failing Actions as work to resume or track.
+5. Run `bash scripts/github/session-preflight.sh` when present. **Exit 2 = health blockers** — dispose every BLOCKER (fix-and-merge / close / fix CI) **before** net-new Architect product work. Report-only is forbidden.
 6. Load knowledge graph + `docs/INDEX.md` (if present) + product docs for the objective; map whole-product fit, not only the named file.
 7. Confirm local CI hooks are installed (or install via project script). Never `--no-verify`.
 8. Map work via **`using-agent-skills`**; invoke applicable lifecycle skills and specialist personas without waiting for slash names.
@@ -1060,7 +1104,7 @@ Instructions stay in root **`AGENTS.md`** (OpenCode loads them). Skills and comm
 | Dependabot, CodeQL, org security products       | Actions that only move Project cards (agents own Project V2 via `gh`) | `scripts/github/*`                    |
 | Manual `workflow_dispatch` release              | —                                                                     | Session Start: `gh run list` failures |
 
-**Agent autonomy:** Session Start (`session-preflight.sh`) and Session End (`session-end-hygiene.sh`) **must** list recent Actions runs/failures and open Dependabot/bot PRs. Failed deploys after your merge are your problem until fixed or tracked. Inventory per repo: `docs/GITHUB_ACTIONS.md`.
+**Agent autonomy:** Session Start (`session-preflight.sh`) and Session End (`session-end-hygiene.sh`) are **health gates** (exit 2 on open PRs / failed protected-branch Actions). Agents **dispose** blockers — not list them. Failed deploys on protected are your problem until fixed or supersession is evidenced. Inventory per repo: `docs/GITHUB_ACTIONS.md`.
 
 #### GitHub Project V2 sync (agent CLI only — no Actions)
 
@@ -1079,12 +1123,12 @@ bash scripts/github/ensure-scopes.sh
 
 | Script                                                    | When agents run it                                                                                                               |
 | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `scripts/github/session-preflight.sh`                     | **Session Start** — open PRs/Issues, branch vs main, board snapshot                                                              |
+| `scripts/github/session-preflight.sh`                     | **Session Start health gate** — exit 2 if open PRs / main CI red / local WIP; dispose before net-new                             |
 | `scripts/github/ensure-labels.sh` / `ensure-milestone.sh` | Bootstrap + before create Issue/PR                                                                                               |
 | `scripts/github/open-unit.sh`                             | Starting a tracked product/infra unit (Issue + labels + board **In Progress**)                                                   |
 | `scripts/github/project-sync.sh`                          | `add <url>` · `status <url> <stage>` · `done <url>`                                                                              |
 | `scripts/github/ship-unit.sh`                             | **GitOps ship** — push, PR+labels, board In Review → merge → board **Done**, checkout protected                                  |
-| `scripts/github/session-end-hygiene.sh`                   | **Session End** after ship — list remaining open work; `--close-stale-os-prs` for superseded OS-init PRs                         |
+| `scripts/github/session-end-hygiene.sh`                   | **Session End health gate** — exit 2 if open PR/main-CI blockers remain; dispose or PARK(4); then return-to-main                 |
 | `scripts/github/session-end-return-main.sh`               | **Session End hard gate** — require clean tree on protected branch (`main`), ff to origin; fail if unmerged feature work remains |
 | `scripts/github/bootstrap.sh`                             | OS install / drift repair                                                                                                        |
 
@@ -1100,7 +1144,7 @@ bash scripts/github/ensure-scopes.sh
 | `/end` / ship unit              | `ship-unit.sh` (or equivalent: PR → labels → project In Review → squash merge → project Done)  |
 | After merge                     | Linked Issues close via `Closes #N`; board item **Done**; no orphan remote branches            |
 | Session End closeout            | `session-end-hygiene.sh` — do not leave obsolete agent-os-init PRs open if main already has OS |
-| Dependabot / bot PRs            | Value-first triage on Session Start or stewardship — not ignore forever                        |
+| Dependabot / bot PRs            | **Session Start blocker** — merge green / rebase / close duplicate; never “later” without PARK |
 
 **Ownership:** the agent updates Project/board status at the right GitOps moment. Local CI stays on hooks; GitHub Actions stay for deploy/release/environment work.
 

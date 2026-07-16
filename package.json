@@ -14,7 +14,8 @@
     "format": "biome check --write .",
     "format:check": "biome check .",
     "lint": "biome lint .",
-    "biome:ci": "biome ci ."
+    "biome:ci": "biome ci .",
+    "smoke": "bash scripts/smoke.sh"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.9",

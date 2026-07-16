@@ -17,7 +17,7 @@ const staticGallery = [
 ];
 
 // Try live gallery from SeamFusion app, fall back to static
-let _galleryMedia = staticGallery;
+let galleryMedia = staticGallery;
 try {
   const apiData = await fetchAcademyData(['gallery']);
   if (apiData?.gallery && Array.isArray(apiData.gallery) && apiData.gallery.length > 0) {
@@ -31,7 +31,7 @@ try {
 
     // Use API items if available, otherwise keep static
     if (apiItems.length > 0) {
-      _galleryMedia = apiItems;
+      galleryMedia = apiItems;
     }
   }
 } catch {

@@ -102,3 +102,5 @@ Agents must inventory and dispose dirty trees, local branches ahead of protected
 
 - a11y + noUnused* elevated to **error** (Astro unused vars overridden — Biome cannot see template uses).
 - Hygiene/preflight: failed Actions only block when **latest run of that workflowName** is still red.
+
+- Fix: Biome unsafe unused renames break Astro templates — never autofix Astro frontmatter without build verify.

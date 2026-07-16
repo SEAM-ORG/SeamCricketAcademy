@@ -6,7 +6,8 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignoreUnknown": true
+    "ignoreUnknown": true,
+    "includes": ["**", "!docs", "!public/**/*.svg"]
   },
   "formatter": {
     "enabled": true,
@@ -34,18 +35,18 @@
     "rules": {
       "recommended": true,
       "a11y": {
-        "noSvgWithoutTitle": "warn",
-        "noStaticElementInteractions": "warn",
-        "useKeyWithClickEvents": "warn",
-        "useButtonType": "warn",
-        "useSemanticElements": "warn",
-        "noLabelWithoutControl": "warn"
+        "noSvgWithoutTitle": "error",
+        "noStaticElementInteractions": "error",
+        "useKeyWithClickEvents": "error",
+        "useButtonType": "error",
+        "useSemanticElements": "error",
+        "noLabelWithoutControl": "error"
       },
       "correctness": {
         "useExhaustiveDependencies": "warn",
-        "noUnusedVariables": "warn",
-        "noUnusedImports": "warn",
-        "noUnusedFunctionParameters": "warn"
+        "noUnusedVariables": "error",
+        "noUnusedImports": "error",
+        "noUnusedFunctionParameters": "error"
       },
       "suspicious": {
         "useIterableCallbackReturn": "off",
@@ -73,5 +74,18 @@
     "formatter": {
       "enabled": true
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["**/*.astro"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedVariables": "off",
+            "noUnusedImports": "off"
+          }
+        }
+      }
+    }
+  ]
 }

@@ -2,7 +2,7 @@
 import academy from '../data/academy.json';
 import { fetchWebsiteContent } from '../lib/seamfusion-api';
 
-let features = academy.about.features;
+let _features = academy.about.features;
 
 // Override with CMS content if available
 try {
@@ -10,7 +10,7 @@ try {
   if (content?.about) {
     const about = content.about as Record<string, unknown>;
     if (Array.isArray(about.features) && about.features.length > 0) {
-      features = about.features as string[];
+      _features = about.features as string[];
     }
   }
 } catch {

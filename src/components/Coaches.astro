@@ -3,11 +3,11 @@ import academy from '../data/academy.json';
 import { fetchAcademyData } from '../lib/seamfusion-api';
 
 // Try live data from SeamFusion app, fall back to static academy.json
-let trainers = academy.trainers;
+let _trainers = academy.trainers;
 try {
   const apiData = await fetchAcademyData(['coaches']);
   if (apiData?.coaches && Array.isArray(apiData.coaches) && apiData.coaches.length > 0) {
-    trainers = apiData.coaches.map((c: Record<string, unknown>) => ({
+    _trainers = apiData.coaches.map((c: Record<string, unknown>) => ({
       name: (c.displayName as string) || 'Coach',
       title:
         Array.isArray(c.specializations) && c.specializations.length > 0

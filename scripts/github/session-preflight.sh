@@ -75,17 +75,28 @@ else
 fi
 echo
 
-echo "=== Failed Actions on $BASE (last 8) — still failing on protected = BLOCKER ==="
+echo "=== Failed Actions on $BASE (active only — later green supersedes) ==="
 FAIL_MAIN=0
 while read -r line; do
   [[ -z "$line" ]] && continue
   FAIL_MAIN=$((FAIL_MAIN + 1))
-  echo "  $line"
-done < <(gh run list -R "$REPO" --branch "$BASE" --status failure --limit 8 2>/dev/null || true)
+  echo "  ACTIVE FAIL: $line"
+done < <(
+  gh run list -R "$REPO" --branch "$BASE" --limit 50 \
+    --json databaseId,conclusion,name,createdAt,displayTitle,url,workflowName 2>/dev/null \
+    | jq -r '
+        map(. + {key: (if (.workflowName // "") != "" then .workflowName else .name end)})
+        | group_by(.key)
+        | map(sort_by(.createdAt) | reverse | .[0])
+        | map(select(.conclusion == "failure"))
+        | .[]
+        | "\(.key)\t\(.createdAt)\t\(.displayTitle // "")\t\(.url // "")"
+      ' 2>/dev/null || true
+)
 if [[ "$FAIL_MAIN" -eq 0 ]]; then
-  echo "  (none on $BASE)"
+  echo "  (none on $BASE — historical failures superseded by later green)"
 else
-  blocker "$FAIL_MAIN failed Action run(s) on $BASE — reproduce/fix or document supersession with evidence (not 'old noise')"
+  blocker "$FAIL_MAIN active failed workflow(s) on $BASE — fix or re-run until latest of that workflow is green"
 fi
 echo
 

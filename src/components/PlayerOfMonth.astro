@@ -3,16 +3,16 @@ import academy from '../data/academy.json';
 import { fetchWebsiteContent } from '../lib/seamfusion-api';
 
 // Static defaults from academy.json
-let playerName = academy.playerFeature.name;
-let playerDescription = academy.playerFeature.description;
+let _playerName = academy.playerFeature.name;
+let _playerDescription = academy.playerFeature.description;
 
 // Override with CMS content if available
 try {
   const content = await fetchWebsiteContent();
   if (content?.playerFeature) {
     const pf = content.playerFeature as Record<string, string>;
-    if (pf.name) playerName = pf.name;
-    if (pf.description) playerDescription = pf.description;
+    if (pf.name) _playerName = pf.name;
+    if (pf.description) _playerDescription = pf.description;
   }
 } catch {
   // Silent — static data already loaded

@@ -97,3 +97,8 @@ Agents must inventory and dispose dirty trees, local branches ahead of protected
 ## 2026-07-16 — Biome format/lint
 
 - JS/TS/JSON/CSS/HTML/Astro use **Biome** (not Prettier/ESLint). Machine gate: `~/.config/agent-quality/`. Dart stays `fvm dart format`.
+
+## 2026-07-16 — Biome tighten + Actions supersession
+
+- a11y + noUnused* elevated to **error** (Astro unused vars overridden — Biome cannot see template uses).
+- Hygiene/preflight: failed Actions only block when **latest run of that workflowName** is still red.

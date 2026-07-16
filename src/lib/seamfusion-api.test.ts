@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import { after, before, describe, mock, test } from 'node:test';
+import { after, describe, mock, test } from 'node:test';
 
 // Mock process.env before importing the module
 process.env.PUBLIC_API_URL = 'https://api.example.com';

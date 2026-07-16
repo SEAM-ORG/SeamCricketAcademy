@@ -1,12 +1,10 @@
 ---
-import academy from '../data/academy.json';
 import { fetchWebsiteContent } from '../lib/seamfusion-api';
-import SummerCampPromo from './SummerCampPromo.astro';
 
 // Static defaults (match the original hardcoded HTML)
-let titleMain = 'Seam Cricket';
-let titleAccent = 'Academy';
-let subtitle =
+let _titleMain = 'Seam Cricket';
+let _titleAccent = 'Academy';
+let _subtitle =
   'Nurturing passion, discipline, and skill through high-quality cricket coaching tailored for every age and skill level.';
 
 // Override with CMS content if available
@@ -14,16 +12,16 @@ try {
   const content = await fetchWebsiteContent();
   if (content?.hero) {
     const hero = content.hero as Record<string, string>;
-    if (hero.subtitle) subtitle = hero.subtitle;
+    if (hero.subtitle) _subtitle = hero.subtitle;
     if (hero.title) {
       // Split title: last word becomes the accent (gold) line
       const words = hero.title.trim().split(/\s+/);
       if (words.length > 1) {
-        titleAccent = words.pop()!;
-        titleMain = words.join(' ');
+        _titleAccent = words.pop()!;
+        _titleMain = words.join(' ');
       } else {
-        titleMain = hero.title;
-        titleAccent = '';
+        _titleMain = hero.title;
+        _titleAccent = '';
       }
     }
   }

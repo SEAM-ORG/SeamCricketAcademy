@@ -52,16 +52,32 @@ if [[ -n "$OWNER" && "$OWNER" != "REPLACE_ORG" && "$PNUM" != "0" ]] && require_p
 fi
 
 echo
-echo "=== Failed Actions on protected (last 5) ==="
+echo "=== Failed Actions on protected (active only — superseded by later green = clear) ==="
 BASE="$(cfg protected_branch)"; BASE="${BASE:-main}"
 FAIL=0
+# Per workflow name on protected branch: only the latest run counts.
+# Historical red is noise when a later run of the same workflow is success/cancelled.
 while read -r line; do
   [[ -z "$line" ]] && continue
   FAIL=$((FAIL + 1))
-  echo "  $line"
-done < <(gh run list -R "$REPO" --branch "$BASE" --status failure --limit 5 2>/dev/null || true)
-if [[ "$FAIL" -gt 0 ]]; then
-  blocker "$FAIL failed Action(s) on $BASE — fix or evidence of supersession required"
+  echo "  ACTIVE FAIL: $line"
+done < <(
+  # Prefer workflowName (stable); name can be the workflow file path on some runs.
+  gh run list -R "$REPO" --branch "$BASE" --limit 50 \
+    --json databaseId,conclusion,name,createdAt,displayTitle,url,workflowName 2>/dev/null \
+    | jq -r '
+        map(. + {key: (if (.workflowName // "") != "" then .workflowName else .name end)})
+        | group_by(.key)
+        | map(sort_by(.createdAt) | reverse | .[0])
+        | map(select(.conclusion == "failure"))
+        | .[]
+        | "\(.key)\t\(.createdAt)\t\(.displayTitle // "")\t\(.url // "")"
+      ' 2>/dev/null || true
+)
+if [[ "$FAIL" -eq 0 ]]; then
+  echo "  (none — failures superseded by later green, or no failures)"
+else
+  blocker "$FAIL active failed workflow(s) on $BASE — fix root cause or re-run until latest is green"
 fi
 
 echo

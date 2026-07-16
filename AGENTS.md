@@ -74,6 +74,7 @@ Suggest improvements; on Architect yes (including short yes), execute end-to-end
 | Ship / clean handoff / GitOps / OpenCode list hygiene | `session-end`                                                  |
 | Install / repair / multi-repo OS sync                 | `agent-os-bootstrap`                                           |
 | Plan / TDD / debug / verify / review                  | **agent-skills** via `using-agent-skills` (not new OS skills)  |
+| Code write / refactor minimalism                      | **ponytail** (default full; compose with OS gates)             |
 | Product facts                                         | **This Project** + `docs/INDEX.md` — not a new top-level guide |
 
 **Docs:** Prefer `docs/{specs,plans,archive}/` + `docs/INDEX.md`. **Do not** create `docs/superpowers/`. `.github/ai-context/` holds knowledge graph + journal — not a second copy of AGENTS principles/workflow.
@@ -829,6 +830,20 @@ When Architect runs bootstrap / install OS / "set this project up", after OS mat
 
 ### Methodology note
 
+## Ponytail (global — code minimalism)
+
+**Package:** [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) (`@dietrichgebert/ponytail`)  
+**Always-on when writing code** (default mode **full**): climb the ladder before generating — YAGNI → reuse → stdlib → native → one line → minimum. Never cut validation, security, a11y, or Agent OS verification/health gates.
+
+| Surface         | Where                                                                                                           |
+| --------------- | --------------------------------------------------------------------------------------------------------------- |
+| Skills          | `~/.agents/skills/ponytail*` (Grok + OpenCode)                                                                  |
+| OpenCode plugin | `@dietrichgebert/ponytail` in global `opencode.jsonc`                                                           |
+| Default mode    | `~/.config/ponytail/config.json`                                                                                |
+| Commands        | `/ponytail [lite\|full\|ultra\|off]`, `/ponytail-review`, `/ponytail-audit`, `/ponytail-debt`, `/ponytail-help` |
+
+**Compose with Agent OS:** Session Start health gate, Local-vs-GitOps, memory drift, and Architect intent **win** if they conflict with “do less.” Ponytail shapes _how little code_ to write after the task is legitimate.
+
 This OS is the always-on work layer. **addyosmani/agent-skills** supplies methodology. OS skills + hooks supply session/GitOps. **No Superpowers.** **No** command wrapper trees required.
 
 ## Harness common ground (Grok + OpenCode)
@@ -892,6 +907,7 @@ Wire it the **harness-native** way (Grok plugin enablement and/or OpenCode `mcp`
 [ ] DEVELOPMENT.md or equivalent command surface linked from This Project
 [ ] Knowledge graph links domains → docs
 [ ] OS skills present under `~/.agents/skills` (`session-start`, `session-end`, `agent-os-bootstrap` only); methodology via `using-agent-skills`; no project skill trees
+[ ] Ponytail: OpenCode plugin `@dietrichgebert/ponytail` + `~/.agents/skills/ponytail*`
 [ ] agent-skills available globally (`bash ~/.agents/scripts/sync-agent-skills.sh`; both harnesses load `~/.agents/skills`; no Superpowers; no project `.agents/`)
 [ ] Harness surfaces healthy enough to work (skills discoverable; OpenCode auth plugin present; browser MCP if UI work needs it)
 [ ] Chrome DevTools MCP global (Grok plugin `chrome-devtools-mcp`; OpenCode `opencode mcp list` → connected)

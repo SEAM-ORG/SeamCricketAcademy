@@ -20,7 +20,6 @@ Focusing on highlighting the new Summer Camp program and optimizing hero space u
 - **Copy Updates** - Cleaned up redundant 'Launching Soon', renaming existing flow to 'Ongoing Programs'.
 - **Age Limits** - Expanded Summer Camp age demographic to 5-16 years.
 
-
 ## [2.2.0] - 2025-12-27
 
 ### 🏆 Gold Theme & UI Polish
@@ -75,3 +74,7 @@ Complete website revamp with modern Astro architecture.
 - Static HTML website
 - Basic responsive design
 - Contact form integration
+
+## Unreleased
+
+- chore(deps): astro ^7.0.7, @tailwindcss/vite ^4.3.2 (typescript remains ^6).

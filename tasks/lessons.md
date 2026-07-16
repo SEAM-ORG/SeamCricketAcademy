@@ -76,3 +76,8 @@ Before creating skills, docs, hooks, or workflows: update AGENTS.md, INDEX-linke
 ### 2026-07-15: No silent ignore of unfinished work
 
 Agents must inventory and dispose dirty trees, local branches ahead of protected, unpushed commits, open plans/todos, open PRs, portfolio loose files under ~/Projects, and machine OS drift. Clean main is not idle. Re-ground mid-session. Superseded chore branches may be deleted after classification; unique product commits must be recovered or PARKED — never silent drop.
+
+## 2026-07-16 — Dependabot #37 rehome
+
+- astro 7 + @tailwindcss/vite 4.3.2; pin typescript ^6 for @astrojs/check peer (TS 7 rejected).
+- Closed broken #37; new Dependabot #55 may supersede further — triage same turn.

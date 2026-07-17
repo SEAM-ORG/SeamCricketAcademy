@@ -70,16 +70,34 @@ if [[ "$HAS_REMOTE" -eq 1 && "$NO_FETCH" -eq 0 ]]; then
 fi
 
 prune_merged_locals() {
-  info "Pruning local branches fully merged into $BASE"
+  info "Pruning local feature branches (merged into $BASE, or remote already deleted after ship)"
   if [[ "$HAS_REMOTE" -eq 1 ]] && git show-ref --verify --quiet "refs/remotes/origin/$BASE"; then
     MERGE_TIP="origin/$BASE"
   else
     MERGE_TIP="$BASE"
   fi
+  local REPO_SLUG=""
+  if [[ "$HAS_REMOTE" -eq 1 ]] && command -v gh >/dev/null 2>&1; then
+    REPO_SLUG="$(gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null || true)"
+  fi
   while read -r br; do
     [[ -z "$br" || "$br" == "$BASE" || "$br" == "master" ]] && continue
+    # 1) Classic: fully contained in protected tip
     if git merge-base --is-ancestor "$br" "$MERGE_TIP" 2>/dev/null; then
       git branch -d "$br" 2>/dev/null && info "deleted merged branch $br" || true
+      continue
+    fi
+    # 2) Squash-merge residue: remote branch gone + no open PR → safe to drop local
+    if [[ "$HAS_REMOTE" -eq 1 ]]; then
+      if ! git ls-remote --heads origin "$br" 2>/dev/null | grep -q .; then
+        local open_pr=""
+        if [[ -n "$REPO_SLUG" ]]; then
+          open_pr="$(gh pr list -R "$REPO_SLUG" --head "$br" --state open --limit 1 --json number --jq '.[0].number // empty' 2>/dev/null || true)"
+        fi
+        if [[ -z "$open_pr" ]]; then
+          git branch -D "$br" 2>/dev/null && info "deleted local residue $br (remote gone, no open PR — post-squash ship)" || true
+        fi
+      fi
     fi
   done < <(git for-each-ref --format='%(refname:short)' refs/heads/)
 }

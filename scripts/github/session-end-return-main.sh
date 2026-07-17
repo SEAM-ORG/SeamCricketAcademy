@@ -69,6 +69,21 @@ if [[ "$HAS_REMOTE" -eq 1 && "$NO_FETCH" -eq 0 ]]; then
   git fetch origin --prune 2>/dev/null || true
 fi
 
+prune_merged_locals() {
+  info "Pruning local branches fully merged into $BASE"
+  if [[ "$HAS_REMOTE" -eq 1 ]] && git show-ref --verify --quiet "refs/remotes/origin/$BASE"; then
+    MERGE_TIP="origin/$BASE"
+  else
+    MERGE_TIP="$BASE"
+  fi
+  while read -r br; do
+    [[ -z "$br" || "$br" == "$BASE" || "$br" == "master" ]] && continue
+    if git merge-base --is-ancestor "$br" "$MERGE_TIP" 2>/dev/null; then
+      git branch -d "$br" 2>/dev/null && info "deleted merged branch $br" || true
+    fi
+  done < <(git for-each-ref --format='%(refname:short)' refs/heads/)
+}
+
 return_to_base() {
   if git show-ref --verify --quiet "refs/heads/$BASE"; then
     git checkout "$BASE"
@@ -103,6 +118,7 @@ if [[ "$BRANCH" == "$BASE" ]]; then
       fi
     fi
   fi
+  prune_merged_locals
   info "READY on $BASE @ $(git rev-parse --short HEAD) (clean slate for next session)"
   git status -sb
   exit 0
@@ -122,6 +138,7 @@ if [[ "$HAS_REMOTE" -eq 0 ]]; then
     git merge --no-ff "$BRANCH" -m "chore(session-end): merge $BRANCH into $BASE (local-only repo)"
   fi
   git branch -d "$BRANCH" 2>/dev/null || git branch -D "$BRANCH" 2>/dev/null || true
+  prune_merged_locals
   info "READY on $BASE @ $(git rev-parse --short HEAD) (local-only repo)"
   git status -sb
   exit 0
@@ -133,6 +150,7 @@ if git merge-base --is-ancestor HEAD "origin/$BASE" 2>/dev/null; then
   MERGED_BRANCH="$BRANCH"
   return_to_base
   git branch -d "$MERGED_BRANCH" 2>/dev/null || true
+  prune_merged_locals
   info "READY on $BASE @ $(git rev-parse --short HEAD)"
   git status -sb
   exit 0

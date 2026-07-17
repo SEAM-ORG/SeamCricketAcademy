@@ -43,3 +43,8 @@
 | --------------------------------------------- | ------------------------------------ |
 | [.github/ai-context/](../.github/ai-context/) | Knowledge graph, principles, journal |
 | [tasks/lessons.md](../tasks/lessons.md)       | Corrections                          |
+
+## Spec-Driven Development (cc-sdd)
+
+- **Steering / specs:** [`.kiro/`](../.kiro/) — product SDD memory (steering + feature specs)
+- **Machine skills:** `kiro-*` under `~/.agents/skills` (global)

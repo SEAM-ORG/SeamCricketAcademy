@@ -17,7 +17,7 @@ is_memory_path() {
   case "$f" in
     AGENTS.md|DEVELOPMENT.md|CHANGELOG.md|README.md|PRD.md|PROJECT_CONTEXT.md|DESIGN_SYSTEM.md|DEPLOYMENT.md|SETUP.md|roadmap.md)
       return 0 ;;
-    docs/*|tasks/*|.github/ai-context/*)
+    docs/*|tasks/*|.github/ai-context/*|.kiro/*)
       return 0 ;;
   esac
   return 1

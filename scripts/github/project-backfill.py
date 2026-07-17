@@ -190,8 +190,24 @@ def main() -> int:
         ])
         err_blob = ((r.stderr or "") + (r.stdout or "")).lower()
         if r.returncode != 0 and ("rate limit" in err_blob or "secondary rate" in err_blob):
-            for wait in (15, 30, 60):
-                print(f"  rate-limit backoff {wait}s…", flush=True)
+            # Wait for GraphQL primary reset when exhausted; otherwise short secondary backoff
+            for attempt in range(4):
+                wait = 90
+                rr = run(["gh", "api", "rate_limit"])
+                if rr.returncode == 0:
+                    try:
+                        data = json.loads(rr.stdout)
+                        g = (data.get("resources") or {}).get("graphql") or {}
+                        rem = int(g.get("remaining") or 0)
+                        reset = int(g.get("reset") or 0)
+                        now = int(time.time())
+                        if rem <= 5 and reset > now:
+                            wait = min(reset - now + 15, 3700)
+                        else:
+                            wait = 45 + attempt * 30
+                    except Exception:
+                        wait = 90 + attempt * 30
+                print(f"  rate-limit backoff {wait}s (attempt {attempt+1}/4)…", flush=True)
                 time.sleep(wait)
                 r = run([
                     "gh", "project", "item-edit",

@@ -1326,7 +1326,7 @@ Restored and consolidated from historical Agent OS GitOps practice (labels/miles
 | **CODEOWNERS / Dependabot / Jules** | Keep when present. Dependabot/Jules PRs: value-first triage (fix and merge; do not lazy-close). |
 | **Orphans** | If push succeeds but PR create fails, delete the remote orphan branch. **Any** remote branch without an open PR is a preflight/session-end **BLOCKER** until deleted (if merged/superseded) or shipped. |
 | **Session start** | Run `session-preflight.sh` (exit 2 = dispose first). Inventory open PRs, remote orphans, Project V2 config, main CI. Resume before inventing parallel work. |
-| **Project V2** | Every Issue/PR from `open-unit` / `ship-unit` **must** land on the board with Status (and Work Type when known). `project_number: 0` is a hard fail. |
+| **Project V2** | Every Issue/PR from `open-unit` / `ship-unit` **must** land on the board with **Status + Work Type + Priority Level**, plus **≥1 label** on the Issue/PR and a **milestone** when multi-session or infra. `project_number: 0` is a hard fail. Historical gaps → `project-backfill.sh`. |
 | **Agent closes the loop** | On `/end`, squash-merge yourself when green; prune local+remote; leave Architect on clean `main`. Leave unmerged only when the Architect asked to review first. |
 
 **Thin portable scripts (create at bootstrap if missing):**
@@ -1400,7 +1400,8 @@ bash scripts/github/ensure-scopes.sh
 | `scripts/github/ensure-labels.sh` / `ensure-milestone.sh` | Bootstrap + before create Issue/PR |
 | `scripts/github/open-unit.sh` | Starting a tracked unit: Issue + labels + milestone + board **In Progress** + Work Type/Priority |
 | `scripts/github/project-sync.sh` | `add` · `status` · `done` · `type` · `priority` |
-| `scripts/github/ship-unit.sh` | **GitOps ship** — push, PR+labels+milestone, board In Review → merge → board **Done**, delete remote branch, checkout protected |
+| `scripts/github/project-backfill.sh` | **Historical board repair** — set Work Type + Priority Level on every item; fill missing Issue/PR labels; infra milestone when missing |
+| `scripts/github/ship-unit.sh` | **GitOps ship** — push, PR+labels+milestone, board In Review + **Work Type + Priority** → merge → board **Done**, delete remote, checkout protected |
 | `scripts/github/session-end-hygiene.sh` | **Session End health gate** — open PRs + **remote orphans** + project config + main CI; then return-to-main |
 | `scripts/github/session-end-return-main.sh` | **Session End hard gate** — clean tree on protected (`main`), ff to origin; prune merged **local** branches |
 | `scripts/github/bootstrap.sh` | OS install / drift repair |
@@ -1422,13 +1423,36 @@ bash scripts/github/ensure-scopes.sh
 | ------------------------------- | ---------------------------------------------------------------------------------------------- |
 | Session Start | Preflight open PRs/Issues/**orphans**/board config; **resume** open agent work before net-new |
 | Local turn | **No** push/PR/board required; commit locally on feature branch |
-| Start multi-session product arc | `open-unit.sh` Issue + milestone/labels + board In Progress + Work Type |
-| `/end` / ship unit | `ship-unit.sh` (PR → labels → milestone → project In Review → squash merge → project Done → prune remote) |
-| After merge | Linked Issues close via `Closes #N`; board item **Done**; **no** orphan remote branches |
+| Start multi-session product arc | `open-unit.sh` Issue + milestone/labels + board In Progress + Work Type + Priority |
+| `/end` / ship unit | `ship-unit.sh` (PR → labels → milestone → project In Review + Type + Priority → squash merge → Done → prune remote) |
+| After merge | Linked Issues close via `Closes #N`; board item **Done** + Type/Priority set; **no** orphan remote branches |
 | Session End closeout | `session-end-hygiene.sh --close-stale-os-prs` → return-to-main exit 0 |
+| Board gaps (historical empty Type/labels/milestone) | `bash scripts/github/project-backfill.sh` (or `--dry-run` first). Do **not** leave empty custom fields on the board. |
 | Dependabot / bot PRs | **Session Start blocker** — merge green / rebase / close duplicate; never “later” without PARK |
 
-**Ownership:** the agent updates Project/board status at the right GitOps moment. Local CI stays on hooks; GitHub Actions stay for deploy/release/environment work.
+#### Project V2 field contract (every item)
+
+| Field | Required | Who sets it | Defaults / inference |
+|-------|----------|-------------|----------------------|
+| **Status** | Yes | `open-unit` / `ship-unit` / `project-sync` | Todo · In Progress · Done (map via `status_map`) |
+| **Work Type** | Yes | `open-unit --type` / `ship-unit` (infer from labels/title) / `project-backfill` | Feature · Bug · Chore · Infra · Security |
+| **Priority Level** | Yes | `open-unit --priority` / `ship-unit` (P2 mid-flight, P3 when Done) / backfill | P0 · P1 · P2 · P3 |
+| **Labels** (on Issue/PR) | ≥1 | `ensure-labels` + create/edit | bug · enhancement · chore · agent-infra · security · documentation |
+| **Milestone** (on Issue/PR) | When multi-session arc **or** infra/OS | `ensure-milestone` / `--milestone` / backfill for infra | Durable: `Agent OS & Tooling`; product phases as defined in This Project |
+
+**Backfill (one-shot or repair):**
+
+```bash
+# From a product repo wired to the board:
+bash scripts/github/project-backfill.sh --dry-run --limit 20
+bash scripts/github/project-backfill.sh --limit 500
+# Project fields only (no Issue/PR edits):
+bash scripts/github/project-backfill.sh --skip-content --limit 500
+```
+
+Inference rules (portable): `fix*`/`bug` → Bug; `feat*`/`enhancement` → Feature; security/ssrf/cve → Security; agent-os/gitops/hooks/`chore(os)` → Infra; else Chore. Closed/Done items get Priority **P3** on backfill.
+
+**Ownership:** the agent updates Project/board status **and** Type/Priority/labels/milestones at the right GitOps moment. Local CI stays on hooks; GitHub Actions stay for deploy/release/environment work.
 
 #### Guardrails (agent-enforced, behavioral)
 

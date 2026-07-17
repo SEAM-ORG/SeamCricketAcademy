@@ -110,3 +110,7 @@ Agents must inventory and dispose dirty trees, local branches ahead of protected
 - **Rule:** Session Start preflight exit 2 on open PRs, remote orphans, and Project V2 misconfig. Session End must prune remotes + return-to-main. `ship-unit`/`open-unit` refuse if board unwired.
 - **Boards:** SEAM-ORG #8 SeamFusionProject · Tanti-ORG #1 Tanti Project. Status: Todo / In Progress / Done. Fields: Work Type, Priority Level.
 - **Canonical scripts:** `~/.agents/scripts/github/*` → product `scripts/github/`.
+
+## 2026-07-17 — Project V2 field completeness
+- **Rule:** Every board item needs Status + Work Type + Priority Level; every Issue/PR needs ≥1 label; infra needs Agent OS & Tooling milestone when no product phase.
+- **Repair:** `bash scripts/github/project-backfill.sh` (GraphQL paginated). ship-unit always sets Type+Priority.

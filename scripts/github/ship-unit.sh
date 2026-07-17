@@ -87,17 +87,37 @@ if [[ -z "$POWNER" || "$POWNER" == "REPLACE_ORG" || -z "$PNUM" || "$PNUM" == "0"
   die "refusing to ship without Project V2 wiring"
 fi
 
-info "Project V2: add + status in_review"
+info "Project V2: add + status in_review + type + priority"
 if ! bash "$(dirname "$0")/project-sync.sh" add "$PR_URL"; then
   echo "WARN: project-sync add failed for $PR_URL — retrying status path" >&2
 fi
 if ! bash "$(dirname "$0")/project-sync.sh" status "$PR_URL" in_review; then
   echo "WARN: project-sync status in_review failed — agent must fix board mapping (status_map)" >&2
 fi
-# Optional Work Type from --infra
+# Work Type (required on every ship) + Priority Level
+WORK_TYPE="chore"
 if [[ "$INFRA" -eq 1 ]]; then
-  bash "$(dirname "$0")/project-sync.sh" type "$PR_URL" infra 2>/dev/null || true
+  WORK_TYPE="infra"
+else
+  for L in "${LABELS[@]}"; do
+    case "$L" in
+      bug|security) WORK_TYPE="$L"; break ;;
+      enhancement|feature) WORK_TYPE="feature" ;;
+      agent-infra) WORK_TYPE="infra" ;;
+    esac
+  done
+  # Title heuristics when labels are only chore
+  case "$(printf '%s' "$TITLE" | tr '[:upper:]' '[:lower:]')" in
+    fix:*|fix\(*|bug:*) WORK_TYPE="bug" ;;
+    feat:*|feat\(*|feature:*) WORK_TYPE="feature" ;;
+    *security*|*ssrf*) WORK_TYPE="security" ;;
+    chore\(os\)*|chore\(agents\)*|*gitops*|*agent\ os*) WORK_TYPE="infra" ;;
+  esac
 fi
+bash "$(dirname "$0")/project-sync.sh" type "$PR_URL" "$WORK_TYPE" 2>/dev/null \
+  || echo "WARN: project-sync type failed ($WORK_TYPE)" >&2
+bash "$(dirname "$0")/project-sync.sh" priority "$PR_URL" p2 2>/dev/null \
+  || echo "WARN: project-sync priority failed" >&2
 
 if [[ "$NO_MERGE" -eq 1 ]]; then
   echo "$PR_URL"
@@ -116,6 +136,8 @@ fi
 
 bash "$(dirname "$0")/project-sync.sh" status "$PR_URL" done 2>/dev/null \
   || echo "WARN: project-sync done failed for $PR_URL" >&2
+bash "$(dirname "$0")/project-sync.sh" type "$PR_URL" "$WORK_TYPE" 2>/dev/null || true
+bash "$(dirname "$0")/project-sync.sh" priority "$PR_URL" p3 2>/dev/null || true
 
 git fetch origin --prune
 git checkout "$BASE"

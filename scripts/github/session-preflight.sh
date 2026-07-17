@@ -5,11 +5,11 @@
 # Exit 2 = BLOCKERS present — agent MUST dispose before net-new product work.
 # Exit 1 = tooling error.
 #
-# Install: copy into product scripts/github/session-preflight.sh (or source from here).
+# Canonical: ~/.agents/scripts/github/session-preflight.sh
+# Products: scripts/github/session-preflight.sh (keep in sync via agent-os-bootstrap)
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-# Prefer product _lib when installed under scripts/github/
 if [[ -f "$SCRIPT_DIR/_lib.sh" ]]; then
   # shellcheck source=/dev/null
   source "$SCRIPT_DIR/_lib.sh"
@@ -19,6 +19,8 @@ else
   REPO="$(gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null || true)"
   BASE="main"
   info() { echo "→ $*"; }
+  cfg() { return 0; }
+  CONFIG_FILE=""
 fi
 
 REPO="${REPO:-unknown}"
@@ -75,6 +77,58 @@ else
 fi
 echo
 
+echo "=== remote orphan branches (no open PR — GitOps residue) ==="
+git fetch origin --prune --quiet 2>/dev/null || true
+ORPHANS=0
+while read -r br; do
+  [[ -z "$br" || "$br" == "$BASE" || "$br" == "master" || "$br" == "gh-pages" ]] && continue
+  pr_exists="$(gh pr list -R "$REPO" --head "$br" --state open --limit 1 --json number --jq '.[0].number // empty' 2>/dev/null || true)"
+  if [[ -n "$pr_exists" ]]; then
+    continue
+  fi
+  # Classify merged vs unmerged tip
+  if git show-ref --verify --quiet "refs/remotes/origin/$br" 2>/dev/null; then
+    if git merge-base --is-ancestor "origin/$br" "origin/$BASE" 2>/dev/null; then
+      echo "  MERGED orphan: origin/$br (safe to delete — no open PR)"
+    else
+      ahead=$(git rev-list --count "origin/$BASE..origin/$br" 2>/dev/null || echo "?")
+      tip=$(git log -1 --format='%h %s' "origin/$br" 2>/dev/null || echo "?")
+      echo "  UNMERGED orphan: origin/$br +$ahead  $tip"
+    fi
+  else
+    echo "  orphan: $br (no local remote-tracking ref — still on origin, no open PR)"
+  fi
+  ORPHANS=$((ORPHANS + 1))
+done < <(git ls-remote --heads origin 2>/dev/null | awk '{print $2}' | sed 's|refs/heads/||')
+if [[ "$ORPHANS" -eq 0 ]]; then
+  echo "  (none)"
+else
+  blocker "$ORPHANS remote branch(es) without open PR — delete merged (git push origin --delete <br>) or rehome/ship/supersede+delete unmerged. Session End: session-end-hygiene.sh --close-stale-os-prs"
+fi
+echo
+
+echo "=== Project V2 config (.github/agent-project.yml) ==="
+POWNER="$(cfg project_owner 2>/dev/null || true)"
+PNUM="$(cfg project_number 2>/dev/null || true)"
+PTITLE="$(cfg project_title 2>/dev/null || true)"
+echo "  project_owner=${POWNER:-'(unset)'}"
+echo "  project_number=${PNUM:-'(unset)'}"
+echo "  project_title=${PTITLE:-'(unset)'}"
+if [[ -z "${POWNER:-}" || "$POWNER" == "REPLACE_ORG" ]]; then
+  blocker "project_owner unset/REPLACE_ORG — set real org/user that owns Project V2 in .github/agent-project.yml"
+fi
+if [[ -z "${PNUM:-}" || "$PNUM" == "0" ]]; then
+  blocker "project_number is 0/unset — Project V2 board not wired; Issues/PRs will not populate the board. Set project_number from: gh project list --owner <org>"
+fi
+if [[ -n "${POWNER:-}" && "$POWNER" != "REPLACE_ORG" && -n "${PNUM:-}" && "$PNUM" != "0" ]]; then
+  if command -v require_project_scopes >/dev/null 2>&1 && require_project_scopes 2>/dev/null; then
+    echo "  board: https://github.com/orgs/${POWNER}/projects/${PNUM} (or /users/…)"
+  else
+    echo "  (scopes ok or check: gh auth refresh -s project,read:project)"
+  fi
+fi
+echo
+
 echo "=== Failed Actions on $BASE (active only — later green supersedes) ==="
 FAIL_MAIN=0
 while read -r line; do
@@ -119,11 +173,12 @@ if [[ "$BLOCKERS" -gt 0 ]]; then
   echo "================================================================="
   echo "HEALTH GATE FAILED: $BLOCKERS blocker class(es)."
   echo "Agent MUST dispose every BLOCKER before net-new product work."
-  echo "Disposition: fix-and-merge | rehome value then close+reason | ship | HOLD+recovery (external block only). Never lose work."
+  echo "Disposition: fix-and-merge | rehome value then close+reason | ship | delete merged orphans |"
+  echo "  HOLD+recovery (external block only). Never lose work."
   echo "Forbidden: 'pre-existing', 'later', 'not this session', report-only, delete without rehome."
   echo "================================================================="
   exit 2
 fi
 
-info "Preflight CLEAR — no open-PR / main-CI / local-WIP blockers. Proceed with Decision Gate."
+info "Preflight CLEAR — no open-PR / remote-orphan / project-config / main-CI / local-WIP blockers. Proceed with Decision Gate."
 exit 0

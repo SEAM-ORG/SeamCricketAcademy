@@ -1,47 +1,49 @@
 # Agent-owned GitHub Project V2 + hygiene config (NO GitHub Actions required).
 # Agents read this via scripts/github/*.sh using `gh` CLI only.
 #
-# Fill once per repo (bootstrap). Owner is the org (or user) that owns Project V2.
+# SEAM-ORG products (SeamFusionServices, SeamCricketAcademy)
 
 version: 1
 
-# GitHub login that owns the Project V2 board (usually the org)
 project_owner: SEAM-ORG
+project_number: 8
+project_title: "SeamFusionProject"
 
-# Project number from: gh project list --owner <org>
-# Example: https://github.com/orgs/SEAM-ORG/projects/1 → number: 1
-project_number: 0  # set via: gh project list --owner SEAM-ORG
-
-# Optional human title (documentation only)
-project_title: ""
-
-# Status field name on the board (usually "Status")
 status_field: Status
-
-# Map workflow stages → Status single-select option names (exact strings on the board)
+# Board options: Todo · In Progress · Done
 status_map:
-  backlog: Backlog
-  ready: Ready
+  backlog: Todo
+  ready: Todo
   in_progress: In Progress
-  in_review: In Review
+  in_review: In Progress
   done: Done
 
-# Labels agents must ensure exist (name: color hex without #)
+type_field: Work Type
+type_map:
+  feature: Feature
+  bug: Bug
+  chore: Chore
+  infra: Infra
+  security: Security
+
+priority_field: Priority Level
+priority_map:
+  p0: P0
+  p1: P1
+  p2: P2
+  p3: P3
+
 labels:
   bug: d73a4a
   enhancement: a2eeef
   chore: ededed
   agent-infra: 5319e7
   security: b60205
+  documentation: 0075ca
 
-# Default milestone for OS/tooling work (created if missing)
 infra_milestone: "Agent OS & Tooling"
-
-# Protected branch name
 protected_branch: main
 
-# On session end: close open PRs older than N days that match these title prefixes
-# only when already superseded on main (agent verifies merge state / file presence)
 stale_pr_title_prefixes:
   - "chore: initialize Architect"
   - "chore: install Architect"

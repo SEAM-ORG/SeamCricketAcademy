@@ -76,6 +76,68 @@ def want_label(type_name: str) -> str:
     }.get(type_name, "chore")
 
 
+def list_milestones(repo: str) -> list[dict]:
+    out = []
+    for state in ("open", "closed"):
+        r = run(["gh", "api", f"repos/{repo}/milestones?state={state}&per_page=100"])
+        if r.returncode == 0:
+            try:
+                out.extend(json.loads(r.stdout or "[]"))
+            except Exception:
+                pass
+    return out
+
+
+def resolve_milestone_title(repo: str, title: str, type_name: str, infra_ms: str, want_hint: str) -> str:
+    """Map a desired milestone to an existing repo milestone when possible."""
+    existing = list_milestones(repo)
+    titles = [(ms.get("title") or "") for ms in existing]
+    if want_hint in titles:
+        return want_hint
+    # Phase N → prefer longest matching "Phase N..." existing title
+    m = re.match(r"^Phase\s+(\d+(?:\.\d+)?[A-Za-z]?)$", want_hint)
+    if m:
+        prefix = f"Phase {m.group(1)}"
+        matches = [t for t in titles if t == prefix or t.startswith(prefix + ":") or t.startswith(prefix + " ")]
+        if matches:
+            matches.sort(key=len, reverse=True)
+            return matches[0]
+    if type_name == "Infra" and infra_ms in titles:
+        return infra_ms
+    if "Product Delivery" in titles:
+        return "Product Delivery"
+    return want_hint
+
+
+def infer_milestone(title: str, type_name: str, infra_ms: str) -> str:
+    """Choose a milestone title for items that have none."""
+    if type_name == "Infra":
+        return infra_ms
+    t = title or ""
+    # Prefer explicit phase markers in title (Phase 20, phase-7, Phase 12.5)
+    m = re.search(r"[Pp]hase[\s\-]*(\d+(?:\.\d+)?[A-Za-z]?)", t)
+    if m:
+        return f"Phase {m.group(1)}"
+    # Durable catch-all for historical shipped product work
+    return "Product Delivery"
+
+
+def ensure_milestone(repo: str, title: str) -> bool:
+    """Create milestone if missing. Returns True if it exists or was created."""
+    for ms in list_milestones(repo):
+        if (ms.get("title") or "") == title:
+            # reopen if closed so assign works
+            if (ms.get("state") or "") == "closed" and ms.get("number"):
+                run(["gh", "api", "-X", "PATCH", f"repos/{repo}/milestones/{ms['number']}", "-f", "state=open"])
+            return True
+    r2 = run([
+        "gh", "api", "-X", "POST", f"repos/{repo}/milestones",
+        "-f", f"title={title}",
+        "-f", f"description=Auto-created by project-backfill for board hygiene",
+    ])
+    return r2.returncode == 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
@@ -126,15 +188,20 @@ def main() -> int:
             "--field-id", field_id,
             "--single-select-option-id", option_id,
         ])
-        if r.returncode != 0 and "rate limit" in ((r.stderr or "") + (r.stdout or "")).lower():
-            time.sleep(10)
-            r = run([
-                "gh", "project", "item-edit",
-                "--project-id", pid,
-                "--id", item_id,
-                "--field-id", field_id,
-                "--single-select-option-id", option_id,
-            ])
+        err_blob = ((r.stderr or "") + (r.stdout or "")).lower()
+        if r.returncode != 0 and ("rate limit" in err_blob or "secondary rate" in err_blob):
+            for wait in (15, 30, 60):
+                print(f"  rate-limit backoff {wait}s…", flush=True)
+                time.sleep(wait)
+                r = run([
+                    "gh", "project", "item-edit",
+                    "--project-id", pid,
+                    "--id", item_id,
+                    "--field-id", field_id,
+                    "--single-select-option-id", option_id,
+                ])
+                if r.returncode == 0:
+                    break
         if r.returncode != 0:
             print(f"  WARN edit {field_name}: {(r.stderr or '')[:100]}", file=sys.stderr, flush=True)
             return False
@@ -293,28 +360,31 @@ def main() -> int:
                         print(f"  +label {lab}", flush=True)
                     time.sleep(0.12)
 
-            # milestone for infra
-            if not mst and type_name == "Infra":
+            # Milestone: infra → Agent OS; product → Phase N from title or Product Delivery
+            if not mst:
+                want_hint = infer_milestone(title, type_name, infra_ms)
+                want_ms = resolve_milestone_title(repo, title, type_name, infra_ms, want_hint)
                 if args.dry_run:
-                    print(f"  [dry] +milestone {infra_ms}", flush=True)
+                    print(f"  [dry] +milestone {want_ms}", flush=True)
                     stats["ms"] += 1
                 else:
+                    ensure_milestone(repo, want_ms)
                     if ctype == "PullRequest":
-                        rr = run(["gh", "pr", "edit", str(number), "-R", repo, "--milestone", infra_ms])
+                        rr = run(["gh", "pr", "edit", str(number), "-R", repo, "--milestone", want_ms])
                     else:
-                        rr = run(["gh", "issue", "edit", str(number), "-R", repo, "--milestone", infra_ms])
+                        rr = run(["gh", "issue", "edit", str(number), "-R", repo, "--milestone", want_ms])
                     if rr.returncode != 0:
-                        run([
-                            "gh", "api", "-X", "POST", f"repos/{repo}/milestones",
-                            "-f", f"title={infra_ms}", "-f", "description=Agent OS / tooling",
-                        ])
+                        ensure_milestone(repo, want_ms)
                         if ctype == "PullRequest":
-                            rr = run(["gh", "pr", "edit", str(number), "-R", repo, "--milestone", infra_ms])
+                            rr = run(["gh", "pr", "edit", str(number), "-R", repo, "--milestone", want_ms])
                         else:
-                            rr = run(["gh", "issue", "edit", str(number), "-R", repo, "--milestone", infra_ms])
+                            rr = run(["gh", "issue", "edit", str(number), "-R", repo, "--milestone", want_ms])
                     if rr.returncode == 0:
                         stats["ms"] += 1
-                        print(f"  +milestone {infra_ms}", flush=True)
+                        print(f"  +milestone {want_ms}", flush=True)
+                    else:
+                        print(f"  WARN milestone failed #{number} → {want_ms}", file=sys.stderr, flush=True)
+                        stats["err"] += 1
                     time.sleep(0.12)
 
         if args.max and stats["seen"] >= args.max:

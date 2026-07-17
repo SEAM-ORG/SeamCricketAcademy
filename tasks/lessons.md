@@ -104,3 +104,9 @@ Agents must inventory and dispose dirty trees, local branches ahead of protected
 - Hygiene/preflight: failed Actions only block when **latest run of that workflowName** is still red.
 
 - Fix: Biome unsafe unused renames break Astro templates — never autofix Astro frontmatter without build verify.
+
+## 2026-07-17 — GitOps hygiene + Project V2 enforcement
+- **Symptom:** Multiple remote branches/orphans; Issues/PRs not landing on Projects; `project_number: 0` silently skipped board sync.
+- **Rule:** Session Start preflight exit 2 on open PRs, remote orphans, and Project V2 misconfig. Session End must prune remotes + return-to-main. `ship-unit`/`open-unit` refuse if board unwired.
+- **Boards:** SEAM-ORG #8 SeamFusionProject · Tanti-ORG #1 Tanti Project. Status: Todo / In Progress / Done. Fields: Work Type, Priority Level.
+- **Canonical scripts:** `~/.agents/scripts/github/*` → product `scripts/github/`.

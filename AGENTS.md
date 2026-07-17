@@ -43,7 +43,7 @@ You operate under **Architect↔Agent OS**. These protocols override convenience
 | Writing code | On **feature branch only** (hooks refuse commits on `main`) · approved tasks → `kiro-impl` · trivial Path B with evidence |
 | JS/TS/JSON/CSS/HTML/Astro/Vue | **Biome** — `bash ~/.config/agent-quality/format.sh --changed` · `check.sh` |
 | Any change | Verify · same-branch memory (`.kiro`/docs/lessons) · local commit on feature branch · never bypass hooks |
-| Ship / end session | **`session-end`**: ship-unit (PR+labels+squash) → close Issues → prune branches → **return-to-main exit 0** |
+| Ship / end session | **`session-end`**: ship-unit (PR+labels+milestone+Project Status/Type) → close Issues → prune **local+remote** orphans → **return-to-main exit 0** |
 | Third-party APIs | **Context7** · UI evidence → **Chrome DevTools** |
 | Non-trivial ship | Writer ≠ reviewer (`kiro-review` / fresh subagent) |
 | Repeated mistake (2×) | Sensors ratchet: lesson → AGENTS line → hook/lint |
@@ -52,7 +52,7 @@ You operate under **Architect↔Agent OS**. These protocols override convenience
 
 **Solo operator:** finish end-to-end this session. No “later.” HOLD only if externally blocked, with **recovery** branch/PR/path. Remove only after rehome/replace with equal-or-better + justification.
 
-**Health blockers are this-turn work.** If preflight/`gh pr list` shows open PRs or red protected CI, you **dispose them in the same turn** (merge · fix-and-merge · rehome+close+reason · or HOLD+recovery). **Forbidden closeout lines:** “next session: dispose open PRs”, “inventory only — triage later”, “pre-existing hygiene”, listing open PR numbers with no disposition. Inventory without disposition = contract failure.
+**Health blockers are this-turn work.** If preflight shows open PRs, **remote orphan branches** (no open PR), red protected CI, local WIP ahead of main, or **Project V2 unconfigured** (`project_number: 0`), you **dispose them in the same turn** (merge · fix-and-merge · rehome+close+reason · delete merged orphans · wire Project · or HOLD+recovery). **Forbidden closeout lines:** “next session: dispose open PRs”, “inventory only — triage later”, “pre-existing hygiene”, listing open PR numbers with no disposition. Inventory without disposition = contract failure.
 
 ### Turn-end closeout (required template — fill briefly)
 
@@ -77,9 +77,10 @@ Omit empty lines only if truly n/a. **Do not** write a novel. **Do not** skip th
 - **Status:** shipped | partial+HOLD
 - **Evidence:** …
 - **PRs / Issues / milestones:** merged/closed/updated …
-- **Health:** each open PR/CI disposed or HOLD+recovery
+- **Project V2:** item Status/Type/Priority set; board not empty of this unit
+- **Health:** each open PR/CI/orphan disposed or HOLD+recovery
 - **Main:** on protected, clean, ff origin? yes/no
-- **Branches pruned:** yes/no
+- **Branches pruned:** local merged + remote orphans? yes/no
 - **Next session:** first step from clean main
 ```
 
@@ -233,6 +234,7 @@ On `/end`, “end session”, “ship it”, or when opening/merging a PR for th
 - Leaving half-done scope untracked
 - Asking Architect to run routine CLI
 - Shipping net-new work from clean `main` while ignoring local branches with unmerged product commits (multi-agent race)
+- Leaving orphaned remote branches that have no open PRs
 - Using `git stash` as the only handoff for product WIP
 - Leaving valuable multi-session WIP **only** local-unpushed when a second harness or session may run
 - Pedantic literal execution of weak prompts when evidence + logic yield a better plan
@@ -1317,14 +1319,15 @@ Restored and consolidated from historical Agent OS GitOps practice (labels/miles
 | **Local commits** | Every normal turn ends **verified + committed** on the feature/chore branch. No stashes; no orphan `??` files. |
 | **Issues** | On GitOps: create/link a GitHub Issue when the unit is product-relevant. Prefer creating the Issue when opening the PR (after local verify), not as empty aspirational tickets mid-turn. Title = outcome; body = context + acceptance. |
 | **PRs** | On GitOps: push → `gh pr create` (or `scripts/create-pr.sh` if present) → link Issue (`Closes #N` when applicable) → squash merge (or `scripts/finalize-pr.sh <n>`). Prefer reviewable units over mega-PRs. |
-| **Labels** | Every Issue/PR should carry at least one meaningful label. Minimum portable set (create via `gh label create` if missing): `agent-infra` (OS/tooling/hooks), `bug`, `enhancement`, `chore`. Product repos may add domain labels under **This Project** (e.g. phase labels) — then use them consistently. |
-| **Milestones** | Use milestones for multi-session product arcs when useful. Infra/OS work may use a durable milestone such as `Agent OS & Tooling` (create if missing). Do not invent vanity milestones every turn. |
-| **Status / boards** | Prefer Issue+PR state as the source of truth. If the repo uses GitHub Projects, update status when closing work; do not leave “In Progress” ghosts after merge. |
+| **Labels & Milestones** | **REQUIRED:** Agents MUST NOT be lazy. Every PR shipped via `ship-unit.sh` or `gh` MUST include meaningful product/infra labels AND a milestone (`--label` and `--milestone`). Never create untagged, unmilestoned PRs. |
+| **Status / boards** | **REQUIRED:** Sync to GitHub Project V2 status. Prefer Issue+PR state as the source of truth. If the repo uses GitHub Projects, update status when closing work; do not leave “In Progress” ghosts after merge. |
+| **Remote Orphans** | **REQUIRED:** Agents MUST clean up stale remote branches (`git push origin --delete <branch>`) that have no open PRs or are fully merged. Never leave orphaned remote branches hanging in the repository. |
 | **Templates** | Bootstrap should ensure `.github/pull_request_template.md` and basic Issue templates exist (or thin defaults). Fill PR bodies with summary · test plan · risk — never empty. |
 | **CODEOWNERS / Dependabot / Jules** | Keep when present. Dependabot/Jules PRs: value-first triage (fix and merge; do not lazy-close). |
-| **Orphans** | If push succeeds but PR create fails, delete the remote orphan branch. |
-| **Session start** | When useful: `gh issue list`, `gh pr list` (and production error checks if the project has them). Resume open PRs/branches before inventing parallel work. |
-| **Agent closes the loop** | On `/end`, squash-merge yourself when green. Leave unmerged only when the Architect asked to review first. |
+| **Orphans** | If push succeeds but PR create fails, delete the remote orphan branch. **Any** remote branch without an open PR is a preflight/session-end **BLOCKER** until deleted (if merged/superseded) or shipped. |
+| **Session start** | Run `session-preflight.sh` (exit 2 = dispose first). Inventory open PRs, remote orphans, Project V2 config, main CI. Resume before inventing parallel work. |
+| **Project V2** | Every Issue/PR from `open-unit` / `ship-unit` **must** land on the board with Status (and Work Type when known). `project_number: 0` is a hard fail. |
+| **Agent closes the loop** | On `/end`, squash-merge yourself when green; prune local+remote; leave Architect on clean `main`. Leave unmerged only when the Architect asked to review first. |
 
 **Thin portable scripts (create at bootstrap if missing):**
 
@@ -1363,11 +1366,22 @@ Instructions stay in root **`AGENTS.md`** (OpenCode loads them). Skills and comm
 | Dependabot, CodeQL, org security products | Actions that only move Project cards (agents own Project V2 via `gh`) | `scripts/github/*` |
 | Manual `workflow_dispatch` release | — | Session Start: `gh run list` failures |
 
-**Agent autonomy:** Session Start (`session-preflight.sh`) and Session End (`session-end-hygiene.sh`) are **health gates** (exit 2 on open PRs / failed protected-branch Actions). Agents **dispose** blockers — not list them. Failed deploys on protected are your problem until fixed or supersession is evidenced. Inventory per repo: `docs/GITHUB_ACTIONS.md`.
+**Agent autonomy:** Session Start (`session-preflight.sh`) and Session End (`session-end-hygiene.sh`) are **health gates** (exit 2 on open PRs / **remote orphans** / **Project V2 misconfig** / failed protected-branch Actions / local WIP). Agents **dispose** blockers — not list them. Failed deploys on protected are your problem until fixed or supersession is evidenced. Inventory per repo: `docs/GITHUB_ACTIONS.md`.
 
 #### GitHub Project V2 sync (agent CLI only — no Actions)
 
-**Hard rule:** Every Architect org has a **GitHub Projects (v2)** board. Agents keep Issues/PRs **and** board Status aligned using **`gh project`** + portable scripts under `scripts/github/`. **Do not** add GitHub Actions workflows to move cards, label, or close Issues — that is agent work at the right GitOps moment.
+**Hard rule:** Every product repo **must** be wired to a **GitHub Projects (v2)** board. Agents keep Issues/PRs **and** board fields (**Status**, **Work Type**, **Priority Level**, Milestone) aligned using **`gh project`** + portable scripts under `scripts/github/`. **Do not** add GitHub Actions workflows to move cards, label, or close Issues — that is agent work at the right GitOps moment.
+
+**`project_number: 0` or `project_owner: REPLACE_ORG` is a Session Start BLOCKER.** Fix `.github/agent-project.yml` before net-new work. `ship-unit.sh` / `open-unit.sh` **refuse** to run without a real board number.
+
+**Known portfolio boards (fill yml from these — do not invent):**
+
+| Org | Project # | Title | Status options | Extra fields |
+|-----|-----------|-------|----------------|--------------|
+| `SEAM-ORG` | **8** | SeamFusionProject | Todo · In Progress · Done | Work Type · Priority Level · Milestone |
+| `Tanti-ORG` | **1** | Tanti Project | Todo · In Progress · Done | Work Type · Priority Level · Milestone |
+
+**Canonical scripts (machine):** `~/.agents/scripts/github/*` — bootstrap copies into each product `scripts/github/`. Keep products in sync; do not let Tanti/SCA/SFS drift.
 
 **Machine prerequisite (once):** token must include Project scopes:
 
@@ -1376,33 +1390,42 @@ gh auth refresh -s project,read:project -h github.com
 bash scripts/github/ensure-scopes.sh
 ```
 
-**Repo config:** `.github/agent-project.yml` — `project_owner`, `project_number`, `status_map` (exact Status option names on the board), labels, `infra_milestone`. Fill at bootstrap (`bash scripts/github/bootstrap.sh`).
+**Repo config:** `.github/agent-project.yml` — `project_owner`, `project_number` (**never 0**), `status_map` (exact Status option names on the board — usually Todo/In Progress/Done), `type_map`, `priority_map`, labels, `infra_milestone`. Fill at bootstrap (`bash scripts/github/bootstrap.sh`) and **link the repo** (`gh project link`).
 
 **Portable scripts (commit in every product repo):**
 
 | Script | When agents run it |
 | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `scripts/github/session-preflight.sh` | **Session Start health gate** — exit 2 if open PRs / main CI red / local WIP; dispose before net-new |
+| `scripts/github/session-preflight.sh` | **Session Start health gate** — exit 2 if open PRs / **remote orphans** / **project_number 0** / main CI red / local WIP |
 | `scripts/github/ensure-labels.sh` / `ensure-milestone.sh` | Bootstrap + before create Issue/PR |
-| `scripts/github/open-unit.sh` | Starting a tracked product/infra unit (Issue + labels + board **In Progress**) |
-| `scripts/github/project-sync.sh` | `add <url>` · `status <url> <stage>` · `done <url>` |
-| `scripts/github/ship-unit.sh` | **GitOps ship** — push, PR+labels, board In Review → merge → board **Done**, checkout protected |
-| `scripts/github/session-end-hygiene.sh` | **Session End health gate** — exit 2 if open PR/main-CI blockers remain; dispose or PARK(4); then return-to-main |
-| `scripts/github/session-end-return-main.sh` | **Session End hard gate** — require clean tree on protected branch (`main`), ff to origin; fail if unmerged feature work remains |
+| `scripts/github/open-unit.sh` | Starting a tracked unit: Issue + labels + milestone + board **In Progress** + Work Type/Priority |
+| `scripts/github/project-sync.sh` | `add` · `status` · `done` · `type` · `priority` |
+| `scripts/github/ship-unit.sh` | **GitOps ship** — push, PR+labels+milestone, board In Review → merge → board **Done**, delete remote branch, checkout protected |
+| `scripts/github/session-end-hygiene.sh` | **Session End health gate** — open PRs + **remote orphans** + project config + main CI; then return-to-main |
+| `scripts/github/session-end-return-main.sh` | **Session End hard gate** — clean tree on protected (`main`), ff to origin; prune merged **local** branches |
 | `scripts/github/bootstrap.sh` | OS install / drift repair |
 
-**Status stages (map names in yml to board options):** `backlog` · `ready` · `in_progress` · `in_review` · `done`.
+**Status stages (map keys → board options):** `backlog`/`ready` → Todo · `in_progress`/`in_review` → In Progress · `done` → Done.
+
+**Remote branch hygiene (hard):**
+
+| State | Action |
+|-------|--------|
+| Remote branch with open PR | Keep until merge/close |
+| Remote branch **merged** into main, no open PR | **Delete** (`git push origin --delete <br>` or `session-end-hygiene.sh --close-stale-os-prs`) |
+| Remote branch **unmerged**, no open PR | BLOCKER — ship/rehome value, or prove supersession then `--force-prune-orphans` |
+| Still on feature branch at Session End | **Forbidden** — ship-unit or return-main after merge |
 
 **Timing (when to touch GitHub):**
 
 | Moment | GitHub / board action |
 | ------------------------------- | ---------------------------------------------------------------------------------------------- |
-| Session Start | Preflight open PRs/Issues/board; **resume** open agent work before net-new |
-| Local turn | **No** push/PR/board required; commit locally |
-| Start multi-session product arc | `open-unit.sh` Issue + milestone/labels + board In Progress |
-| `/end` / ship unit | `ship-unit.sh` (or equivalent: PR → labels → project In Review → squash merge → project Done) |
-| After merge | Linked Issues close via `Closes #N`; board item **Done**; no orphan remote branches |
-| Session End closeout | `session-end-hygiene.sh` — do not leave obsolete agent-os-init PRs open if main already has OS |
+| Session Start | Preflight open PRs/Issues/**orphans**/board config; **resume** open agent work before net-new |
+| Local turn | **No** push/PR/board required; commit locally on feature branch |
+| Start multi-session product arc | `open-unit.sh` Issue + milestone/labels + board In Progress + Work Type |
+| `/end` / ship unit | `ship-unit.sh` (PR → labels → milestone → project In Review → squash merge → project Done → prune remote) |
+| After merge | Linked Issues close via `Closes #N`; board item **Done**; **no** orphan remote branches |
+| Session End closeout | `session-end-hygiene.sh --close-stale-os-prs` → return-to-main exit 0 |
 | Dependabot / bot PRs | **Session Start blocker** — merge green / rebase / close duplicate; never “later” without PARK |
 
 **Ownership:** the agent updates Project/board status at the right GitOps moment. Local CI stays on hooks; GitHub Actions stay for deploy/release/environment work.
@@ -2077,8 +2100,6 @@ For a new project:
 > Create a new [stack] project for [purpose]. Install Architect↔Agent OS from gist `saadev0/5828479245f786c80993b67a6f669aee`, set everything up.
 
 Agent executes Bootstrap (Greenfield or Brownfield) + Environment Discovery + Verify above. No human file copying.
-
----
 
 # This Project
 

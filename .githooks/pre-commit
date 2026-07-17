@@ -1,5 +1,6 @@
 #!/bin/sh
-# Local CI: quality (gold standard pre-commit)
+# Local CI: quality (gold standard pre-commit) — never commit on protected branch
 set -e
 cd "$(git rev-parse --show-toplevel)"
+bash scripts/github/refuse-protected-branch-commit.sh
 bash scripts/local-ci-pre-commit.sh

@@ -8,7 +8,7 @@
 | **cc-sdd (SDD)** | Autonomous Spec-Driven Development (Kiro-style) | `~/.agents/skills/kiro-*` via `sync-cc-sdd.sh`; thin map: `using-sdd`; product memory: **`.kiro/`** |
 | **Hooks** | Non-skippable session gates | `~/.grok/hooks/agent-os-lifecycle.json` + scripts (Grok); OpenCode uses global skills + `AGENT_OS_ENFORCEMENT.md` |
 
-**Removed / forbidden:** obra **Superpowers**, **addyosmani/agent-skills**, **ponytail**, project `.agents/` / `.agent/` / `.opencode/skills/` trees, vendor submodules, and **slash-command files** as required ceremony. Invoke skills by **name/intent** — slash phrases are optional aliases only. **Methodology is cc-sdd only** (`kiro-*`).
+**Skill surface:** machine-global `~/.agents/skills` only (OS + `kiro-*` + `using-sdd`). Product memory under **`.kiro/`**. Invoke skills by **name/intent**. No project skill trees or slash-command ceremony trees.
 
 > **⚠️ ATTENTION AGENTS: WHAT THIS IS & HOW TO UPDATE IT**
 >
@@ -36,18 +36,17 @@ You operate under **Architect↔Agent OS**. These protocols override convenience
 **Load order:** this card → skill for the task → full AGENTS only when needed (session start, health, ship). Do **not** re-read the entire OS every message.
 
 | When | Do |
-| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Non-trivial ask | **SDD:** `kiro-discovery` (or next kiro phase) · thin map `using-sdd` · verify with evidence |
-| Multi-step / multi-file / research-heavy | **Subagent-first** — fan out via harness Task/`task`/`spawn_subagent`; main agent orchestrates + synthesizes (do **not** wait for “use subagents”) |
-| Writing code | Approved tasks → **`kiro-impl`** (autonomous + independent review) · trivial Path B → implement with evidence |
-| JS/TS/JSON/CSS/HTML/Astro/Vue | **Biome** format+lint (not Prettier/ESLint) — `bash ~/.config/agent-quality/format.sh --changed` · `check.sh` |
-| Any change | Verify with evidence · same-branch memory · local commit · never bypass hooks |
-| Product open / re-ground | `session-start` + preflight (exit 2 = clear blockers first) |
-| Ship / end session | `session-end` (GitOps + health) |
-| Product open (after health) | Run **`scripts/smoke.sh`** when present (or This Project smoke command) before net-new |
-| Third-party libraries / unfamiliar APIs | **Context7 MCP** (Grok + OpenCode) — live versioned docs; never invent APIs from memory |
-| Non-trivial ship | **Writer ≠ reviewer** — fresh subagent/context reviews plan vs diff before claim done |
-| Repeated agent mistake (2×) | **Sensors ratchet:** lesson → AGENTS line → hook/lint — promote guides into mechanical sensors |
+|------|-----|
+| Product open / re-ground | **`session-start`**: preflight (exit 2 = dispose blockers) → **clean `main`** → Issue + **feature branch** for this session → smoke |
+| Non-trivial ask | **Proactive SDD** (do not wait to be told): Research → `kiro-discovery` · Spec → `kiro-spec-*` · Implement → **`kiro-impl`** · Verify → `kiro-verify-completion` |
+| Multi-step / multi-file / research-heavy | **Subagent-first** — Task/`task`/`spawn_subagent`; orchestrate + synthesize |
+| Writing code | On **feature branch only** (hooks refuse commits on `main`) · approved tasks → `kiro-impl` · trivial Path B with evidence |
+| JS/TS/JSON/CSS/HTML/Astro/Vue | **Biome** — `bash ~/.config/agent-quality/format.sh --changed` · `check.sh` |
+| Any change | Verify · same-branch memory (`.kiro`/docs/lessons) · local commit on feature branch · never bypass hooks |
+| Ship / end session | **`session-end`**: ship-unit (PR+labels+squash) → close Issues → prune branches → **return-to-main exit 0** |
+| Third-party APIs | **Context7** · UI evidence → **Chrome DevTools** |
+| Non-trivial ship | Writer ≠ reviewer (`kiro-review` / fresh subagent) |
+| Repeated mistake (2×) | Sensors ratchet: lesson → AGENTS line → hook/lint |
 
 **Context load:** always-on card + skill + **This Project** + relevant docs only. Full `AGENTS.md` on session start, health fight, ship, or when unsure — **not** every message. Treat the file as a **map** (progressive disclosure), not a dump to re-ingest each turn.
 
@@ -77,10 +76,11 @@ Omit empty lines only if truly n/a. **Do not** write a novel. **Do not** skip th
 - **Summary:** …
 - **Status:** shipped | partial+HOLD
 - **Evidence:** …
-- **PRs:** <merged URLs or none>
-- **Health:** each open PR/CI item disposed or HOLD+recovery
+- **PRs / Issues / milestones:** merged/closed/updated …
+- **Health:** each open PR/CI disposed or HOLD+recovery
 - **Main:** on protected, clean, ff origin? yes/no
-- **Next session:** first step
+- **Branches pruned:** yes/no
+- **Next session:** first step from clean main
 ```
 
 Canonical OS: gist `saadev0/5828479245f786c80993b67a6f669aee` → root `AGENTS.md`.
@@ -116,7 +116,7 @@ Suggest improvements; on Architect yes (including short yes), execute end-to-end
 | 2 | **Extend / update** that surface in the same change |
 | 3 | **Create new** only if the job has no home — then link it from INDEX / layer map / This Project |
 
-**Do not** re-implement methodology as duplicate OS skills. **Do not** reinstall Superpowers. **Do not** mirror OS skills into `~/.grok/skills/` (Grok loads `~/.agents/skills` via config). **Do not** add project `.agents/`, slash-command trees, or a second always-on OS file beyond the thin OpenCode enforcement pointer.
+**Do not** re-implement methodology as duplicate OS skills. **Do not** mirror OS skills into `~/.grok/skills/` (Grok loads `~/.agents/skills` via config). **Do not** add project `.agents/`, slash-command trees, or a second always-on OS file beyond the thin OpenCode enforcement pointer.
 
 **Skill map (keep lean):**
 
@@ -129,7 +129,7 @@ Suggest improvements; on Architect yes (including short yes), execute end-to-end
 | Product SDD memory | **`.kiro/steering`** + **`.kiro/specs`** |
 | Product facts | **This Project** + `docs/INDEX.md` — not a new top-level guide |
 
-**Docs:** Prefer `docs/{specs,plans,archive}/` + `docs/INDEX.md`. **Do not** create `docs/superpowers/`. `.github/ai-context/` holds knowledge graph + journal — not a second copy of AGENTS principles/workflow.
+**Docs:** Prefer `docs/{specs,plans,archive}/` + `docs/INDEX.md`. `.github/ai-context/` holds knowledge graph + journal — not a second copy of AGENTS principles/workflow.
 
 ---
 
@@ -165,8 +165,9 @@ Suggest improvements; on Architect yes (including short yes), execute end-to-end
  2c. **Health gate:** `bash scripts/github/session-preflight.sh` — exit 2 → dispose open PRs / red main CI / WIP **before** net-new.
 3. **Decision Gate** (state one): `CONTINUE` only if health clear | `FINISH+COMMIT` | `PROMOTE` | `HOLD` (recovery path + 4 fields; external block only) | `ASK`.
 4. Never start net-new work on an unexplained dirty tree, open undirected PRs, or red protected CI; never silently switch branches.
-5. Non-trivial work: **must** route via **cc-sdd** (`kiro-discovery` / phase skill or `using-sdd` map); no Superpowers; no ponytail; no “later”
+5. Non-trivial work: **proactive SDD** (`kiro-discovery` / phase skill) without waiting for skill names — no “later”
 6. Resume incomplete plans/todos/debt **and health blockers** before net-new work.
+7. After health clear: **on clean `main`**, then **Issue + feature branch** for this session (never commit on main).
 
 ---
 
@@ -390,7 +391,7 @@ This section is the **map of the Operating System itself** — project-agnostic.
 | **GitHub hygiene** | `scripts/github/*`, `.github/agent-project.yml` | Issues/PRs/labels/Project V2 via `gh` — no Actions card-movers. |
 | **Project skills** | _(retired)_ — do **not** create `.agents/` or `.agent/` in product repos | Skills are machine-global only. |
 | **OS skills (global)** | `~/.agents/skills/` — **only** `session-start`, `session-end`, `agent-os-bootstrap` | Session open · Session close/GitOps · OS install/repair |
-| **cc-sdd (methodology)** | `~/.agents/skills/kiro-*` + `using-sdd` via `sync-cc-sdd.sh`; map: `~/.agents/README.md` | Autonomous SDD only — not project-vendored; Superpowers/ponytail/addy removed |
+| **cc-sdd (methodology)** | `~/.agents/skills/kiro-*` + `using-sdd` via `sync-cc-sdd.sh`; map: `~/.agents/README.md` | Autonomous SDD only — not project-vendored |
 | **Harness surfaces (machine)** | Grok plugins/hooks; OpenCode config/commands/MCP | Harness-native glue so agents can follow this OS — not a second instruction tree. |
 
 ## Always-on index contract (agents maintain)
@@ -526,7 +527,7 @@ When you want an explicit control surface (OpenCode global commands + Grok skill
 
 **Harness notes:**
 
-- **OpenCode:** Skills from `skills.paths` → `~/.agents/skills/` (global). **No** project `.agents/` trees. **No** Superpowers plugin.
+- **OpenCode:** Skills from `skills.paths` → `~/.agents/skills/` (global). **No** project `.agents/` trees. 
 - **Grok Build:** skills from `~/.agents/skills`; intent-driven lifecycle (slash aliases optional).
 - **`/start` / `/end`** are also protocol phrases in `AGENTS.md` — typing the words works even if a harness has no slash entry.
 
@@ -727,7 +728,7 @@ You are an autonomous entity, not a simple autocomplete. You must leverage your 
 - **Background Tasks (`manage_task` / background Task):** Run long-running servers, builds, or tests in the background while you continue working. Do not sleep-poll; continue non-overlapping work or report launch and proceed.
 - **Timers (`schedule`):** If waiting on a **deploy/release** pipeline (or external review bot), set a timer to check back autonomously instead of ending your turn and waiting for the Architect.
 - **Relentless Execution:** When given a `/goal`, do not stop at the first error. Diagnose, read logs, search the web for solutions, and retry until successful.
-- **cc-sdd (mandatory when relevant):** Use global **kiro-*** skills autonomously — discovery → spec → `kiro-impl` (with built-in independent review). Map via `using-sdd` when unsure. **Do not wait** for the Architect to name a skill. **Do not** use Superpowers, ponytail, or addy packs.
+- **cc-sdd (mandatory when relevant):** Use global **kiro-*** skills autonomously — discovery → spec → `kiro-impl` (with built-in independent review). Map via `using-sdd` when unsure. **Do not wait** for the Architect to name a skill. Use kiro-* skills; do not invent parallel methodology packs.
 
 ## Subagent-first orchestration (model-agnostic — hard)
 
@@ -941,10 +942,10 @@ Run this during Bootstrap and whenever the agent suspects environment drift (e.g
 ```bash
 bash ~/.agents/scripts/sync-cc-sdd.sh
 # Expect: ~17 kiro-* + session-start/end + agent-os-bootstrap + using-sdd
-# No ponytail*, no addy methodology skills, no Superpowers
+# Methodology: kiro-* only under ~/.agents/skills
 ```
 
-Verify: `ls ~/.agents/skills/kiro-* | wc -l` ≥ 17; `test -f ~/.agents/skills/using-sdd/SKILL.md`; `! ls ~/.agents/skills/ponytail* 2>/dev/null`.
+Verify: `ls ~/.agents/skills/kiro-* | wc -l` ≥ 17; `test -f ~/.agents/skills/using-sdd/SKILL.md`.
 
 ### Always-on project map (inject into agent context)
 
@@ -985,7 +986,7 @@ Never create project `.agents/`, project skill trees, or project `opencode.json(
 
 ### Methodology note
 
-This OS is the always-on work layer (session, health, GitOps, Biome, MCP). **cc-sdd** supplies the product methodology (spec → autonomous implement). **No Superpowers. No ponytail. No addy pack.**
+This OS is the always-on work layer (session, health, GitOps, Biome, MCP). **cc-sdd** supplies the product methodology (spec → autonomous implement). 
 
 ## Harness common ground (Grok + OpenCode)
 
@@ -1131,7 +1132,7 @@ Never grow always-on markdown forever — **promote or prune**. Prefer computati
 [ ] DEVELOPMENT.md or equivalent command surface linked from This Project
 [ ] Knowledge graph links domains → docs
 [ ] OS skills present under `~/.agents/skills` (`session-start`, `session-end`, `agent-os-bootstrap` only); methodology via `using-sdd`; no project skill trees
-[ ] cc-sdd (kiro-*) available globally (`bash ~/.agents/scripts/sync-cc-sdd.sh`; both harnesses load `~/.agents/skills`; no Superpowers; no project `.agents/`)
+[ ] cc-sdd (kiro-*) available globally (`bash ~/.agents/scripts/sync-cc-sdd.sh`; both harnesses load `~/.agents/skills`; no project `.agents/`)
 [ ] Harness surfaces healthy enough to work (skills discoverable; OpenCode auth plugin present; browser MCP if UI work needs it)
 [ ] Chrome DevTools MCP global (Grok plugin `chrome-devtools-mcp`; OpenCode `opencode mcp list` → connected)
 [ ] Context7 MCP on **both** harnesses (Grok `mcp_servers.context7`; OpenCode `mcp.context7` from kit)
@@ -1196,7 +1197,7 @@ Two lanes. **Local-first is the default** for every normal turn.
 | Lane | When | Agent does |
 | ---------- | ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | **Local** | Every normal turn | Research → implement → verify → **commit on feature branch** · **no** push / PR / merge |
-| **GitOps** | `/end`, "end session", "ship it", "push and merge", or mid-session exceptions below | Push → PR (`gh`) → squash merge → leave workspace on **protected** branch |
+| **GitOps** | `/end`, "end session", "ship it", or mid-session exceptions | **Always at Session End:** push → PR (labels/Issue/milestone) → squash merge → prune branches → **clean `main`** |
 
 #### Local-first default (per turn)
 
@@ -1228,7 +1229,7 @@ Two lanes. **Local-first is the default** for every normal turn.
 
 #### GitOps rules (when shipping)
 
-- **Protected branch = release-only.** Never edit or commit on it without explicit Architect approval.
+- **Protected branch = release-only.** Agents **never** commit or push on `main` (hooks refuse). Land only via feature branch → PR → squash merge. Session Start leaves you on clean main; Session End returns you there.
 - Product: `feat|fix|perf|security|release/<issue>-<slug>`
 - Internal: `chore|ops|ci|docs|refactor|test|build/<slug>`
 - Landing path: branch → push → PR → squash merge → `git checkout` protected · clean slate
@@ -1248,7 +1249,7 @@ Three layers of enforcement. The agent **discovers, creates, and maintains** all
 Automated scripts that the system runs to block bad actions before they land. **This is the project's CI.**
 
 - **Discovery:** At bootstrap, scan `.githooks/`, `scripts/install-githooks.sh`, `.git/hooks/`, and legacy `.husky/` / `lefthook.yml`.
-- **Default framework:** Tracked **`.githooks/`** + **`scripts/install-githooks.sh`**. Stack-agnostic; no npm-only dependency for git hygiene.
+- **Default framework:** Tracked **`.githooks/`** + **`scripts/install-githooks.sh`** sets **`core.hooksPath=.githooks`**. Includes **refuse commits on protected branch**. Stack-agnostic.
 - **Gold-standard gate split (default — always aim for this):**
  - **`pre-commit` = quality + memory (fast):** lint + format + typecheck. MUST include a mechanical drift check (e.g., `scripts/check-memory-drift.sh`) that blocks commits if stack/config files change without corresponding updates to `AGENTS.md` or `docs/`. Target ≤ ~30s. **No** full test suite.
  - **`pre-push` = correctness:** **test + build** (run `test` when the project has tests; always run `build` when the stack has a build). May take longer.
@@ -1707,12 +1708,12 @@ A session is **never** complete just because code changed locally. When there is
 1. Update durable memory first when needed (`tasks/todo.md`, lessons, docs/plans/specs) so it lands with the work
 2. Consolidate committed work into reviewable unit(s); prefer one PR per logical unit over a mega-PR
 3. For each unit: prefer `bash scripts/github/ship-unit.sh` (or: Issue link → push → PR with labels → Project **In Review** → squash merge → Project **Done** → `Closes #N` where applicable). If you are **on protected with unpushed commits**, rehome to a `chore/…` feature branch first — never leave stranded protected-only history.
-4. Checkout protected branch; delete merged local branch residue when safe
-5. Run `bash scripts/github/session-end-hygiene.sh` (add `--close-stale-os-prs` when obsolete agent-os-init PRs are superseded by main). Hygiene **must** end by invoking `session-end-return-main.sh`.
-6. **Hard gate (non-optional):** `bash scripts/github/session-end-return-main.sh` exits 0 — workspace is on protected branch, **clean**, and (when `origin` exists) **not ahead** of `origin/<protected>`. Fail the session-end claim if this gate fails.
+4. Close linked Issues (`Closes #N`); update milestones when the arc is complete; set Project status **Done**.
+5. Run `bash scripts/github/session-end-hygiene.sh --close-stale-os-prs` — dispose remaining open PRs (not inventory).
+6. **Hard gate (non-optional):** `bash scripts/github/session-end-return-main.sh` exits 0 — on protected, **clean**, ff origin, **merged local branches pruned**. Fail the session-end claim if this gate fails.
 7. Final closeout: fill **Session End template** (Always-on card). Agents merge/dispose PRs themselves — never hand open PRs to the Architect without disposition.
 
-**Ready for next session means:** `git status -sb` shows protected branch, clean tree, tracking origin (or local-only with intentional clean main). Never end Session End on a feature branch without an open PR URL + written justification.
+**Ready for next session means:** `git status -sb` shows protected branch, clean tree, tracking origin, **merged local branches pruned**. Never claim Session End complete while on a feature branch or with open undirected PRs — ship or HOLD+recovery first. `session-end-return-main.sh` must exit 0.
 
 If you must hand off with open PRs still unmerged, justify that in the closeout and leave board Status honest (**In Review**, not **Done**). Do not claim session-complete GitOps without evidence.
 
@@ -1788,7 +1789,7 @@ Durable judgement. Curate; don't bloat. No product-specific design rules here.
 31. **Intent before invention** — do not invent redesigns (scroll-snap, brutalism, rebrands, layout systems) from skills or partial assets when the Architect did not ask. Prefer stack defaults and preserve working product work; escalate taste with one structured question.
 32. **Local-first vs session-end GitOps** — default every turn stops at verified + committed **locally**. Push/PR/merge only on `/end` / ship or documented mid-session exceptions. Never strand the Architect mid-session with unexpected remote noise; never lose work by leaving it uncommitted.
 33. **Gist protocol preservation** — when editing the canonical Gist OS, **add or refine** Session Start/End, Local vs GitOps, Hooks/local CI, harness scope, cc-sdd (Spec-Driven Development), and related structural sections — **do not delete or "slim" them** without an Architect-approved explicit diff. Accidental protocol loss is a contract failure.
-34. **cc-sdd autonomy** — use kiro-* skills globally (discovery, spec pipeline, autonomous `kiro-impl` with review/debug gates) via `using-sdd` without waiting for Architect to name them. On bootstrap, repair global install and seed `.kiro/`. Skills never override Architect intent, Local-vs-GitOps, or release authority. Superpowers, ponytail, and addy packs are forbidden.
+34. **cc-sdd autonomy** — use kiro-* skills globally (discovery, spec pipeline, autonomous `kiro-impl` with review/debug gates) via `using-sdd` without waiting for Architect to name them. On bootstrap, repair global install and seed `.kiro/`. Skills never override Architect intent, Local-vs-GitOps, or release authority. Methodology is machine-global kiro-* only.
 35. **Living index** — always-on `AGENTS.md` + `docs/INDEX.md` + knowledge graph stay linked to real docs/scripts. Create project docs after bootstrap; sync them on the same branch as code; no orphan or duplicate surfaces.
 36. **Suggestive excellence** — proactively propose high-leverage next steps and activate full capabilities (skills, specialists, browser, gh). Never silent deferral; never unsolicited product redesign.
 37. **Handoff continuity** — Session Start Decision Gate + clean per-turn state + Session End GitOps so work progresses as complete units, not abandoned fragments.
@@ -2027,7 +2028,7 @@ Architect states intent only. Agents execute **autonomously** — slash commands
 | `docs/archive/` | Finished specs/plans |
 | Project guides (FEATURES, STACK/ARCHITECTURE, TEST_STRATEGY, DEPLOY, …) | Product-specific standards agents maintain post-bootstrap |
 | `DEVELOPMENT.md` | Machine/script commands |
-| ~~`docs/superpowers/*`~~ | **Removed** — do not recreate; use `docs/{specs,plans,archive}/` only |
+| `docs/{specs,plans,archive}/` | Specs/plans/archive only |
 | `tasks/todo.md` | Active mid-flight checklist when useful |
 | `tasks/lessons.md` | Corrections; review at session start |
 | Product docs (`PRD.md`, `docs/*`, …) | Product truth |
@@ -2062,7 +2063,7 @@ One-line/docs/chore with no design ambiguity. Closeout: "trivial — no new plan
 
 ## Methodology defaults (logical inference)
 
-- **Work layer** = Agent OS + global cc-sdd (kiro-*) + durable repo files. Keep that stack healthy on bootstrap and when drift shows up.
+- **Work layer** = Agent OS + global agent-skills + durable repo files. Keep that stack healthy on bootstrap and when drift shows up.
 - **Skills raise quality** (spec/plan/test/review/ship, specialists, browser evidence); they do not invent product design or requirements the Architect did not state.
 - **Done** means applicable verification ran and evidence is in the closeout — not that the code merely compiles in your head.
 - **Preserve product language** (brand, layout, stack defaults) until the Architect sets new taste (**Intent before invention**).
@@ -2078,7 +2079,6 @@ For a new project:
 Agent executes Bootstrap (Greenfield or Brownfield) + Environment Discovery + Verify above. No human file copying.
 
 ---
-
 
 # This Project
 

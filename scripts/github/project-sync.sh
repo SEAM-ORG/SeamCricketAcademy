@@ -117,15 +117,38 @@ sys.exit(1)
 
 ensure_item() {
   local url="$1"
-  gh project item-add "$PNUM" --owner "$OWNER" --url "$url" >/dev/null 2>&1 || true
-  local item_id
-  item_id="$(find_item_id_for_url "$url")"
+  local item_id add_json
+  # Prefer id from item-add JSON (avoids item-list lag / pagination misses)
+  add_json="$(gh project item-add "$PNUM" --owner "$OWNER" --url "$url" --format json 2>/dev/null || true)"
+  if [[ -n "$add_json" ]]; then
+    item_id="$(python3 -c 'import json,sys; d=json.loads(sys.argv[1]); print(d.get("id") or "")' "$add_json" 2>/dev/null || true)"
+  fi
   if [[ -z "$item_id" ]]; then
-    gh project item-add "$PNUM" --owner "$OWNER" --url "$url" --format json >/dev/null 2>&1 || true
-    sleep 1
     item_id="$(find_item_id_for_url "$url")"
   fi
-  [[ -n "$item_id" ]] || die "could not resolve project item id for $url — is the repo linked to the project?"
+  if [[ -z "$item_id" ]]; then
+    sleep 2
+    gh project item-add "$PNUM" --owner "$OWNER" --url "$url" --format json >/dev/null 2>&1 || true
+    item_id="$(find_item_id_for_url "$url")"
+  fi
+  # GraphQL fallback by content url (paginate)
+  if [[ -z "$item_id" ]]; then
+    item_id="$(gh project item-list "$PNUM" --owner "$OWNER" --limit 500 --format json 2>/dev/null \
+      | python3 -c '
+import json,sys
+url=sys.argv[1].rstrip("/")
+data=json.load(sys.stdin)
+items=data if isinstance(data,list) else data.get("items",[])
+for it in items:
+    c=it.get("content") or {}
+    u=(c.get("url") or "").rstrip("/")
+    if u==url:
+        print(it.get("id") or "")
+        sys.exit(0)
+sys.exit(1)
+' "$url" 2>/dev/null || true)"
+  fi
+  [[ -n "$item_id" ]] || die "could not resolve project item id for $url — is the repo linked to the project? (gh project link)"
   echo "$item_id"
 }
 

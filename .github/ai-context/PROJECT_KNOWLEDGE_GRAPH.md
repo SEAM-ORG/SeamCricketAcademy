@@ -4,7 +4,7 @@ Agent context routing for SeamCricketAcademy. Load the relevant domain only.
 
 ### Marketing site
 
-`src/pages/index.astro` · `src/layouts/Layout.astro` · `src/components/*` (Hero, Navbar, Programs, Gallery, ContactForm, …)
+`src/pages/index.astro` · `src/layouts/Layout.astro` · `src/components/*` (Hero, Navbar, Programs, Gallery, ContactForm, FloatingWhatsApp, Coaches, …)
 
 ### Design system
 
@@ -16,24 +16,25 @@ Agent context routing for SeamCricketAcademy. Load the relevant domain only.
 
 ### Deploy
 
-`.github/workflows/deploy.yml` · `CNAME` · `DEPLOYMENT.md`
+`.github/workflows/release-tag-deploy.yml` · `.github/workflows/rebuild-site.yml` · `CNAME` · `DEPLOYMENT.md` · `docs/GITHUB_ACTIONS.md`
 
 ### Legacy (do not edit)
 
 `backup-legacy/` · root `assets/` (legacy)
 
-### Agent OS
+### Agent OS + OpenSpec
 
-`AGENTS.md` · `.github/ai-context/*` · `.agents/skills/`
+`AGENTS.md` (This Project) · `openspec/` (sole SDD SoT) · `.github/ai-context/*` · `docs/INDEX.md` · `tasks/*`  
+Skills are **machine-global only** (`~/.agents/skills`) — no project `.agents/`.
 
 ### Quality
 
-Gold standard: pre-commit=quality, pre-push=test+build. `.githooks/pre-commit` · `.githooks/pre-push` · `npm test` · `npm run build` · Local CI: hooks (no GitHub PR CI)
+Gold standard: pre-commit=quality, pre-push=test+build. `.githooks/pre-commit` · `.githooks/pre-push` · `npm test` · `npm run build` · `bash scripts/smoke.sh` · Local CI: hooks (no GitHub PR CI)
 
 ### Durable docs
 
-`docs/specs/` · `docs/plans/` · `docs/archive/` (legacy `docs/superpowers/*` ok) — multi-session only; no Superpowers plugin.
+`docs/specs/` · `docs/plans/` · `docs/archive/` · **`openspec/specs/`** (capability requirements)
 
 ### Agent harness
 
-Grok Build + Antigravity (`agy`) only. Single OS: `AGENTS.md`. No Superpowers methodology.
+**OpenCode** (product) · **Grok Build** (OS/machine). Single OS: `AGENTS.md`. Methodology: OpenSpec (`openspec-*` / `using-openspec`).

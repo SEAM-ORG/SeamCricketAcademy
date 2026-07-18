@@ -1,0 +1,61 @@
+schema: spec-driven
+
+# Shown to agents when creating OpenSpec artifacts.
+context: |
+  Product: Seam Cricket Academy — Bengaluru cricket coaching marketing & lead-gen site
+  (www.seamcricketacademy.com).
+
+  Users: prospective players/parents; academy staff receiving leads.
+
+  Stack:
+  - Astro 7 · Tailwind CSS 4 · GSAP · TypeScript · Node 22
+  - Biome 2.5.4 (format + lint)
+  - Static GitHub Pages deploy
+
+  Layout:
+  - src/pages/index.astro · src/layouts/Layout.astro · src/components/*
+  - src/data/academy.json · src/data/programs.ts
+  - src/lib/seamfusion-api.ts · src/lib/validation.ts
+  - scripts/ · docs/ · openspec/
+
+  Commands (see AGENTS This Project + DEVELOPMENT.md when present):
+  - Smoke: bash scripts/smoke.sh
+  - Install: npm ci && bash scripts/install-githooks.sh
+  - Dev: npm run dev
+  - Build: npm run build
+  - Test: npm test
+  - Quality: npm run local-ci:quality · Correctness: npm run local-ci:correctness
+  - Deploy: GitOps only — release-tag-deploy.yml / rebuild-site.yml
+
+  Product truth: PROJECT_CONTEXT.md · DESIGN_SYSTEM.md · DEPLOYMENT.md · docs/INDEX.md
+  SDD SoT: openspec/ only (specs + changes). No .kiro/.
+
+  Board: SEAM-ORG GitHub Project #8 (SeamFusionProject) — shared with SeamFusionServices
+  SeamFusion relationship: API consumer + shared board only; no shared app code.
+
+  Boundaries:
+  - Preserve Weightless/Kinetic dark glassmorphism design system
+  - SeamFusion API fail-soft → static data fallbacks
+  - Validate email/WhatsApp/URL before rendering dynamic links
+  - Do not edit backup-legacy/ or commit huge media
+  - No project .agents/, opencode.json(c), or second SDD tree
+
+rules:
+  Always:
+    - Stay on a feature branch; never commit on main
+    - Prefer surgical changes; preserve working product language and design system
+    - Update openspec/ and docs/INDEX.md (or This Project) when behavior or surfaces change
+    - Verify with smoke / test / build before claiming done
+    - Fail soft on SeamFusion API — never break the static site when API is down
+    - Validate dynamic contact links (email, WhatsApp, URL)
+  Ask first:
+    - Brand / design-system pivots away from DESIGN_SYSTEM.md
+    - Production release tag push / live domain changes
+    - New paid third-party integrations or secrets
+    - Removing lead-gen surfaces (contact form, WhatsApp)
+  Never:
+    - Dual-run .kiro/ or invent a second SDD tree
+    - Commit secrets or bypass git hooks
+    - Edit backup-legacy/ as active source
+    - Put product facts into the portable OS gist
+    - Invent vapor features not evidenced in code / openspec/specs

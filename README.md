@@ -12,7 +12,8 @@ Official website for Seam Cricket Academy, Bengaluru's premier cricket coaching 
 ## Agent OS
 
 Architect↔Agent operating contract: root [`AGENTS.md`](AGENTS.md).  
-Architect states product intent; agent owns technical execution, hooks, and GitOps.
+Architect states product intent; agent owns technical execution, hooks, and GitOps.  
+Spec-driven memory: [`openspec/`](openspec/) (sole SDD SoT). Docs map: [`docs/INDEX.md`](docs/INDEX.md).
 
 ## ✨ Features
 
@@ -28,7 +29,7 @@ Architect states product intent; agent owns technical execution, hooks, and GitO
 
 | Technology                                | Purpose               |
 | ----------------------------------------- | --------------------- |
-| [Astro 5.8](https://astro.build)          | Static site generator |
+| [Astro 7](https://astro.build)            | Static site generator |
 | [Tailwind CSS 4](https://tailwindcss.com) | Utility-first styling |
 | [GSAP](https://greensock.com/gsap/)       | Animation library     |
 | [Web3Forms](https://web3forms.com)        | Form submission       |

@@ -45,3 +45,7 @@ Architect removed Superpowers. Default methodology is Agent OS only (Research â†
 ### 2026-07-16: Agent OS harness upgrade
 - Synced OS: session smoke, Context7 both harnesses, DCP portable, lessons SoT, sensors ratchet
 - Added scripts/smoke.sh
+
+## 2026-07-18 â€” OpenSpec onboard
+
+Migrated SDD from empty `.kiro/` stubs to `openspec/` (5 capability specs). AGENTS.md OS body synced from gist (OpenSpec). Fixed release-tag-deploy.yml YAML parse. Merged Dependabot esbuild #70. Board remains SEAM-ORG/8.

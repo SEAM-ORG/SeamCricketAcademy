@@ -13,7 +13,8 @@
 
 ```
 main branch (Source Code):
-├── .github/workflows/deploy.yml # CI/CD Pipeline
+├── .github/workflows/release-tag-deploy.yml  # Versioned release
+├── .github/workflows/rebuild-site.yml        # Non-release rebuild
 ├── src/                         # Astro Source Code
 ├── public/                      # Static Assets
 ├── astro.config.mjs             # Config
@@ -36,7 +37,7 @@ D:\html-seamcricketacademy\    # ROOT DIRECTORY (Active Source)
 
 ## Deployment Method: GitHub Actions (Active) ✅
 
-Automated deployment via GitHub Actions is configured in `.github/workflows/deploy.yml`.
+Versioned releases use `.github/workflows/release-tag-deploy.yml` (workflow_dispatch / tag `v*.*.*`). Non-release data refreshes use `rebuild-site.yml`. See `docs/GITHUB_ACTIONS.md`.
 
 ### Workflow Configuration
 

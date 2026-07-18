@@ -69,7 +69,7 @@ jobs:
             fi
             if [[ -z "${version:-}" || "$version" == "0.0.0" || "$version" == "0.0.1" ]]; then
               if [[ -f CHANGELOG.md ]]; then
-                version="$(rg -oN '^## \[v?([0-9]+\.[0-9]+\.[0-9]+[^\]]*)\]' -r '$1' CHANGELOG.md | head -1 || true)"
+                version="$(grep -oE '^## \[v?[0-9]+\.[0-9]+\.[0-9]+[^]]*\]' CHANGELOG.md | head -1 | sed -E 's/^## \[v?//;s/\]$//' || true)"
               fi
             fi
             [[ -n "${version:-}" ]] || { echo "Could not resolve version from package.json or CHANGELOG.md" >&2; exit 1; }
@@ -249,31 +249,17 @@ jobs:
 
           start="<!-- release-platform-status:start -->"
           end="<!-- release-platform-status:end -->"
-          section="${start}
-## Platform Release Status
-
-| Platform | Status |
-|----------|--------|
-| Web | ${web_status} |
-
-${end}"
+          # Single-line \n escapes — multiline Markdown inside run:| breaks YAML parse
+          section="${start}\n## Platform Release Status\n\n| Platform | Status |\n|----------|--------|\n| Web | ${web_status} |\n\n${end}"
 
           body="$(gh release view "$tag" --json body --jq '.body // ""' 2>/dev/null || true)"
-          if printf '%s' "$body" | rg -q 'release-platform-status:start'; then
-            # replace existing block
-            printf '%s\n' "$body" | python3 -c '
-import re,sys,os
-body=sys.stdin.read()
-start=os.environ.get("START","<!-- release-platform-status:start -->")
-end=os.environ.get("END","<!-- release-platform-status:end -->")
-section=sys.argv[1]
-pat=re.compile(re.escape(start)+r"[\s\S]*?"+re.escape(end))
-print(pat.sub(section.strip(), body) if pat.search(body) else body.rstrip()+"\n\n"+section)
-' "$section" > /tmp/notes.md
+          section_expanded="$(printf '%b' "$section")"
+          if printf '%s' "$body" | grep -q 'release-platform-status:start'; then
+            START="$start" END="$end" SECTION="$section_expanded" BODY="$body" python3 -c "import re,os;b=os.environ['BODY'];s=os.environ['START'];e=os.environ['END'];sec=os.environ['SECTION'];p=re.compile(re.escape(s)+r'[\\s\\S]*?'+re.escape(e));print(p.sub(sec.strip(),b) if p.search(b) else b.rstrip()+'\n\n'+sec)" > /tmp/notes.md
           else
             {
               printf '%s\n\n' "$body"
-              printf '%s\n' "$section"
+              printf '%s\n' "$section_expanded"
             } > /tmp/notes.md
           fi
           gh release edit "$tag" --notes-file /tmp/notes.md

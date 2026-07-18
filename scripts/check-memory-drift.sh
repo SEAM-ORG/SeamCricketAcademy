@@ -17,7 +17,7 @@ is_memory_path() {
   case "$f" in
     AGENTS.md|DEVELOPMENT.md|CHANGELOG.md|README.md|PRD.md|PROJECT_CONTEXT.md|DESIGN_SYSTEM.md|DEPLOYMENT.md|SETUP.md|roadmap.md)
       return 0 ;;
-    docs/*|tasks/*|.github/ai-context/*|.kiro/*)
+    docs/*|tasks/*|.github/ai-context/*|openspec/*)
       return 0 ;;
   esac
   return 1
@@ -117,7 +117,7 @@ fi
 echo
 echo "Stage at least one memory surface in the same commit:"
 echo "  AGENTS.md (This Project) · docs/** · docs/INDEX.md · tasks/todo.md ·"
-echo "  tasks/lessons.md · CHANGELOG.md · DEVELOPMENT.md · .github/ai-context/**"
+echo "  tasks/lessons.md · CHANGELOG.md · DEVELOPMENT.md · openspec/** · .github/ai-context/**"
 echo
 echo "Agent OS: continuous maintain — no silent doc drift. Never bypass git hooks."
 echo "================================================================="

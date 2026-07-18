@@ -10,7 +10,7 @@ npm run local-ci:quality
 npm run local-ci:correctness
 ```
 
-Deploy: merge to `main` → `.github/workflows/deploy.yml` (GitHub Pages). See `DEPLOYMENT.md`.
+Deploy: GitOps only — **Release Tag Deploy** (`.github/workflows/release-tag-deploy.yml`) for versioned releases; **rebuild-site** for non-release data refresh. See `DEPLOYMENT.md` · `docs/GITHUB_ACTIONS.md`.
 
 ## Session smoke
 

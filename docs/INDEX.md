@@ -1,6 +1,6 @@
 # Documentation Index
 
-> Master directory for Seam Cricket Academy docs. **Last updated:** 2026-07-15
+> Master directory for Seam Cricket Academy docs. **Last updated:** 2026-07-18
 
 ## Product truth (repo root)
 
@@ -22,12 +22,26 @@
 | `src/data/programs.ts`      | Programs              |
 | `src/pages/index.astro`     | Home                  |
 | `src/lib/seamfusion-api.ts` | SeamFusion API client |
+| `src/lib/validation.ts`     | Email / WhatsApp / URL safety |
 
-## Durable plans & specs
+## Spec-Driven Development (OpenSpec)
+
+| Path | Purpose |
+| ---- | ------- |
+| [`openspec/config.yaml`](../openspec/config.yaml) | Project context + agent rules |
+| [`openspec/specs/`](../openspec/specs/) | Living capability requirements (SoT) |
+| [`openspec/changes/`](../openspec/changes/) | Active change proposals |
+| [`openspec/changes/archive/`](../openspec/changes/archive/) | Completed changes |
+
+**Capabilities:** `academy-marketing-ux` · `program-catalog` · `coach-profiles` · `lead-generation` · `seamfusion-api-sync`
+
+Machine skills: global `openspec-*` / `using-openspec` under `~/.agents/skills`. **No `.kiro/`** (removed 2026-07-18).
+
+## Durable plans & human design notes
 
 | Path                 | Purpose              |
 | -------------------- | -------------------- |
-| [specs/](specs/)     | Design specs         |
+| [specs/](specs/)     | Design notes (human) |
 | [plans/](plans/)     | Implementation plans |
 | [archive/](archive/) | Finished work        |
 
@@ -35,7 +49,7 @@
 
 | Document                               | Description                     |
 | -------------------------------------- | ------------------------------- |
-| [GITHUB_ACTIONS.md](GITHUB_ACTIONS.md) | Pages deploy workflow inventory |
+| [GITHUB_ACTIONS.md](GITHUB_ACTIONS.md) | Deploy/release workflow inventory |
 
 ## Agent context
 
@@ -43,8 +57,4 @@
 | --------------------------------------------- | ------------------------------------ |
 | [.github/ai-context/](../.github/ai-context/) | Knowledge graph, principles, journal |
 | [tasks/lessons.md](../tasks/lessons.md)       | Corrections                          |
-
-## Spec-Driven Development (cc-sdd)
-
-- **Steering / specs:** [`.kiro/`](../.kiro/) — product SDD memory (steering + feature specs)
-- **Machine skills:** `kiro-*` under `~/.agents/skills` (global)
+| [tasks/todo.md](../tasks/todo.md)             | Active checklist                     |

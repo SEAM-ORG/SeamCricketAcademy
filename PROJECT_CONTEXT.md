@@ -18,7 +18,7 @@
 1.  **Repository Root Verification**: Always check the root `d:\html-seamcricketacademy` for `.github/workflows` to identify CI/CD pipelines.
 2.  **Legacy vs. Active**: The root directory is now the "Source of Truth".
 3.  **Environment Scan**: Check `package.json` and `astro.config.mjs` for build targets.
-4.  **Deployment Config**: Verify `.github/workflows/deploy.yml` uses root paths (no `astro-revamp` references).
+4.  **Deployment Config**: Verify release/rebuild workflows run from **repo root** (no `astro-revamp` references).
 
 > [!WARNING]
 > **ANTI-HALLUCINATION PROTOCOL**:
@@ -30,7 +30,7 @@
 ## 3. Key Documentation
 
 - **`DESIGN_SYSTEM.md`**: (In project root) Contains strict guidelines for Iconography (Size: w-16), Card Styles, and Colors. **CONSULT THIS BEFORE MAKING UI CHANGES.**
-- **`.github/workflows/deploy.yml`**: Automated deployment pipeline configuration.
+- **`.github/workflows/release-tag-deploy.yml`** + **`rebuild-site.yml`**: Versioned release + non-release Pages rebuild.
 
 ## 4. Workflow Memory
 

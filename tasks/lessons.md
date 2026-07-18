@@ -114,3 +114,11 @@ Agents must inventory and dispose dirty trees, local branches ahead of protected
 ## 2026-07-17 — Project V2 field completeness
 - **Rule:** Every board item needs Status + Work Type + Priority Level; every Issue/PR needs ≥1 label; infra needs Agent OS & Tooling milestone when no product phase.
 - **Repair:** `bash scripts/github/project-backfill.sh` (GraphQL paginated). ship-unit always sets Type+Priority.
+
+### 2026-07-18: OpenSpec sole SDD — .kiro removed
+
+Migrated methodology from kiro/cc-sdd stubs to **OpenSpec** (`openspec/specs`, `openspec/config.yaml`). Capability specs folded from product truth (design system, programs, coaches, lead-gen, SeamFusion API). **Prevention:** never reintroduce `.kiro/` or dual SDD trees; use global `openspec-*` / `using-openspec` only.
+
+### 2026-07-18: Release Tag Deploy YAML — no raw multiline Markdown in run:|
+
+Multiline Markdown tables inside `run: |` (especially lines starting with `|`) break GitHub Actions YAML parse → 0s failed runs with no jobs. **Prevention:** use single-line `\n` escapes for release notes sections (see AGENTS Release Tag Deploy warning).

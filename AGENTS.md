@@ -4,11 +4,14 @@
 
 | Layer | What | Where |
 | ---------------------- | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
-| **Architect↔Agent OS** | Session Start/End, GitOps, Decision Gate, bootstrap | root `AGENTS.md` + global skills under `~/.agents/skills/` only: `session-start`, `session-end`, `agent-os-bootstrap` |
-| **cc-sdd (SDD)** | Autonomous Spec-Driven Development (Kiro-style) | `~/.agents/skills/kiro-*` via `sync-cc-sdd.sh`; thin map: `using-sdd`; product memory: **`.kiro/`** |
+| **Architect↔Agent OS** | Session Start/End, GitOps, Decision Gate, bootstrap | root `AGENTS.md` + global skills: `session-start`, `session-end`, `agent-os-bootstrap` |
+| **OpenSpec (SDD)** | Spec-Driven Development | `~/.agents/skills/openspec-*` via `sync-openspec.sh`; router: `using-openspec`; product memory: **`openspec/`** |
+| **SWE Discipline** | Domain expertise (frontend, API, security, perf, testing, debugging, CI/CD, observability, architecture, etc.) | `~/.agents/skills/` — 23 from [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) + 7 cherry-picks from [mattpocock/skills](https://github.com/mattpocock/skills) |
+| **References** | On-demand checklists (definition-of-done, testing, security, perf, a11y, observability, orchestration) | `~/.agents/references/*.md` — from [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) `references/`; read when entering that domain, never always-on |
+| **Personas** | Specialist subagent system prompts (code-reviewer, security-auditor, test-engineer, web-performance-auditor) | `~/.agents/personas/*.md` — from [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) `agents/`; use as system prompt for Task subagents |
 | **Hooks** | Non-skippable session gates | `~/.grok/hooks/agent-os-lifecycle.json` + scripts (Grok); OpenCode uses global skills + `AGENT_OS_ENFORCEMENT.md` |
 
-**Skill surface:** machine-global `~/.agents/skills` only (OS + `kiro-*` + `using-sdd`). Product memory under **`.kiro/`**. Invoke skills by **name/intent**. No project skill trees or slash-command ceremony trees.
+**Skill surface:** machine-global `~/.agents/skills/` only (~40 skills across 3 tiers). Product memory under **`openspec/`**. Invoke skills by **name/intent** — the `using-openspec` router maps intent to the right skill. Load SWE discipline skills **on demand** (one at a time) to keep context lean. No project skill trees or slash-command ceremony trees.
 
 > **⚠️ ATTENTION AGENTS: WHAT THIS IS & HOW TO UPDATE IT**
 >
@@ -23,9 +26,10 @@
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **This gist** `saadev0/5828479245f786c80993b67a6f669aee` | Architect↔Agent OS (`AGENTS.md`) — project-agnostic contract | Upstream only here (clone → edit → push). Downstream: agents **analyze the project** and distribute wisdom into local surfaces — **not** copy this file as a monolith. **Never put product This Project facts in this gist.** |
 | OpenCode kit `saadev0/fa4d874490158f7252ca2441227d3343` | **Machine** OpenCode + antigravity-auth harness | Upstream on that gist; install writes runtime under `~/.config/opencode/` only. Not product-repo bootstrap. |
-| seamfusion status `saadev0/f1c2ab293cf8996b787eedf94ec60029` | Unrelated product status JSON | Separate product concern. |
 
-**Local kit/runtime trees are not second sources of truth.** If a universal OS or harness change is made locally while debugging (including **DCP config**, OpenCode plugins/MCP, Grok MCP servers, agent-quality, cc-sdd skills), **promote it to the correct gist immediately**, then re-sync/install. **No local-only standing capability.** Project-only facts stay in that repo’s **This Project** / `tasks/lessons.md`.
+**Pollution rule:** This OS and the OpenCode kit stay **portfolio-agnostic**. Do **not** name product repos, orgs, board numbers, or product-only gists here. Product facts live only in each repo’s **This Project** / `docs/` / `.github/agent-project.yml`.
+
+**Local kit/runtime trees are not second sources of truth.** If a universal OS or harness change is made locally while debugging (including **DCP config**, OpenCode plugins/MCP, Grok MCP servers, agent-quality, OpenSpec skills), **promote it to the correct gist immediately**, then re-sync/install. **No local-only standing capability.** Project-only facts stay in that repo’s **This Project** / `tasks/lessons.md`.
 
 # PROTOCOL ENFORCEMENT (ALWAYS-ON — non-skippable)
 
@@ -38,14 +42,14 @@ You operate under **Architect↔Agent OS**. These protocols override convenience
 | When | Do |
 |------|-----|
 | Product open / re-ground | **`session-start`**: preflight (exit 2 = dispose blockers) → **clean `main`** → Issue + **feature branch** for this session → smoke |
-| Non-trivial ask | **Proactive SDD** (do not wait to be told): Research → `kiro-discovery` · Spec → `kiro-spec-*` · Implement → **`kiro-impl`** · Verify → `kiro-verify-completion` |
+| Non-trivial ask | **Proactive OpenSpec** (do not wait to be told): Explore → `openspec-explore` · Propose → `openspec-propose` · Apply → **`openspec-apply-change`** · Archive → `openspec-archive-change` |
 | Multi-step / multi-file / research-heavy | **Subagent-first** — Task/`task`/`spawn_subagent`; orchestrate + synthesize |
-| Writing code | On **feature branch only** (hooks refuse commits on `main`) · approved tasks → `kiro-impl` · trivial Path B with evidence |
+| Writing code | On **feature branch only** (hooks refuse commits on `main`) · approved tasks → `openspec-apply-change` · trivial Path B with evidence |
 | JS/TS/JSON/CSS/HTML/Astro/Vue | **Biome** — `bash ~/.config/agent-quality/format.sh --changed` · `check.sh` |
-| Any change | Verify · same-branch memory (`.kiro`/docs/lessons) · local commit on feature branch · never bypass hooks |
+| Any change | Verify · same-branch memory (`openspec/`/docs/lessons) · local commit on feature branch · never bypass hooks |
 | Ship / end session | **`session-end`**: ship-unit (PR+labels+milestone+Project Status/Type) → close Issues → prune **local+remote** orphans → **return-to-main exit 0** |
 | Third-party APIs | **Context7** · UI evidence → **Chrome DevTools** |
-| Non-trivial ship | Writer ≠ reviewer (`kiro-review` / fresh subagent) |
+| Non-trivial ship | Writer ≠ reviewer (fresh subagent / independent pass) |
 | Repeated mistake (2×) | Sensors ratchet: lesson → AGENTS line → hook/lint |
 
 **Context load:** always-on card + skill + **This Project** + relevant docs only. Full `AGENTS.md` on session start, health fight, ship, or when unsure — **not** every message. Treat the file as a **map** (progressive disclosure), not a dump to re-ingest each turn.
@@ -126,8 +130,8 @@ Suggest improvements; on Architect yes (including short yes), execute end-to-end
 | Session / product boot / Decision Gate | `session-start` |
 | Ship / clean handoff / GitOps / OpenCode list hygiene | `session-end` |
 | Install / repair / multi-repo OS sync | `agent-os-bootstrap` |
-| Spec / design / tasks / autonomous implement | **cc-sdd** `kiro-*` via `using-sdd` (not new OS skills) |
-| Product SDD memory | **`.kiro/steering`** + **`.kiro/specs`** |
+| Spec / design / tasks / autonomous implement | **OpenSpec** `openspec-*` via `using-openspec` (not new OS skills) |
+| Product SDD memory | **`openspec/specs`** + **`openspec/changes`** |
 | Product facts | **This Project** + `docs/INDEX.md` — not a new top-level guide |
 
 **Docs:** Prefer `docs/{specs,plans,archive}/` + `docs/INDEX.md`. `.github/ai-context/` holds knowledge graph + journal — not a second copy of AGENTS principles/workflow.
@@ -166,7 +170,7 @@ Suggest improvements; on Architect yes (including short yes), execute end-to-end
  2c. **Health gate:** `bash scripts/github/session-preflight.sh` — exit 2 → dispose open PRs / red main CI / WIP **before** net-new.
 3. **Decision Gate** (state one): `CONTINUE` only if health clear | `FINISH+COMMIT` | `PROMOTE` | `HOLD` (recovery path + 4 fields; external block only) | `ASK`.
 4. Never start net-new work on an unexplained dirty tree, open undirected PRs, or red protected CI; never silently switch branches.
-5. Non-trivial work: **proactive SDD** (`kiro-discovery` / phase skill) without waiting for skill names — no “later”
+5. Non-trivial work: **proactive OpenSpec** (`openspec-explore` / `openspec-propose` / phase skill) without waiting for skill names — no “later”
 6. Resume incomplete plans/todos/debt **and health blockers** before net-new work.
 7. After health clear: **on clean `main`**, then **Issue + feature branch** for this session (never commit on main).
 
@@ -174,11 +178,11 @@ Suggest improvements; on Architect yes (including short yes), execute end-to-end
 
 ## 2) Every turn that changes code / docs / config
 
-1. **Skill route first** (non-trivial): `using-sdd` / `kiro-discovery` → applicable **kiro-*** skill; follow process + verify. Do not wait for the Architect to name a skill.
+1. **Skill route first** (non-trivial): `using-openspec` / `openspec-explore` → applicable **openspec-*** skill; follow process + verify. Do not wait for the Architect to name a skill.
  1b. **Subagent-first** when multi-step / multi-file / research-heavy: decompose → spawn harness subagents → synthesize (see **Subagent-first orchestration**). Do not solo-monolith.
 2. Implement → **verify with evidence** (test / build / runtime / read-back) → only then claim done.
 3. **“Seems right” is never done.** No evidence = not finished.
-4. **Memory same change (no silent drift):** update `docs/INDEX.md`, **This Project**, `tasks/todo.md` / `tasks/lessons.md`, **`.kiro/`** (steering/specs when SDD work), product docs, knowledge graph, and journal when reality changed. Prune dead links; archive or delete superseded docs. If a surface is missing, broken, or irrelevant → fix same turn, or rehome value and replace with better; HOLD+recovery only if externally blocked.
+4. **Memory same change (no silent drift):** update `docs/INDEX.md`, **This Project**, `tasks/todo.md` / `tasks/lessons.md`, **`openspec/`** (specs/changes when SDD work), product docs, knowledge graph, and journal when reality changed. Prune dead links; archive or delete superseded docs. If a surface is missing, broken, or irrelevant → fix same turn, or rehome value and replace with better; HOLD+recovery only if externally blocked.
 5. Local commit on a **feature branch** when the unit is clean. **Never** `--no-verify`. Pre-commit = quality + **`scripts/check-memory-drift.sh`** (blocks source/config without memory).
 6. Prefer complete the objective **now**; only stop with tracked deferral fields above.
 
@@ -209,19 +213,19 @@ On `/end`, “end session”, “ship it”, or when opening/merging a PR for th
 | Situation | Protocol / skill |
 | ---------------------------- | ----------------------------------------------------------------------------- |
 | Session start / product boot | `session-start` (mandatory; no wait for `/start`) |
-| Non-trivial work | `using-sdd` / `kiro-discovery` → **one** current-phase kiro skill (**must** if applicable) |
+| Non-trivial work | `using-openspec` / `openspec-explore` → **one** current-phase openspec skill (**must** if applicable) |
 | Before claim done | Skill **verify** + evidence + memory surfaces honest |
 | Ship / end | `session-end` (GitOps + return-to-main) |
 | OS install / repair | `agent-os-bootstrap` |
 | Gist/OS update | Gist Sync (clone/push + head verify) |
-| Compaction | Re-read AGENTS.md + Decision Gate + `using-sdd` |
+| Compaction | Re-read AGENTS.md + Decision Gate + `using-openspec` |
 
 ---
 
 ## Anti-patterns (forbidden unless project-critical + justified)
 
 - Skipping Session Start on product work
-- Skipping skill routing (`using-sdd`) on non-trivial work
+- Skipping skill routing (`using-openspec`) on non-trivial work
 - Solo-monolith multi-file/multi-step work when harness subagents were available (skipping **Subagent-first orchestration**)
 - Waiting for the Architect to request subagents / teamwork / parallel agents
 - Shipping code without same-branch memory/doc updates when behavior or surfaces changed
@@ -393,7 +397,7 @@ This section is the **map of the Operating System itself** — project-agnostic.
 | **GitHub hygiene** | `scripts/github/*`, `.github/agent-project.yml` | Issues/PRs/labels/Project V2 via `gh` — no Actions card-movers. |
 | **Project skills** | _(retired)_ — do **not** create `.agents/` or `.agent/` in product repos | Skills are machine-global only. |
 | **OS skills (global)** | `~/.agents/skills/` — **only** `session-start`, `session-end`, `agent-os-bootstrap` | Session open · Session close/GitOps · OS install/repair |
-| **cc-sdd (methodology)** | `~/.agents/skills/kiro-*` + `using-sdd` via `sync-cc-sdd.sh`; map: `~/.agents/README.md` | Autonomous SDD only — not project-vendored |
+| **OpenSpec (methodology)** | `~/.agents/skills/openspec-*` + `using-openspec` via `sync-openspec.sh`; map: `~/.agents/README.md` | Autonomous SDD only — not project-vendored |
 | **Harness surfaces (machine)** | Grok plugins/hooks; OpenCode config/commands/MCP | Harness-native glue so agents can follow this OS — not a second instruction tree. |
 
 ## Always-on index contract (agents maintain)
@@ -417,7 +421,7 @@ Root `AGENTS.md` **must** stay the hub. Agents autonomously (**continuous mainta
 | Who agent is / relationship / autonomy | **For Agents** → Relationship protocol + Autonomy Decision Table |
 | Session start / dirty tree / handoff | **Session Start Protocol** (+ optional harness helpers) |
 | Install OS into a repo | **Bootstrap** (greenfield / brownfield) |
-| Global skills pack | **cc-sdd (Spec-Driven Development)** |
+| Global skills pack | **OpenSpec (Spec-Driven Development)** |
 | Local CI / hooks / deploy Actions policy | **Hooks, Workflows & Guardrails** |
 | Plans, journal, stack, features, tests, scripts | **Documentation System** |
 | Suggest improvements / use full capability | **Proactive & Suggestive Agents** |
@@ -456,7 +460,7 @@ This OS is **not a one-shot setup checklist**. Setup **establishes** surfaces; *
 | Local CI (`.githooks` + install script) | Install hooks when missing | Pre-commit / pre-push always; never skip | Tighten gates when bugs escape |
 | `docs/INDEX.md` + knowledge graph | Create thin INDEX + graph at bootstrap | Same-branch updates when docs/code entry points change | Prune dead links; merge duplicate docs |
 | `docs/{specs,plans,archive}/` | Create dirs at bootstrap | Update plan checkboxes; archive when shipped | Prefer this layout over ad-hoc doc dumps |
-| cc-sdd kiro-* (global) | `sync-cc-sdd.sh` when missing | Use kiro skills on relevant work without being asked | Repair install when discovery fails |
+| OpenSpec openspec-* (global) | `sync-openspec.sh` when missing | Use openspec skills on relevant work without being asked | Repair install when discovery fails |
 | Harness surfaces (Grok plugins/hooks; OpenCode auth/MCP/commands) | Minimal native setup so the harness can work | Keep auth/MCP/commands healthy when used | Lighten or adjust only when outcomes break |
 | GitHub Issues/PRs/Project V2 hygiene | Bootstrap scripts/templates when product uses GitHub | **Session Start + Session End** (health gate, not advisory) | Clear blockers; board alignment |
 | Lessons / standing rules | First `tasks/lessons.md` / write rule when taught | Review lessons at Session Start; persist new corrections same session | Promote universal lessons to Gist |
@@ -523,7 +527,7 @@ When you want an explicit control surface (OpenCode global commands + Grok skill
 | **`/boot`** | Project boot status (where we are; not full OS install) |
 | **`/end`** | Session End Protocol (consolidate → push → PR → squash merge) |
 | **`/agent-os-bootstrap`** | Install/repair OS from Gist + agent-skills health |
-| kiro-* / using-sdd (intent) | Methodology — discovery · spec · autonomous impl · validate |
+| openspec-* / using-openspec (intent) | Methodology — explore · propose · apply · archive |
 | **`/goal`** | Long-running maximum autonomy until objective is verified |
 | **`/teamwork-preview`** | Large scopes with parallel subagents |
 
@@ -621,20 +625,16 @@ When the prompt is silent, infer:
 6. **Preserve working product** — extend what exists; do not redesign surfaces the Architect did not ask about.
 7. **Whole-repo continuity** — dirty trees and open plans are owned work, not noise.
 8. **Suggest, then execute on yes** — offer 1–3 high-leverage next steps; a short yes is enough to proceed.
-9. **Skills and tools are assumed** — use kiro SDD skills, specialists, browser MCP, `gh` when they raise quality; the Architect should not have to name them.
+9. **Skills and tools are assumed** — use OpenSpec skills, specialists, browser MCP, `gh` when they raise quality; the Architect should not have to name them.
 10. **Same OS everywhere** — Gist OS changes sync into known product repos by default; only **This Project** differs per repo.
 
 ## Portfolio context (Architect’s products)
 
-Agents should know these are **separate products** under one OS. Product work stays in the repo whose folder opened the chat unless the Architect names more.
+Agents treat each git product under the Architect’s workspace as a **separate product** under one portable OS. Product work stays in the repo whose folder opened the chat unless the Architect names more.
 
-| Product (known repos under `~/Projects`) | Nature |
-| ---------------------------------------- | --------------------------------------------------------------------------------------------- |
-| **SeamFusionServices** | Core multi-tenant SaaS (Flutter + Firebase) — high correctness bar (money, tenants, releases) |
-| **SeamCricketAcademy** | Marketing / academy site (Astro) — ship thin, iterate fast |
-| **TantiInfra** | Civil/construction portal + estimator (Astro + Firebase) — product + UX quality |
-
-Portfolio priorities and which product is “active” come from the Architect’s objective and the **open folder / named repo** — not from agent preference. Product SoT = that repo’s root `AGENTS.md` **This Project** + `docs/INDEX.md`. OS SoT = this gist (project-agnostic sections only).
+- **Active product** = open folder / named repo — not agent preference.
+- **Product SoT** = that repo’s root `AGENTS.md` **This Project** + `docs/INDEX.md` + `openspec/` + `.github/agent-project.yml`.
+- **OS SoT** = this gist (project-agnostic sections only). Never embed product names, org board numbers, or stack-specific facts into this gist.
 
 ## Standing non-negotiables (Architect)
 
@@ -730,7 +730,7 @@ You are an autonomous entity, not a simple autocomplete. You must leverage your 
 - **Background Tasks (`manage_task` / background Task):** Run long-running servers, builds, or tests in the background while you continue working. Do not sleep-poll; continue non-overlapping work or report launch and proceed.
 - **Timers (`schedule`):** If waiting on a **deploy/release** pipeline (or external review bot), set a timer to check back autonomously instead of ending your turn and waiting for the Architect.
 - **Relentless Execution:** When given a `/goal`, do not stop at the first error. Diagnose, read logs, search the web for solutions, and retry until successful.
-- **cc-sdd (mandatory when relevant):** Use global **kiro-*** skills autonomously — discovery → spec → `kiro-impl` (with built-in independent review). Map via `using-sdd` when unsure. **Do not wait** for the Architect to name a skill. Use kiro-* skills; do not invent parallel methodology packs.
+- **OpenSpec (mandatory when relevant):** Use global **openspec-*** skills autonomously — explore → propose → `openspec-apply-change` → archive. Map via `using-openspec` when unsure. **Do not wait** for the Architect to name a skill. Do not invent parallel methodology packs or dual-run `openspec/`.
 
 ## Subagent-first orchestration (model-agnostic — hard)
 
@@ -760,10 +760,12 @@ You are an autonomous entity, not a simple autocomplete. You must leverage your 
  | **OpenCode** | `task` (subagent_type: `explore`, `general`, or specialist) |
  | **Grok Build** | `spawn_subagent` / Task (explore, general-purpose, plan, …) |
  | Other | harness-native subagent / Task equivalent |
-3. **Route by role (OpenCode defaults):**
- - Open-ended search / multi-round glob+grep → **`explore`** (budget Flash)
- - Parallel implement / test / refactor / tool-heavy slice → **`general`**
- - Specialist quality → `kiro-review` / fresh subagent review · harness `task` specialists when available
+ 3. **Route by role (OpenCode defaults — kit `opencode.jsonc`):**
+  - Open-ended search / multi-round glob+grep → **`explore`** (`google/antigravity-gemini-3.1-pro` + **`variant: high`**)
+  - Parallel implement / test / refactor / tool-heavy slice → **`general`** (same: 3.1 Pro high)
+  - Specialist quality → fresh subagent review · harness `task` specialists when available · personas under `~/.agents/personas/`
+  - Title / summary / compaction / `small_model` only → Gemini 3.5 Flash (budget utilities — not Task subagents)
+  - Machine harness SoT: gist `saadev0/fa4d874490158f7252ca2441227d3343` → `~/.config/opencode/`
 4. **One focused objective per subagent** with a concrete deliverable (“List every call site of X with path + line + 1-line note” beats “look around”).
 5. **Synthesize** digests in the main context; **do not re-do** the subagent’s work.
 6. Main agent **keeps:** Session Start / Decision Gate, GitOps, memory, Architect communication, merge of findings, final verification claim.
@@ -807,7 +809,7 @@ Do this **automatically** at the start of every session — and **re-ground** be
 5. Run `bash scripts/github/session-preflight.sh` when present. **Exit 2 = health blockers** — dispose every BLOCKER (fix-and-merge / close / fix CI) **before** net-new Architect product work. Report-only is forbidden.
 6. Load knowledge graph + `docs/INDEX.md` (if present) + product docs for the objective; map whole-product fit, not only the named file.
 7. Confirm local CI hooks are installed (or install via project script). Never `--no-verify`.
-8. Map work via **`using-sdd`** / **`kiro-discovery`**; invoke applicable kiro skills without waiting for slash names.
+8. Map work via **`using-openspec`** / **`openspec-explore`**; invoke applicable openspec skills without waiting for slash names.
 9. **Continuous health (lightweight):** if INDEX, hooks, skills discovery, or **This Project** paths look broken/missing → re-establish before net-new work (see **One-time vs continuous**). Do not assume last month’s bootstrap still holds.
 10. **Session smoke (product cwd, after health clear):** if `scripts/smoke.sh` exists, run it (or the smoke command named under **This Project**). Must pass or be fixed before net-new feature work. Smoke = fast known-good proof (lint subset, unit smoke, or boot check) — **not** full pre-push suite.
 11. **Multi-session arcs:** if an open plan has a `docs/plans/*/feature-checklist.json` (or plan points to one), read it, pick the highest-priority item with `"passes": false`, and work **one** item this session. Only flip `passes` after real verification.
@@ -866,7 +868,7 @@ Trigger: Architect says install/init Agent OS, or you find no usable `AGENTS.md`
  - Create a **deploy/release** pipeline only if the deploy target is known (tag push, environment deploy, manual dispatch). Do **not** create GitHub workflows that duplicate local lint/test/build.
  - Assume GitHub-side hygiene (Dependabot, Jules, etc.) may already cover dependency and review essentials — do not re-implement those as Actions CI.
 7. **Materialize Agent OS surfaces:** (same as Brownfield step 3 below)
-8. **Agent Skills health:** run **cc-sdd (Spec-Driven Development)** protocol (global install + project gaps for tests/CI/docs).
+8. **Agent Skills health:** run **OpenSpec (Spec-Driven Development)** protocol (global install + project gaps for tests/CI/docs).
 9. **Fill This Project** from the scaffolded structure (stack, commands, code map, **doc index**).
 10. **Scaffold project docs:** `docs/INDEX.md` + `docs/{specs,plans,archive}/` + `DEVELOPMENT.md` (commands) + thin STACK/FEATURES/TEST notes when the product has surface area. Knowledge graph links to them.
 11. **Verify** with checklist below (including Agent Skills + doc index).
@@ -888,7 +890,7 @@ Trigger: Architect says install/init Agent OS, or you find no usable `AGENTS.md`
  - **Project documentation system (project-specific, agent-authored):** create `docs/{specs,plans,archive}/`, `docs/INDEX.md`, and thin starters as needed: stack/architecture notes, feature/capability map, test strategy, `DEVELOPMENT.md` machine commands. Prefer one honest thin doc over empty ceremony. Link all of them from **This Project** + knowledge graph + INDEX.
  - Keep a single instruction entrypoint: root `AGENTS.md`. Supported harnesses: **Grok Build** + **OpenCode** only. Do **not** add Claude Code / Cursor / Codex instruction forks or harness dirs.
 4. **Environment Discovery:** Run the protocol below.
-5. **Agent Skills health (global + project gaps):** Run **cc-sdd (Spec-Driven Development)** protocol below — ensure global install for Grok CLI + OpenCode; fill project gaps that skills/hooks/workflows expect (tests, local CI, docs dirs, definition-of-done surfaces).
+5. **Agent Skills health (global + project gaps):** Run **OpenSpec (Spec-Driven Development)** protocol below — ensure global install for Grok CLI + OpenCode; fill project gaps that skills/hooks/workflows expect (tests, local CI, docs dirs, definition-of-done surfaces).
  5b. **GitHub hygiene + Project V2:** ensure `gh` works with `project`/`read:project` scopes; install `scripts/github/*` + `.github/agent-project.yml` (owner + project number); `bash scripts/github/bootstrap.sh`; thin `create-pr.sh`/`finalize-pr.sh` + PR/Issue templates; labels + infra milestone. **No** Project-sync GitHub Actions — agents own the board via CLI.
 6. **Fill This Project** from evidence: stack, commands, code map, deploy target, hooks (local CI), GitHub deploy workflows, external services, invariants, **product doc paths / INDEX**.
  6b. **Documentation system gap-fill:** If `docs/INDEX.md` missing, create it listing real docs. Ensure knowledge graph points at product docs. Add or update thin `DEVELOPMENT.md`, feature/capability map, and test notes when the repo has non-trivial surface area and those docs are missing or stale. Do not invent a novel doc tree when a clear existing layout works — index and maintain what exists.
@@ -925,70 +927,38 @@ Run this during Bootstrap and whenever the agent suspects environment drift (e.g
 
 ---
 
-## cc-sdd (Spec-Driven Development) — standing global
+## OpenSpec (Spec-Driven Development) — standing global
 
-**Canonical pack:** [github.com/gotalab/cc-sdd](https://github.com/gotalab/cc-sdd) (`cc-sdd` npm, Kiro-style autonomous SDD)  
-**Machine map:** `~/.agents/README.md` · project map fragment: `~/.agents/cc-sdd/PROJECT_SDD_MAP.md`
+**Canonical pack:** [github.com/Fission-AI/OpenSpec](https://github.com/Fission-AI/OpenSpec) (`@fission-ai/openspec` npm)  
+**Machine map:** `~/.agents/README.md` · project map fragment: `~/.agents/openspec/PROJECT_OPENSPEC_MAP.md`
 
-| Surface | Location | Notes |
-|---------|----------|-------|
-| **Skill install** | `bash ~/.agents/scripts/sync-cc-sdd.sh` | Installs **17** `kiro-*` skills + thin `using-sdd` into `~/.agents/skills/` only |
-| **Grok Build** | `[skills].paths = ["~/.agents/skills"]` in `~/.grok/config.toml` | Discovers OS + kiro skills |
-| **OpenCode** | `skills.paths` → same `~/.agents/skills` (global only) | **No** project `.opencode/skills/` |
-| **Thin map** | `using-sdd` (overlay `~/.agents/os-overlays/using-sdd/`) | Intent → kiro skill; progressive disclosure |
-| **Product SDD memory** | **`.kiro/steering/`** · **`.kiro/specs/`** · **`.kiro/settings/`** | Durable cross-session context; seed settings from `~/.agents/cc-sdd/settings/` |
-| **Templates** | `~/.agents/cc-sdd/settings/` | Synced with package; product may customize under `.kiro/settings/` |
-
-### Install / repair
+| Surface | Path / command | Notes |
+|---------|----------------|-------|
+| **Skill install** | `bash ~/.agents/scripts/sync-openspec.sh` | Installs **6** `openspec-*` skills + thin `using-openspec` into `~/.agents/skills/` only (OpenCode + Grok) |
+| **Grok Build** | `[skills].paths = ["~/.agents/skills"]` in `~/.grok/config.toml` | Discovers OS + openspec skills |
+| **OpenCode** | `skills.paths` includes `~/.agents/skills`; commands in `~/.config/opencode/command/opsx-*.md` | No other IDE adapters |
+| **Thin map** | `using-openspec` (overlay `~/.agents/os-overlays/using-openspec/`) | Intent → openspec skill; progressive disclosure |
+| **Product SDD memory** | **`openspec/specs/`** · **`openspec/changes/`** · **`openspec/config.yaml`** | Durable cross-session context |
+| **Project init** | `openspec init --tools none` | **Never** install Cursor/Claude/Copilot trees in product repos |
+| **CLI state** | `openspec list|status|instructions --json` | Agents query live change graph |
 
 ```bash
-bash ~/.agents/scripts/sync-cc-sdd.sh
-# Expect: ~17 kiro-* + session-start/end + agent-os-bootstrap + using-sdd
-# Methodology: kiro-* only under ~/.agents/skills
+npm install -g @fission-ai/openspec@latest
+bash ~/.agents/scripts/sync-openspec.sh
+# Expect: 6 openspec-* + session-start/end + agent-os-bootstrap + using-openspec
 ```
 
-Verify: `ls ~/.agents/skills/kiro-* | wc -l` ≥ 17; `test -f ~/.agents/skills/using-sdd/SKILL.md`.
-
-### Always-on project map (inject into agent context)
-
-Agents must treat this as durable memory for product work (not a chat-only summary):
+Verify: `ls ~/.agents/skills/openspec-* | wc -l` ≥ 6; `test -f ~/.agents/skills/using-openspec/SKILL.md`; `command -v openspec`.
 
 | Path | Role |
 |------|------|
-| Root `AGENTS.md` | Agent OS contract + **This Project** facts |
-| `.kiro/steering/` | Project-wide policies (product · tech · structure · custom) |
-| `.kiro/specs/<feature>/` | Feature contract: brief · requirements · design · tasks |
-| `docs/INDEX.md` | Doc index; may **link** to `.kiro` specs — not a second SDD root |
-| `tasks/lessons.md` | Lessons only (no dual LEARNINGS) |
+| `openspec/specs/` | Living requirements (source of truth) |
+| `openspec/changes/<name>/` | Active change: proposal · design · tasks · delta specs |
+| `openspec/changes/archive/` | Completed changes |
+| `openspec/config.yaml` | Project context + rules for agents |
 
-**Do not** overwrite root `AGENTS.md` with stock cc-sdd AGENTS. Compose OS + This Project; SDD workflow lives in always-on card + kiro skills.
-
-### Autonomous workflow (intent → skill)
-
-| Intent | Skill |
-|--------|-------|
-| New / unclear work | `kiro-discovery` |
-| Brownfield memory | `kiro-steering` (+ `kiro-steering-custom`) |
-| Single feature pipeline | `kiro-spec-init` → `kiro-spec-requirements` → `kiro-spec-design` → `kiro-spec-tasks` → `kiro-impl` |
-| Fast single feature | `kiro-spec-quick` |
-| Multi-spec initiative | `kiro-discovery` → `kiro-spec-batch` → `kiro-impl` per feature |
-| Implement approved tasks | **`kiro-impl`** (no task args = **autonomous**: implementer + independent reviewer + auto-debug) |
-| Status / validate | `kiro-spec-status` · `kiro-validate-*` · `kiro-verify-completion` |
-| Trivial fix | Path B (no full spec) — implement with evidence |
-
-### Bootstrap product for SDD
-
-```bash
-mkdir -p .kiro/{steering,specs,settings}
-rsync -a ~/.agents/cc-sdd/settings/ .kiro/settings/
-# Optional: run kiro-steering on brownfield to fill .kiro/steering/
-```
-
-Never create project `.agents/`, project skill trees, or project `opencode.json(c)`.
-
-### Methodology note
-
-This OS is the always-on work layer (session, health, GitOps, Biome, MCP). **cc-sdd** supplies the product methodology (spec → autonomous implement). 
+**Lifecycle (proactive):** `openspec-explore` → `openspec-propose` → `openspec-apply-change` → `openspec-sync-specs` / `openspec-archive-change`.  
+**Removed:** cc-sdd / `kiro-*`, dual `.kiro/` methodology. Do not reinstall kiro or dual-run SDD layers.
 
 ## Harness common ground (Grok + OpenCode)
 
@@ -1017,7 +987,7 @@ Use each harness’s **native** surfaces. Prefer the lightest setup that keeps o
 | Concern | Grok-native (typical) | OpenCode-native (typical) |
 | --------------------------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | Skills | `~/.agents/skills` (OS + agent-skills) | `skills.paths` → same `~/.agents/skills` |
-| Lifecycle shortcuts | Intent + skill names | Intent + skill tool (`session-start`, `using-sdd`, `kiro-discovery`, `kiro-impl`, …) |
+| Lifecycle shortcuts | Intent + skill names | Intent + skill tool (`session-start`, `using-openspec`, `openspec-explore`, `openspec-apply-change`, …) |
 | Session evidence (optional) | `~/.grok/hooks/*` scripts if they help re-ground | Rely on **Session Start Protocol** in chat + optional commands — **no required custom OpenCode plugin** |
 | Browser MCP | Grok `chrome-devtools-mcp` plugin | `mcp.chrome-devtools` in kit → `~/.config/opencode/opencode.jsonc` |
 | Library docs MCP | `[mcp_servers.context7]` in `~/.grok/config.toml` | `mcp.context7` in kit `opencode.jsonc` |
@@ -1133,8 +1103,8 @@ Never grow always-on markdown forever — **promote or prune**. Prefer computati
 [ ] docs/{specs,plans,archive}/ present
 [ ] DEVELOPMENT.md or equivalent command surface linked from This Project
 [ ] Knowledge graph links domains → docs
-[ ] OS skills present under `~/.agents/skills` (`session-start`, `session-end`, `agent-os-bootstrap` only); methodology via `using-sdd`; no project skill trees
-[ ] cc-sdd (kiro-*) available globally (`bash ~/.agents/scripts/sync-cc-sdd.sh`; both harnesses load `~/.agents/skills`; no project `.agents/`)
+[ ] OS skills present under `~/.agents/skills` (`session-start`, `session-end`, `agent-os-bootstrap` only); methodology via `using-openspec`; no project skill trees
+[ ] OpenSpec (openspec-*) available globally (`bash ~/.agents/scripts/sync-openspec.sh`; both harnesses load `~/.agents/skills`; no project `.agents/`)
 [ ] Harness surfaces healthy enough to work (skills discoverable; OpenCode auth plugin present; browser MCP if UI work needs it)
 [ ] Chrome DevTools MCP global (Grok plugin `chrome-devtools-mcp`; OpenCode `opencode mcp list` → connected)
 [ ] Context7 MCP on **both** harnesses (Grok `mcp_servers.context7`; OpenCode `mcp.context7` from kit)
@@ -1300,8 +1270,8 @@ Automated scripts that the system runs to block bad actions before they land. **
 
 - **Discovery:** At bootstrap, scan `.github/workflows/` for existing Actions. Remove redundant PR CI if it duplicates local hooks.
 - **Allowed on GitHub:** deployment, release tagging, environment promotion, pages/hosting publish.
-- **Canonical workflow name:** **`Release Tag Deploy`** → `.github/workflows/release-tag-deploy.yml` (same logic as SeamFusionServices across all products).
-- **Creation (Universal Release Pattern):** When the deploy target is known, implement **`release-tag-deploy.yml`** (not a random `ci.yml`). Triggers: **`workflow_dispatch`** with `tag` + `ref` inputs (primary, Architect-approved), and optionally `push` tags `v*.*.*`. Job graph **must** match SFS:
+- **Canonical workflow name:** **`Release Tag Deploy`** → `.github/workflows/release-tag-deploy.yml` (same job graph on every product that ships).
+- **Creation (Universal Release Pattern):** When the deploy target is known, implement **`release-tag-deploy.yml`** (not a random `ci.yml`). Triggers: **`workflow_dispatch`** with `tag` + `ref` inputs (primary, Architect-approved), and optionally `push` tags `v*.*.*`. Job graph **must** be:
 
 ```
 resolve → deploy-<platform(s)> → finalize
@@ -1320,7 +1290,7 @@ resolve → deploy-<platform(s)> → finalize
 5. **Forbidden:** PR lint/test/build Actions that duplicate local hooks; “deploy every main push” as a substitute for versioned releases (use rebuild workflow if continuous publish is needed).
 
  _⚠️ YAML Syntax Warning: If injecting multi-line Markdown into a `run:` block, you MUST use `\n` escaping on a single line (e.g. `NOTES="Line 1\n\nLine2"`) or use proper YAML block scalars (`|`). Unescaped raw newlines inside double-quotes will cause GitHub Actions to fail workflow parsing on every push._
-- **Maintenance:** Keep deploy/release pipelines healthy. Local hook failures → fix root cause; never `--no-verify`. Portfolio reference implementation: `SEAM-ORG/SeamFusionServices` `.github/workflows/release-tag-deploy.yml`.
+- **Maintenance:** Keep deploy/release pipelines healthy. Local hook failures → fix root cause; never `--no-verify`. Reference implementation lives in each product that already ships releases (copy the job graph, not product names, into peers).
 
 #### GitHub Issues, PRs, labels, milestones & status (agent-owned hygiene)
 
@@ -1365,7 +1335,7 @@ Instructions stay in root **`AGENTS.md`** (OpenCode loads them). Skills and comm
 
 | Tracked in repo | Purpose |
 | -------------------------------------- | ------------------------------------------------------------------------------------------- |
-| `~/.agents/skills/*/SKILL.md` | Global skills only (OS control-plane + cc-sdd methodology; see `~/.agents/README.md`) |
+| `~/.agents/skills/*/SKILL.md` | Global skills only (OS control-plane + OpenSpec methodology; see `~/.agents/README.md`) |
 | `*(commands removed — use skills)*` | OpenCode slash commands (global) |
 | OpenCode `skills.paths` | `~/.agents/skills` only — no project `.opencode/skills` |
 | `scripts/github/*` | Agent GitHub/Project V2 CLI (no Actions) |
@@ -1389,14 +1359,16 @@ Instructions stay in root **`AGENTS.md`** (OpenCode loads them). Skills and comm
 
 **`project_number: 0` or `project_owner: REPLACE_ORG` is a Session Start BLOCKER.** Fix `.github/agent-project.yml` before net-new work. `ship-unit.sh` / `open-unit.sh` **refuse** to run without a real board number.
 
-**Known portfolio boards (fill yml from these — do not invent):**
+**Board numbers are product-local — never hardcode org/project lists in this OS.** Discover and wire per repo:
 
-| Org | Project # | Title | Status options | Extra fields |
-|-----|-----------|-------|----------------|--------------|
-| `SEAM-ORG` | **8** | SeamFusionProject | Todo · In Progress · Done | Work Type · Priority Level · Milestone |
-| `Tanti-ORG` | **1** | Tanti Project | Todo · In Progress · Done | Work Type · Priority Level · Milestone |
+```bash
+gh project list --owner <org-or-user>   # pick the product board
+# write .github/agent-project.yml with project_owner + project_number + status_map
+# (Status options usually Todo · In Progress · Done; fields Work Type · Priority Level · Milestone)
+bash scripts/github/bootstrap.sh && gh project link
+```
 
-**Canonical scripts (machine):** `~/.agents/scripts/github/*` — bootstrap copies into each product `scripts/github/`. Keep products in sync; do not let Tanti/SCA/SFS drift.
+Board owner/number/title live only in that product’s `.github/agent-project.yml` (and **This Project** if useful). Machine-canonical scripts: `~/.agents/scripts/github/*` → copy into each product `scripts/github/`. Keep script **behavior** in sync across products; do not let products drift from the portable GitOps contract.
 
 **Machine prerequisite (once):** token must include Project scopes:
 
@@ -1717,9 +1689,9 @@ Stewardship is necessary but not sufficient. Agents must **actively suggest** hi
 
 **Capability activation (autonomous):**
 
-- Map work with **cc-sdd (kiro-*)**; run applicable cc-sdd methodology skills + OS session skills without waiting for slash names.
+- Map work with **OpenSpec (openspec-*)**; run applicable OpenSpec methodology skills + OS session skills without waiting for slash names.
 - **Subagent-first orchestration** on multi-step / multi-file / research-heavy work (hard — see **Subagent-first orchestration**). Fan out via harness Task/`task`/`spawn_subagent` without waiting for the Architect.
-- Use **independent review** before `/end` on non-trivial units: `kiro-review` / `kiro-verify-completion` or fresh harness subagent (writer ≠ reviewer).
+- Use **independent review** before `/end` on non-trivial units: `fresh subagent review` / `openspec-archive-change` or fresh harness subagent (writer ≠ reviewer).
 - Use **Chrome DevTools MCP** for real UI/runtime claims; use `gh` for Issues/PRs/Project V2 on GitOps turns.
 - Use live probes (HTTP, emulators, platform CLIs) when integrations matter.
 
@@ -1758,10 +1730,10 @@ Every machine **must** have these **global** skills (under `~/.agents/skills/` �
 | `session-end` | Session End Protocol + return-to-main hard gate |
 | `session-end` | Portfolio / multi-repo return-to-main |
 | `agent-os-bootstrap` | Install/repair OS from Gist |
-| `using-sdd` | Thin intent → kiro-* map (not a heavy pack) |
+| `using-openspec` | Thin intent → openspec-* map (not a heavy pack) |
 | `session-end` | OpenCode session list cleanup |
 
-Both harnesses load `~/.agents/skills` only. Machine map: `~/.agents/README.md`. **Do not** create project `.agents/` or command trees. Repair: `agent-os-bootstrap` + `sync-cc-sdd.sh`.
+Both harnesses load `~/.agents/skills` only. Machine map: `~/.agents/README.md`. **Do not** create project `.agents/` or command trees. Repair: `agent-os-bootstrap` + `sync-openspec.sh`.
 
 ### Session End Protocol (only on `/end`, "end session", "ship it", or equivalent)
 
@@ -1791,7 +1763,7 @@ Taste + function · stack-fit modern tools · root cause · security · a11y bas
 
 ### Stay on the rails
 
-Prefer whole-repo status over session-diff tunnel vision. Run local CI, core work, and applicable **cc-sdd (kiro-*)** without waiting for slash names. Close deferrals with a fix or a tracked item. Use hooks (no `--no-verify`). Keep mid-session work local-first unless an exception applies. Stay off the protected branch without Architect approval. Keep public git human. Handle money/user error paths explicitly. Keep secrets out of commits. One always-on OS file. Explain dirty handoffs. Link new docs/scripts from INDEX/graph. Treat release tags as durable. Refine Protected OS sections rather than dropping them. Product design follows Architect intent.
+Prefer whole-repo status over session-diff tunnel vision. Run local CI, core work, and applicable **OpenSpec (openspec-*)** without waiting for slash names. Close deferrals with a fix or a tracked item. Use hooks (no `--no-verify`). Keep mid-session work local-first unless an exception applies. Stay off the protected branch without Architect approval. Keep public git human. Handle money/user error paths explicitly. Keep secrets out of commits. One always-on OS file. Explain dirty handoffs. Link new docs/scripts from INDEX/graph. Treat release tags as durable. Refine Protected OS sections rather than dropping them. Product design follows Architect intent.
 
 ### Instruction surfaces
 
@@ -1807,7 +1779,7 @@ Prefer whole-repo status over session-diff tunnel vision. Run local CI, core wor
 | `DEVELOPMENT.md` (or equiv.) | Machine/script commands |
 | Project guides (FEATURES, STACK, TEST_STRATEGY, …) | Product-specific truth agents maintain |
 | Project `.agents/` / `.agent/` | **Forbidden / retired** — remove if found; skills are global |
-| Global **cc-sdd (kiro-*)** pack | Lifecycle engineering skills/hooks/commands (machine-level) |
+| Global **OpenSpec (openspec-*)** pack | Lifecycle engineering skills/hooks/commands (machine-level) |
 | Machine session hooks | Evidence injection + Decision Gate reminders |
 | `tasks/lessons.md` | Persistent mistake prevention |
 | `tasks/todo.md` | Active objective tracking |
@@ -1846,12 +1818,12 @@ Durable judgement. Curate; don't bloat. No product-specific design rules here.
 26. **Context self-preservation** — `AGENTS.md` is your OS. Re-read it at every session start and after any context loss (compaction, truncation, long conversations). Never operate from memory alone when the source of truth is one file-read away.
 27. **Gold-standard local CI** — pre-commit = quality (fast lint/format); pre-push = correctness (test + build). Do not invert or collapse both into one slow commit hook.
 28. **Whole-project ownership & continuity** — own the project's real state, not only staged files or this session's diff. Re-check status before planning/implementing; bridge sessions and agents without disconnection. Verify and fix/track beyond your narrow edit set when the tree demands it.
-29. **Harness scope** — runtimes for this OS: **Grok Build (CLI/TUI)** and **OpenCode**. Same root `AGENTS.md` + global **cc-sdd (kiro-*)** pack for both. One always-on instruction file: `AGENTS.md`.
+29. **Harness scope** — runtimes for this OS: **Grok Build (CLI/TUI)** and **OpenCode**. Same root `AGENTS.md` + global **OpenSpec (openspec-*)** pack for both. One always-on instruction file: `AGENTS.md`.
 30. **Agent OS autonomy + durable docs** — for non-trivial product work, agents run Research → Plan → Implement → Verify from this OS and may persist specs/plans under `docs/{specs,plans}/` without Architect slash commands. Taste/design pivots need Architect intent.
 31. **Intent before invention** — do not invent redesigns (scroll-snap, brutalism, rebrands, layout systems) from skills or partial assets when the Architect did not ask. Prefer stack defaults and preserve working product work; escalate taste with one structured question.
 32. **Local-first vs session-end GitOps** — default every turn stops at verified + committed **locally**. Push/PR/merge only on `/end` / ship or documented mid-session exceptions. Never strand the Architect mid-session with unexpected remote noise; never lose work by leaving it uncommitted.
-33. **Gist protocol preservation** — when editing the canonical Gist OS, **add or refine** Session Start/End, Local vs GitOps, Hooks/local CI, harness scope, cc-sdd (Spec-Driven Development), and related structural sections — **do not delete or "slim" them** without an Architect-approved explicit diff. Accidental protocol loss is a contract failure.
-34. **cc-sdd autonomy** — use kiro-* skills globally (discovery, spec pipeline, autonomous `kiro-impl` with review/debug gates) via `using-sdd` without waiting for Architect to name them. On bootstrap, repair global install and seed `.kiro/`. Skills never override Architect intent, Local-vs-GitOps, or release authority. Methodology is machine-global kiro-* only.
+33. **Gist protocol preservation** — when editing the canonical Gist OS, **add or refine** Session Start/End, Local vs GitOps, Hooks/local CI, harness scope, OpenSpec (Spec-Driven Development), and related structural sections — **do not delete or "slim" them** without an Architect-approved explicit diff. Accidental protocol loss is a contract failure.
+34. **OpenSpec autonomy** — use openspec-* skills globally (discovery, spec pipeline, autonomous `openspec-apply-change` with review/debug gates) via `using-openspec` without waiting for Architect to name them. On bootstrap, repair global install and seed `openspec/`. Skills never override Architect intent, Local-vs-GitOps, or release authority. Methodology is machine-global openspec-* only.
 35. **Living index** — always-on `AGENTS.md` + `docs/INDEX.md` + knowledge graph stay linked to real docs/scripts. Create project docs after bootstrap; sync them on the same branch as code; no orphan or duplicate surfaces.
 36. **Suggestive excellence** — proactively propose high-leverage next steps and activate full capabilities (skills, specialists, browser, gh). Never silent deferral; never unsolicited product redesign.
 37. **Handoff continuity** — Session Start Decision Gate + clean per-turn state + Session End GitOps so work progresses as complete units, not abandoned fragments.
@@ -1880,7 +1852,7 @@ Durable judgement. Curate; don't bloat. No product-specific design rules here.
 | Always-on card + closeout template | **Every turn** |
 | Session Start / End skills | Open product · ship |
 | Full AGENTS sections | Ambiguity, OS edit, first day on repo |
-| One kiro skill | Current SDD phase only (via `using-sdd` map) |
+| One openspec skill | Current SDD phase only (via `using-openspec` map) |
 
 **Start (and re-ground before non-trivial turns):** full repo status (all dirty/WIP) · prior session-end warnings · Session Start Decision Gate (continue/finish/promote/park/ask) · **local branches ahead of protected** · branch off protected · `tasks/lessons.md` + `todo.md` + open plans/specs · `docs/INDEX.md` + knowledge graph → whole-product fit · proactive brief · live probes · plan · execute same turn (local-first).
 
@@ -1978,7 +1950,7 @@ When editing the Gist, the following structural contracts are **protected**. Age
 - GitHub Issues/PRs/labels/milestones/status hygiene (agent-owned on GitOps)
 - GitHub Project V2 sync via `gh` + `scripts/github/*` (no Actions card-movers)
 - Hooks / local CI gold standard + deploy-only GitHub Actions policy
-- cc-sdd (Spec-Driven Development) (gotalab/cc-sdd methodology + OS session skills; extend-existing-first)
+- OpenSpec (Spec-Driven Development) (Fission-AI/OpenSpec methodology + OS session skills; extend-existing-first)
 - Harness common ground (outcomes shared; harness-native setup agent-maintained; OpenCode auth plugin lean)
 - Chrome DevTools MCP available when UI work needs evidence
 - Context7 MCP on both harnesses + DCP (OpenCode kit) as portable surfaces
@@ -2040,13 +2012,13 @@ This OS is **harness-scoped** so setup stays lean and behavior stays predictable
 | Product facts | That repo’s **This Project** + `docs/INDEX.md` + product docs |
 | OpenCode machine runtime | Gist `fa4d874490158f7252ca2441227d3343` → `~/.config/opencode/` only |
 | Session/GitOps skills | `~/.agents/skills/` (not project-vendored) |
-| Methodology | gotalab/cc-sdd in `~/.agents/skills` (both harnesses) |
+| Methodology | Fission-AI/OpenSpec in `~/.agents/skills` (both harnesses) |
 
 **OpenCode Google auth:** `opencode-antigravity-auth` and `~/.config/opencode/antigravity-*` are **OpenCode’s Google/Gemini auth path** — not a second product harness. Keep them healthy.
 
 **Standing global capability (portable — not local-only):**
 
-- **[gotalab/cc-sdd](https://github.com/gotalab/cc-sdd)** — methodology skills (see **cc-sdd (Spec-Driven Development)**).
+- **[Fission-AI/OpenSpec](https://github.com/Fission-AI/OpenSpec)** — methodology skills (see **OpenSpec (Spec-Driven Development)**).
 - **Chrome DevTools MCP** — Grok plugin + OpenCode `mcp.chrome-devtools` for UI evidence.
 - **Context7 MCP** — **both** harnesses (`~/.grok/config.toml` + OpenCode kit `mcp.context7`) for live library docs.
 - **DCP (OpenCode)** — Dynamic Context Pruning via kit gist (`@tarquinen/opencode-dcp` + `dcp.jsonc`); promote config to gist, never leave kit drift local-only.
@@ -2055,13 +2027,13 @@ This OS is **harness-scoped** so setup stays lean and behavior stays predictable
 
 **Grok note:** project `AGENTS.md` may be truncated in automatic injection (~10k chars). Agents **must still Read** root `AGENTS.md` (PROTOCOL + How to work with this Architect + This Project + Session protocols) before product or OS edits — especially in Grok. OpenCode loads the repo `AGENTS.md` more fully when cwd is the product root.
 
-**Durable project memory** lives in the repo: `docs/`, `tasks/`, product docs, `.github/ai-context/`. Methodology = **this Agent OS composed with cc-sdd (kiro-*)**.
+**Durable project memory** lives in the repo: `docs/`, `tasks/`, product docs, `.github/ai-context/`. Methodology = **this Agent OS composed with OpenSpec (openspec-*)**.
 
 # Durable project memory (Agent OS–owned)
 
 **Memory model:** git-tracked files only (`docs/`, `tasks/`, This Project, ai-context). **No** vector DBs, embedding stores, or mind-map products as Agent OS memory. Continuity = Session Start + git + plans/lessons/smoke.
 
-**Default methodology** for non-trivial product work: **this Agent OS** (Research → Plan → Implement → Verify) **composed with** the global **cc-sdd (kiro-*)** pack (spec/plan/build/test/review/ship skills as they apply). 
+**Default methodology** for non-trivial product work: **this Agent OS** (Research → Plan → Implement → Verify) **composed with** the global **OpenSpec (openspec-*)** pack (spec/plan/build/test/review/ship skills as they apply). 
 Architect states intent only. Agents execute **autonomously** — slash commands are optional accelerators, not required ceremony.
 
 | Layer | Owns |
@@ -2069,7 +2041,7 @@ Architect states intent only. Agents execute **autonomously** — slash commands
 | Agent OS (`AGENTS.md`) | Always-on contract (ownership, GitOps, local CI, continuity, harness) |
 | Durable project docs | Specs/plans/lessons that survive sessions and update as agents work |
 | Local CI (`.githooks/`) | Quality / correctness gates |
-| **cc-sdd (kiro-*)** (global) | Discovery · spec · autonomous impl · review gates — use autonomously; product design follows Architect intent |
+| **OpenSpec (openspec-*)** (global) | Discovery · spec · autonomous impl · review gates — use autonomously; product design follows Architect intent |
 | Optional tooling (e.g. Chrome DevTools MCP) | Only when installed and relevant |
 
 ## Intent before invention
@@ -2144,32 +2116,37 @@ Agent executes Bootstrap (Greenfield or Brownfield) + Environment Discovery + Ve
 
 ## This Project (quick facts)
 
-- **Stack:** Astro 6 · Tailwind CSS 4 · GSAP · TypeScript · Node 22
-- **Deployment target:** GitHub Pages (`www.seamcricketacademy.com` via `CNAME`) · workflow `.github/workflows/deploy.yml`
-- **Environment:** Node 22 (CI + local Homebrew) · no `.nvmrc` yet
-- **Product truth:** `PROJECT_CONTEXT.md` · `DESIGN_SYSTEM.md` · `DEPLOYMENT.md` · `src/data/academy.json` · `src/data/programs.ts`
-- **Doc index:** `docs/INDEX.md` · knowledge graph · `DEVELOPMENT.md`
+- **Product:** Seam Cricket Academy — Bengaluru cricket coaching marketing & lead-generation site (`www.seamcricketacademy.com`). Showcases programs/batches, coaches, gallery, and converts visitors via contact form + WhatsApp.
+- **Users:** Prospective players/parents discovering academy programs; academy staff receiving leads.
+- **Stack:** Astro `^7` · Tailwind CSS 4 (`@tailwindcss/vite`) · GSAP · TypeScript · Node 22 · Biome 2.5.4
+- **Deployment target:** GitHub Pages (`CNAME` → `www.seamcricketacademy.com`) · versioned **Release Tag Deploy** (`.github/workflows/release-tag-deploy.yml`) · non-release rebuild (`.github/workflows/rebuild-site.yml`)
+- **Environment:** Node 22 (local Homebrew + CI) · no `.nvmrc` yet
+- **GitHub Project V2:** `SEAM-ORG` project **#8** (`SeamFusionProject`) — shared board with SeamFusionServices · `.github/agent-project.yml` · agents use `scripts/github/*` (no Actions card-movers)
+- **Relationship to SeamFusionServices:** **Shared board only** (SEAM-ORG/8) + **API consumer** of SeamFusion Cloud Functions (`PUBLIC_API_URL`, `PUBLIC_ACADEMY_ID`) for build-time public academy data. **No shared application code** — SCA is a standalone Astro marketing site.
+- **Product truth:** `PROJECT_CONTEXT.md` · `DESIGN_SYSTEM.md` · `DEPLOYMENT.md` · `src/data/academy.json` · `src/data/programs.ts` · `docs/INDEX.md`
+- **SDD SoT:** **`openspec/`** only (`openspec/config.yaml`, `openspec/specs/`, `openspec/changes/`) · legacy `.kiro/` removed (migrated 2026-07-18)
 - **Canonical commands:**
   - Install: `npm ci` then `bash scripts/install-githooks.sh`
   - Dev: `npm run dev`
   - Build: `npm run build`
   - Test: `npm test`
   - Smoke: `bash scripts/smoke.sh` (Session Start after health clear)
-  - Lint/format: `npm run format` / `npm run lint` (**Biome**) · pre-commit via `agent-quality` (Biome)
+  - Lint/format: `npm run format` / `npm run lint` (**Biome**) · pre-commit via `~/.config/agent-quality`
   - Local CI quality: `npm run local-ci:quality`
   - Local CI correctness: `npm run local-ci:correctness`
-  - Deploy: push/merge to `main` → `.github/workflows/deploy.yml`
-- **Code map:** `src/pages/index.astro` · `src/components/*` · `src/layouts/Layout.astro` · `src/lib/seamfusion-api.ts` · `src/lib/validation.ts` · `src/styles/`
-- **Hooks (local CI):** `.githooks/` + `scripts/install-githooks.sh` · **gold standard** · pre-commit → Biome via `~/.config/agent-quality/check.sh` + memory drift · pre-push → `npm test && npm run build`
-- **GitHub:** `.github/workflows/deploy.yml` (Pages deploy/release only) · no PR lint/test Actions · Dependabot present
-- **External services:** SeamFusion Cloud Functions API (`PUBLIC_API_URL`, `PUBLIC_ACADEMY_ID`) · Web3Forms (contact) · WhatsApp deep links
-- **GitHub Project V2:** configure `.github/agent-project.yml` (`project_owner`, `project_number`); agents use `scripts/github/*` (no Actions card-movers)
-- **Harnesses:** **OpenCode desktop** (default product work) · **Grok Build** from `~/Projects` (Agent OS / machine) · same root `AGENTS.md` + global **cc-sdd (kiro-*)**
-- **Durable docs:** `docs/INDEX.md` · `docs/specs/` · `docs/plans/` · `docs/archive/` (legacy `docs/superpowers/` if present)
-- **Invariants:** dark glassmorphism + neon design system (`DESIGN_SYSTEM.md`) · do not edit `backup-legacy/` · do not commit video >90MB · validate dynamic email/WhatsApp links · deploy workflow runs from **repo root** (not a nested astro folder)
-
----
-
----
-
-- **SDD memory (cc-sdd):** `.kiro/steering/` · `.kiro/specs/` · `.kiro/settings/` — machine skills `kiro-*` via `using-sdd`; no project skill trees.
+  - Deploy: GitOps — Release Tag Deploy (`workflow_dispatch` / tag `v*.*.*`) or rebuild-site for data refresh
+- **Code map:** `src/pages/index.astro` · `src/layouts/Layout.astro` · `src/components/*` (Hero, Programs, Coaches, ContactForm, FloatingWhatsApp, Gallery, …) · `src/data/academy.json` · `src/data/programs.ts` · `src/lib/seamfusion-api.ts` · `src/lib/validation.ts` · `src/styles/`
+- **Hooks (local CI):** `.githooks/` + `scripts/install-githooks.sh` · gold standard · pre-commit → Biome + `scripts/check-memory-drift.sh` · pre-push → `npm test && npm run build`
+- **GitHub:** `.github/workflows/release-tag-deploy.yml` + `rebuild-site.yml` (deploy/release only) · no PR lint/test Actions · Dependabot OK
+- **External services:** SeamFusion Cloud Functions API (`PUBLIC_API_URL`, `PUBLIC_ACADEMY_ID`) · Web3Forms (contact dual-submit) · WhatsApp deep links (`wa.me` / `api.whatsapp.com`)
+- **Harnesses:** **OpenCode desktop** (default product work) · **Grok Build** from `~/Projects` (Agent OS / machine) · same root `AGENTS.md` + global OpenSpec skills (`openspec-*` / `using-openspec`)
+- **Durable docs:** `docs/INDEX.md` · `docs/specs/` · `docs/plans/` · `docs/archive/` · **`openspec/`**
+- **Invariants:**
+  - Dark glassmorphism + neon “Weightless/Kinetic” design (`DESIGN_SYSTEM.md`) — non-negotiable aesthetic
+  - Feature icons: 3D emoji / transparent PNG, `w-16 h-16 object-contain`
+  - Do not edit `backup-legacy/`
+  - Do not commit video / media over ~50–90MB
+  - Validate dynamic email/WhatsApp/URL links (`src/lib/validation.ts`)
+  - Deploy workflows run from **repo root** (not a nested astro folder)
+  - Build-time SeamFusion API must fail soft → static `academy.json` / `programs.ts` fallback
+  - Public git/docs = product voice (no AI/agent language)

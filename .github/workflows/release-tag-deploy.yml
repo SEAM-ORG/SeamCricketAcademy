@@ -1,0 +1,295 @@
+name: Release Tag Deploy
+
+# Universal Release Pattern (Agent OS / SFS-aligned):
+#   resolve → deploy-web (GitHub Pages) → finalize (tag + GitHub Release + platform table)
+# Local hooks remain CI. This workflow is deploy/release only.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (e.g. v2.3.0). Empty → package.json or latest CHANGELOG version'
+        required: false
+        type: string
+      ref:
+        description: 'Git ref to checkout (default: main / current ref)'
+        required: false
+        type: string
+  push:
+    tags:
+      - 'v*.*.*'
+
+concurrency:
+  group: release-${{ github.ref_name || inputs.tag || github.run_id }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+  deployments: write
+
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.release.outputs.tag }}
+      ref: ${{ steps.release.outputs.ref }}
+      sha: ${{ steps.metadata.outputs.sha }}
+      version: ${{ steps.metadata.outputs.version }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+          fetch-depth: 0
+
+      - name: Resolve release target
+        id: release
+        shell: bash
+        run: |
+          set -euo pipefail
+          ref='${{ inputs.ref }}'
+          if [[ -z "$ref" ]]; then
+            if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+              ref="${{ github.ref }}"
+            else
+              ref='main'
+            fi
+          fi
+
+          tag='${{ inputs.tag }}'
+          if [[ -z "$tag" && "${{ github.ref }}" == refs/tags/v* ]]; then
+            tag="${GITHUB_REF#refs/tags/}"
+          fi
+          if [[ -z "$tag" ]]; then
+            if [[ -f package.json ]]; then
+              version="$(node -p "require('./package.json').version" 2>/dev/null || true)"
+            fi
+            if [[ -z "${version:-}" || "$version" == "0.0.0" || "$version" == "0.0.1" ]]; then
+              if [[ -f CHANGELOG.md ]]; then
+                version="$(rg -oN '^## \[v?([0-9]+\.[0-9]+\.[0-9]+[^\]]*)\]' -r '$1' CHANGELOG.md | head -1 || true)"
+              fi
+            fi
+            [[ -n "${version:-}" ]] || { echo "Could not resolve version from package.json or CHANGELOG.md" >&2; exit 1; }
+            tag="v${version#v}"
+            echo "Auto-detected tag: $tag"
+          fi
+
+          if [[ ! "$tag" =~ ^v[0-9]+(\.[0-9]+){1,3}([+-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "Release tags must look like v1.2.3. Got: $tag" >&2
+            exit 1
+          fi
+
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+
+      - name: Resolve release metadata
+        id: metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag='${{ steps.release.outputs.tag }}'
+          if git rev-parse "$tag" >/dev/null 2>&1; then
+            sha="$(git rev-list -n 1 "$tag")"
+          else
+            sha="$(git rev-parse HEAD)"
+          fi
+          version="${tag#v}"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+  deploy-web:
+    needs: resolve
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+    environment:
+      name: github-pages
+      url: ${{ steps.pages.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.resolve.outputs.ref }}
+          fetch-depth: 0
+
+      - name: Create Web deployment record
+        shell: bash
+        run: |
+          bash scripts/upsert-github-deployment.sh \
+            --environment Web \
+            --ref '${{ needs.resolve.outputs.sha }}' \
+            --tag '${{ needs.resolve.outputs.tag }}' \
+            --deployment-description 'Web release ${{ needs.resolve.outputs.tag }}' \
+            --state in_progress \
+            --status-description 'Building Astro site for GitHub Pages' \
+            --log-url 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}' \
+            --production true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Astro site
+        run: npm run build
+        env:
+          PUBLIC_ACADEMY_ID: ${{ vars.PUBLIC_ACADEMY_ID }}
+          PUBLIC_API_URL: ${{ vars.PUBLIC_API_URL }}
+
+      - name: Copy CNAME to dist
+        run: test -f CNAME && cp CNAME dist/ || true
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+      - name: Deploy to GitHub Pages
+        id: pages
+        uses: actions/deploy-pages@v4
+
+      - name: Mark Web deployment success
+        if: success()
+        shell: bash
+        run: |
+          bash scripts/upsert-github-deployment.sh \
+            --environment Web \
+            --ref '${{ needs.resolve.outputs.sha }}' \
+            --tag '${{ needs.resolve.outputs.tag }}' \
+            --deployment-description 'Web release ${{ needs.resolve.outputs.tag }}' \
+            --state success \
+            --status-description 'GitHub Pages deployed' \
+            --log-url 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}' \
+            --production true
+
+      - name: Mark Web deployment failure
+        if: failure()
+        shell: bash
+        run: |
+          bash scripts/upsert-github-deployment.sh \
+            --environment Web \
+            --ref '${{ needs.resolve.outputs.sha }}' \
+            --tag '${{ needs.resolve.outputs.tag }}' \
+            --deployment-description 'Web release ${{ needs.resolve.outputs.tag }}' \
+            --state failure \
+            --status-description 'GitHub Pages deploy failed' \
+            --log-url 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}' \
+            --production true
+
+  finalize:
+    needs: [resolve, deploy-web]
+    if: always() && needs.resolve.result == 'success'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.resolve.outputs.ref }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Create and push Git tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag='${{ needs.resolve.outputs.tag }}'
+          sha='${{ needs.resolve.outputs.sha }}'
+          if git rev-parse "$tag" >/dev/null 2>&1; then
+            echo "Tag $tag already exists. Skipping."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git tag "$tag" "$sha"
+            git push origin "$tag"
+          fi
+
+      - name: Sync GitHub release notes from changelog
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag='${{ needs.resolve.outputs.tag }}'
+          notes_file="$(mktemp)"
+          trap 'rm -f "$notes_file"' EXIT
+          node scripts/extract-release-notes.mjs "${tag#v}" > "$notes_file"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release edit "$tag" --title "Release $tag" --notes-file "$notes_file"
+          else
+            gh release create "$tag" \
+              --target '${{ needs.resolve.outputs.sha }}' \
+              --title "Release $tag" \
+              --notes-file "$notes_file"
+          fi
+
+      - name: Update release platform status section
+        shell: bash
+        env:
+          TAG: ${{ needs.resolve.outputs.tag }}
+          WEB_RESULT: ${{ needs.deploy-web.result }}
+        run: |
+          set -euo pipefail
+          tag="$TAG"
+          if [[ "$WEB_RESULT" == "success" ]]; then
+            web_status="✅ success — GitHub Pages"
+          elif [[ "$WEB_RESULT" == "failure" ]]; then
+            web_status="❌ failure — Pages deploy failed"
+          else
+            web_status="⏳ pending — web result not finalized"
+          fi
+
+          start="<!-- release-platform-status:start -->"
+          end="<!-- release-platform-status:end -->"
+          section="${start}
+## Platform Release Status
+
+| Platform | Status |
+|----------|--------|
+| Web | ${web_status} |
+
+${end}"
+
+          body="$(gh release view "$tag" --json body --jq '.body // ""' 2>/dev/null || true)"
+          if printf '%s' "$body" | rg -q 'release-platform-status:start'; then
+            # replace existing block
+            printf '%s\n' "$body" | python3 -c '
+import re,sys,os
+body=sys.stdin.read()
+start=os.environ.get("START","<!-- release-platform-status:start -->")
+end=os.environ.get("END","<!-- release-platform-status:end -->")
+section=sys.argv[1]
+pat=re.compile(re.escape(start)+r"[\s\S]*?"+re.escape(end))
+print(pat.sub(section.strip(), body) if pat.search(body) else body.rstrip()+"\n\n"+section)
+' "$section" > /tmp/notes.md
+          else
+            {
+              printf '%s\n\n' "$body"
+              printf '%s\n' "$section"
+            } > /tmp/notes.md
+          fi
+          gh release edit "$tag" --notes-file /tmp/notes.md
+
+      - name: Summary
+        shell: bash
+        run: |
+          web_result="${{ needs.deploy-web.result }}"
+          web_icon="❌"; [[ "$web_result" == "success" ]] && web_icon="✅"
+          {
+            echo "## Release Tag Deploy — ${{ needs.resolve.outputs.tag }}"
+            echo ""
+            echo "| Platform | Status |"
+            echo "|----------|--------|"
+            echo "| Web (GitHub Pages) | $web_icon $web_result |"
+            echo ""
+            echo "- **Commit**: ${{ needs.resolve.outputs.sha }}"
+            echo "- **Version**: ${{ needs.resolve.outputs.version }}"
+          } >> "$GITHUB_STEP_SUMMARY"

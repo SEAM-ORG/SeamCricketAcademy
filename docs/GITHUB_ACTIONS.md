@@ -2,26 +2,59 @@
 
 **Policy (Agent OS):** Local hooks = CI. GitHub Actions = **deploy/release** only.
 
-## Tracked workflow (repo file)
+## Tracked workflows
 
-| Workflow                         | Path                           | Triggers                                                                        | Verdict                                                         |
-| -------------------------------- | ------------------------------ | ------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| **Deploy Astro to GitHub Pages** | `.github/workflows/deploy.yml` | `push` main, release, `repository_dispatch` (rebuild-site), weekly cron, manual | **Keep** — real **deploy** to Pages (build+publish). Not PR CI. |
+| Workflow | Path | Triggers | Verdict |
+|----------|------|----------|---------|
+| **Release Tag Deploy** | `.github/workflows/release-tag-deploy.yml` | `workflow_dispatch` (tag/ref) · `push` tags `v*.*.*` | **Keep** — authorized versioned release (SFS Universal Release Pattern) |
+| **Rebuild Site (non-release)** | `.github/workflows/rebuild-site.yml` | `repository_dispatch` (`rebuild-site`), weekly cron, manual | **Keep** — data/gallery refresh without cutting a release |
 
-Build inside this job is **for the deploy artifact**, not a PR quality gate. Local hooks already run `npm test` + `npm run build` on pre-push.
+## Universal Release Pattern (aligned with SeamFusionServices)
 
-## Platform / dynamic (not under `.github/workflows/`)
+```
+resolve → deploy-web (GitHub Pages + Deployments API env "Web") → finalize
+  (create tag if missing · GitHub Release + CHANGELOG notes · Platform Status table)
+```
 
-| Name                                   | Why it appears         | Verdict                                                                                     |
-| -------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------- |
-| **pages-build-deployment**             | GitHub Pages platform  | Usually tracks deployment events; do not add a second competing Pages source without intent |
-| **CodeQL**                             | GitHub code scanning   | **Keep** — security, not PR lint/test mirror of hooks                                       |
-| **Dependabot Updates**                 | Dependabot             | **Keep** — agent triages PRs value-first (rebase/fix/merge or close with evidence)          |
-| **Copilot code review / coding agent** | GitHub Copilot product | Optional platform; not Agent OS CI                                                          |
+| Job | Role |
+|-----|------|
+| `resolve` | Tag `vX.Y.Z` from input, package.json, or latest CHANGELOG; resolve SHA |
+| `deploy-web` | Build Astro · Pages artifact · `deploy-pages` · Deployment status |
+| `finalize` | Tag push · `gh release` · platform status markers |
+
+**Not PR CI.** Local pre-push already runs `npm test` + `npm run build`.
+
+## How to release (Architect-approved)
+
+```bash
+# 1. Ensure CHANGELOG has ## [X.Y.Z] and package.json version is coherent
+# 2. From Actions → Release Tag Deploy → Run workflow
+#    (or: git tag vX.Y.Z && git push origin vX.Y.Z)
+gh workflow run "Release Tag Deploy" -R SEAM-ORG/SeamCricketAcademy \
+  -f tag=v2.3.0 -f ref=main
+gh run list -R SEAM-ORG/SeamCricketAcademy --workflow "Release Tag Deploy" --limit 3
+```
+
+## Non-release rebuild
+
+Used when CMS/gallery data changes without a product version:
+
+```bash
+# From SeamFusion or manual:
+gh api repos/SEAM-ORG/SeamCricketAcademy/dispatches \
+  -f event_type=rebuild-site
+```
+
+## Platform / dynamic (not under workflows/)
+
+| Name | Verdict |
+|------|---------|
+| pages-build-deployment | Platform Pages helper |
+| CodeQL / Dependabot / Copilot | Security/deps — not product CI |
 
 ## Agent duty
 
-1. Session Start preflight lists open Dependabot PRs + failed Actions.
-2. After merge to `main`, expect **Deploy Astro** run — if it fails, fix root cause same session when related to your change (or open Issue + board).
-3. **Do not** add `.github/workflows/ci.yml` that re-runs lint/test/build already on hooks.
-4. Open Dependabot PRs (#34, #35, #37 as of audit) need stewardship: update, verify locally, merge or close with reason — do not ignore forever.
+1. Session Start: preflight failed Actions + bot PRs.
+2. After Architect release approval: run/monitor **Release Tag Deploy**; never claim ship without run evidence.
+3. Do **not** reintroduce `deploy.yml` that ships every `main` push as a “release.”
+4. Do **not** add PR lint/test Actions that duplicate hooks.

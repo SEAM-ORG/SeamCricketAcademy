@@ -1300,12 +1300,27 @@ Automated scripts that the system runs to block bad actions before they land. **
 
 - **Discovery:** At bootstrap, scan `.github/workflows/` for existing Actions. Remove redundant PR CI if it duplicates local hooks.
 - **Allowed on GitHub:** deployment, release tagging, environment promotion, pages/hosting publish.
-- **Creation (Universal Release Pattern):** When the deploy target is known, create a deployment pipeline (`deploy.yml` or `release.yml`) triggered on tags (e.g., `v*.*.*`) or `workflow_dispatch`. It must follow the **Universal Release Protocol**:
- 1. **Deploy Jobs**: Execute the deployment (e.g., Cloud Build, Vercel, GitHub Pages) and map it to a GitHub Environment (e.g., `environment: name: Web`).
- 2. **Surface All Platforms**: Even if mobile (Android/iOS) or other platforms are distributed manually, create jobs to surface them in GitHub Environments (e.g., `environment: name: Android` → skipped/pending) so the GitHub UI tracks the full product surface area.
- 3. **Finalize Job**: Run a final job that uses the `gh release` CLI to auto-generate or update a **GitHub Release**. It must inject a Markdown table (`| Platform | Status |`) into the release body tracking the outcome of all platforms (e.g., Web ✅, Android ⏩ Skipped).
+- **Canonical workflow name:** **`Release Tag Deploy`** → `.github/workflows/release-tag-deploy.yml` (same logic as SeamFusionServices across all products).
+- **Creation (Universal Release Pattern):** When the deploy target is known, implement **`release-tag-deploy.yml`** (not a random `ci.yml`). Triggers: **`workflow_dispatch`** with `tag` + `ref` inputs (primary, Architect-approved), and optionally `push` tags `v*.*.*`. Job graph **must** match SFS:
+
+```
+resolve → deploy-<platform(s)> → finalize
+```
+
+| Job | Required behavior |
+|-----|-------------------|
+| **`resolve`** | Resolve `vX.Y.Z` from input or product version file (`pubspec.yaml` / `package.json` / CHANGELOG); validate tag shape; output `tag`, `ref`, `sha`, `version` |
+| **`deploy-*`** | Product-specific deploy (Cloud Build, GitHub Pages, Firebase, …). Record **GitHub Deployments** status per environment (`Web`, `Firebase`, `Android`, `iOS`, …) via `scripts/upsert-github-deployment.sh` |
+| **`finalize`** | Create/push tag if missing · create/update **GitHub Release** (notes from `scripts/extract-release-notes.mjs` / CHANGELOG) · inject platform status markers `<!-- release-platform-status:start -->` table · step summary |
+
+1. **Deploy Jobs**: Map each shippable surface to a GitHub Environment (e.g. `Web`). Build inside deploy jobs is **for the deploy artifact**, not PR CI.
+2. **Surface All Platforms**: Even if mobile is manual, post Deployments as **inactive/skipped** so the GitHub Environments UI tracks the full product surface.
+3. **Finalize Job**: Always produce a versioned **Release** + `| Platform | Status |` matrix (Web ✅ / Android ⏩ Skipped / …).
+4. **Non-release rebuilds** (optional): separate workflow (e.g. `rebuild-site.yml`) for data-only Pages refreshes — **no** tag, **no** GitHub Release.
+5. **Forbidden:** PR lint/test/build Actions that duplicate local hooks; “deploy every main push” as a substitute for versioned releases (use rebuild workflow if continuous publish is needed).
+
  _⚠️ YAML Syntax Warning: If injecting multi-line Markdown into a `run:` block, you MUST use `\n` escaping on a single line (e.g. `NOTES="Line 1\n\nLine2"`) or use proper YAML block scalars (`|`). Unescaped raw newlines inside double-quotes will cause GitHub Actions to fail workflow parsing on every push._
-- **Maintenance:** Keep deploy/release pipelines healthy. Local hook failures → fix root cause; never `--no-verify`.
+- **Maintenance:** Keep deploy/release pipelines healthy. Local hook failures → fix root cause; never `--no-verify`. Portfolio reference implementation: `SEAM-ORG/SeamFusionServices` `.github/workflows/release-tag-deploy.yml`.
 
 #### GitHub Issues, PRs, labels, milestones & status (agent-owned hygiene)
 

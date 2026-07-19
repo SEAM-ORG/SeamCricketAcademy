@@ -202,37 +202,35 @@ Protected contracts (must remain available on demand — do not delete from gist
 
 ## This Project (quick facts)
 
-- **Product:** Seam Cricket Academy — Bengaluru cricket coaching marketing & lead-generation site (`www.seamcricketacademy.com`). Showcases programs/batches, coaches, gallery, and converts visitors via contact form + WhatsApp.
-- **Users:** Prospective players/parents discovering academy programs; academy staff receiving leads.
-- **Stack:** Astro `^7` · Tailwind CSS 4 (`@tailwindcss/vite`) · GSAP · TypeScript · Node 22 · Biome 2.5.4
-- **Deployment target:** GitHub Pages (`CNAME` → `www.seamcricketacademy.com`) · versioned **Release Tag Deploy** (`.github/workflows/release-tag-deploy.yml`) · non-release rebuild (`.github/workflows/rebuild-site.yml`)
-- **Environment:** Node 22 (local Homebrew + CI) · no `.nvmrc` yet
-- **GitHub Project V2:** `SEAM-ORG` project **#8** (`SeamFusionProject`) — shared board with SeamFusionServices · `.github/agent-project.yml` · agents use `scripts/github/*` (no Actions card-movers)
-- **Relationship to SeamFusionServices:** **Shared board only** (SEAM-ORG/8) + **API consumer** of SeamFusion Cloud Functions (`PUBLIC_API_URL`, `PUBLIC_ACADEMY_ID`) for build-time public academy data. **No shared application code** — SCA is a standalone Astro marketing site.
-- **Product truth:** `PROJECT_CONTEXT.md` · `docs/ROADMAP.md` · `docs/HISTORY.md` · `DESIGN_SYSTEM.md` · `DEPLOYMENT.md` · `src/data/academy.json` · `src/data/programs.ts` · `docs/INDEX.md`
-- **SDD SoT:** **`openspec/`** only (`openspec/config.yaml`, `openspec/specs/`, `openspec/changes/`) · legacy `.kiro/` removed (migrated 2026-07-18)
+- **Product:** Seam Cricket Academy — Bengaluru cricket coaching marketing & lead-generation site (`www.seamcricketacademy.com`). Showcases programs/batches, coaches, gallery; converts via contact form + WhatsApp.
+- **Users:** Prospective players/parents discovering programs; academy staff receiving leads.
+- **Repo:** `SEAM-ORG/SeamCricketAcademy` · package name `seam-cricket-academy` · **source of truth = repo root** (not nested `astro-revamp/`)
+- **Stack:** Astro `^7.0.9` · Tailwind CSS 4 (`tailwindcss` + `@tailwindcss/vite`) · GSAP `^3.15` · TypeScript `^6` · Node **22** · Biome **2.5.4**
+- **Deployment:** GitHub Pages · `CNAME` → `www.seamcricketacademy.com` · **Release Tag Deploy** (`.github/workflows/release-tag-deploy.yml`: `workflow_dispatch` / tags `v*.*.*`) · non-release rebuild (`.github/workflows/rebuild-site.yml`: dispatch / weekly cron / manual)
+- **Environment:** Node 22 (`.nvmrc` + CI `node-version: 22`) · local Homebrew OK
+- **GitHub Project V2:** `SEAM-ORG` **#8** (`SeamFusionProject`) — shared board with SeamFusionServices · `.github/agent-project.yml` · `scripts/github/*` only (no Actions card-movers)
+- **SeamFusionServices:** **Shared board only** + **API consumer** (`PUBLIC_API_URL`, `PUBLIC_ACADEMY_ID`) for build-time public academy data · **no shared app code**
+- **Product truth:** `PROJECT_CONTEXT.md` · `docs/ROADMAP.md` · `docs/HISTORY.md` · `DESIGN_SYSTEM.md` · `DEPLOYMENT.md` · `docs/GITHUB_ACTIONS.md` · `src/data/academy.json` · `src/data/programs.ts` · `docs/INDEX.md`
+- **SDD SoT:** **`openspec/`** only (`config.yaml`, `specs/`, `changes/`) · capabilities: `academy-marketing-ux` · `program-catalog` · `coach-profiles` · `lead-generation` · `seamfusion-api-sync` · no `.kiro/`
 - **Canonical commands:**
-  - Install: `npm ci` then `bash scripts/install-githooks.sh`
-  - Dev: `npm run dev`
-  - Build: `npm run build`
-  - Test: `npm test`
-  - Smoke: `bash scripts/smoke.sh` (Session Start after health clear)
-  - Lint/format: `npm run format` / `npm run lint` (**Biome**) · pre-commit via `~/.config/agent-quality`
-  - Local CI quality: `npm run local-ci:quality`
-  - Local CI correctness: `npm run local-ci:correctness`
-  - Deploy: GitOps — Release Tag Deploy (`workflow_dispatch` / tag `v*.*.*`) or rebuild-site for data refresh
-- **Code map:** `src/pages/index.astro` · `src/layouts/Layout.astro` · `src/components/*` (Hero, Programs, Coaches, ContactForm, FloatingWhatsApp, Gallery, …) · `src/data/academy.json` · `src/data/programs.ts` · `src/lib/seamfusion-api.ts` · `src/lib/validation.ts` · `src/styles/`
-- **Hooks (local CI):** `.githooks/` + `scripts/install-githooks.sh` · gold standard · pre-commit → Biome + `scripts/check-memory-drift.sh` · pre-push → `npm test && npm run build`
-- **GitHub:** `.github/workflows/release-tag-deploy.yml` + `rebuild-site.yml` (deploy/release only) · no PR lint/test Actions · Dependabot OK
-- **External services:** SeamFusion Cloud Functions API (`PUBLIC_API_URL`, `PUBLIC_ACADEMY_ID`) · Web3Forms (contact dual-submit) · WhatsApp deep links (`wa.me` / `api.whatsapp.com`)
-- **Harnesses:** **OpenCode desktop** (default product work) · **Grok Build** from `~/Projects` (Agent OS / machine) · same root `AGENTS.md` + global OpenSpec skills (`openspec-*` / `using-openspec`)
-- **Durable docs:** `docs/INDEX.md` · `docs/specs/` · `docs/plans/` · `docs/archive/` · **`openspec/`**
+  - Install: `npm ci` then `bash scripts/install-githooks.sh` (`prepare` also installs hooks)
+  - Dev: `npm run dev` → http://localhost:4321
+  - Build / test / smoke: `npm run build` · `npm test` · `bash scripts/smoke.sh`
+  - Lint/format: `npm run format` / `npm run lint` (**Biome**)
+  - Local CI: `npm run local-ci:quality` · `npm run local-ci:correctness`
+  - Deploy: GitOps only — Release Tag Deploy or rebuild-site (never direct `main` push-as-release)
+- **Code map:** `src/pages/index.astro` · `src/layouts/Layout.astro` · `src/components/*` (Hero, Programs, Coaches, ContactForm, FloatingWhatsApp, Gallery, …) · `src/data/*` · `src/lib/seamfusion-api.ts` · `src/lib/validation.ts` · `src/styles/{global,base}.css`
+- **Hooks (local CI):** `.githooks/` + `scripts/install-githooks.sh` · pre-commit → Biome + `scripts/check-memory-drift.sh` · pre-push → `npm test && npm run build`
+- **GitHub Actions:** deploy/release only (`release-tag-deploy.yml`, `rebuild-site.yml`) · no PR lint/test Actions · Dependabot OK
+- **External services:** SeamFusion Cloud Functions · Web3Forms (contact dual-submit) · WhatsApp (`wa.me` / `api.whatsapp.com`)
+- **Harnesses:** OpenCode desktop (product) · Grok Build from `~/Projects` (OS/machine) · skills machine-global only (`~/.agents/skills`)
+- **Durable docs:** `docs/INDEX.md` · `docs/specs/` · `docs/plans/` · `docs/archive/` · **`openspec/`** · thin GitHub Wiki (product index only; repo docs remain SoT)
 - **Invariants:**
-  - Dark glassmorphism + neon “Weightless/Kinetic” design (`DESIGN_SYSTEM.md`) — non-negotiable aesthetic
+  - Dark glassmorphism + neon “Weightless/Kinetic” (`DESIGN_SYSTEM.md`) — non-negotiable
   - Feature icons: 3D emoji / transparent PNG, `w-16 h-16 object-contain`
-  - Do not edit `backup-legacy/`
-  - Do not commit video / media over ~50–90MB
+  - Do not edit `backup-legacy/` · do not commit media ≳50–90MB
   - Validate dynamic email/WhatsApp/URL links (`src/lib/validation.ts`)
-  - Deploy workflows run from **repo root** (not a nested astro folder)
-  - Build-time SeamFusion API must fail soft → static `academy.json` / `programs.ts` fallback
-  - Public git/docs = product voice (no AI/agent language)
+  - Deploy workflows run from **repo root**
+  - SeamFusion API **fail soft** → static `academy.json` / `programs.ts`
+  - Public git/docs = product voice (no AI/agent ceremony language)
+  - No project `.agents/`, `opencode.json(c)`, second SDD tree, or `project_number: 0`

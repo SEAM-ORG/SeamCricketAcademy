@@ -1,7 +1,7 @@
 # Project Context — Seam Cricket Academy
 
 > Product truth brief for the marketing & lead-generation site.  
-> **Last aligned:** 2026-07-19 · **Roadmap:** `docs/ROADMAP.md` · **Session journal:** `docs/HISTORY.md`
+> **Last aligned:** 2026-07-19 (memory honesty) · **Roadmap:** `docs/ROADMAP.md` · **Session journal:** `docs/HISTORY.md` · **Repo:** `SEAM-ORG/SeamCricketAcademy`
 
 ## 1. Product
 
@@ -18,10 +18,11 @@ Showcases programs/batches, coaches, gallery; converts visitors via contact form
 | Layer | Choice |
 | ----- | ------ |
 | Framework | Astro **7** · Tailwind CSS **4** · TypeScript · GSAP |
-| Quality | Biome · Node **22** · local `.githooks` (quality → correctness) |
+| Quality | Biome **2.5.4** · Node **22** (`.nvmrc`) · local `.githooks` (quality → correctness) |
 | Hosting | GitHub Pages · CNAME → `www.seamcricketacademy.com` |
-| Release | **Release Tag Deploy** + non-release `rebuild-site` workflow |
+| Release | **Release Tag Deploy** + non-release `rebuild-site` (see `DEPLOYMENT.md`) |
 | Integrations | SeamFusion public API (build-time) · Web3Forms · WhatsApp deep links |
+| Package | `seam-cricket-academy` · app at **repo root** |
 
 ## 3. Mandates (non-negotiable)
 

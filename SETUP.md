@@ -1,87 +1,66 @@
-# Project Migration & Setup Guide
+# Setup — Seam Cricket Academy
 
-This guide ensures you can get the **Seam Cricket Academy** project up and running on any new machine (Mac or Windows) in minutes using the Antigravity agent.
+> Get the marketing site running locally. **Last aligned:** 2026-07-19  
+> Product brief: `PROJECT_CONTEXT.md` · Deploy: `DEPLOYMENT.md` · Agent contract: `AGENTS.md`
 
-## 🚀 The "Single Prompt" Setup
+## Prerequisites
 
-1. **Clone the Repository**
+- **Node.js 22** (see `.nvmrc`) — Homebrew `brew install node@22` or [nodejs.org](https://nodejs.org/)
+- **npm** (bundled with Node)
+- **Git**
 
-   ```bash
-   git clone https://github.com/seamcricketacademy-png/html-seamcricketacademy.git
-   cd html-seamcricketacademy
-   ```
+## Install
 
-2. **Open in IDE**
-   - Open the folder in VS Code (with Antigravity installed).
+```bash
+git clone https://github.com/SEAM-ORG/SeamCricketAcademy.git
+cd SeamCricketAcademy
+npm ci
+bash scripts/install-githooks.sh
+```
 
-3. **Run the Agent Prompt**
-   Open the Agent chat and type:
+Optional env (SeamFusion build-time public data): copy `.env.example` → `.env`.  
+Build **fails soft** to static `src/data/*` when the API is unavailable.
 
-   > **"I just cloned this repo. Please run /setup to initialize the environment."**
+## Develop
 
-   The agent will automatically:
-   - Check your Node.js & Git versions.
-   - Install dependencies (`npm ci`).
-   - Run a production build to verify everything works.
-   - Confirm the project is ready.
+```bash
+npm run dev
+# → http://localhost:4321
+```
 
----
+## Verify
 
-## 💻 OS-Specific Prerequisites
+```bash
+npm test
+npm run build
+npm run lint
+bash scripts/smoke.sh
+```
 
-### 🍎 Mac (macOS)
+| Action | Command |
+| ------ | ------- |
+| Format | `npm run format` |
+| Local CI quality | `npm run local-ci:quality` |
+| Local CI correctness | `npm run local-ci:correctness` |
 
-1. **Install Node.js**:
-   - Recommended via Homebrew: `brew install node`
-   - Or download [Node.js LTS](https://nodejs.org/) (v20+).
-2. **Git**: usually pre-installed. Run `git --version` to check.
+## Deploy
 
-### 🪟 Windows
+Do **not** treat every `main` push as a release. Use GitOps:
 
-1. **Install Node.js**:
-   - Download [Node.js LTS](https://nodejs.org/) (v20+).
-2. **Git**:
-   - Install [Git for Windows](https://git-scm.com/download/win).
-3. **PowerShell**:
-   - Antigravity uses PowerShell by default. No special config needed usually, but if scripts fail, you might need: `Set-ExecutionPolicy RemoteSigned -Scope CurrentUser`.
+- **Release Tag Deploy** — versioned Pages release
+- **rebuild-site** — non-release data refresh
 
----
+Details: `DEPLOYMENT.md` · `docs/GITHUB_ACTIONS.md`.
 
-## 🛠 Manual Setup (Fallback)
-
-If you prefer to run commands yourself without the agent:
-
-1. **Install Dependencies**
-
-   ```bash
-   npm ci
-   ```
-
-2. **Start Dev Server**
-
-   ```bash
-   npm run dev
-   ```
-
-   > Opens at `http://localhost:4321`
-
-3. **Build for Production**
-   ```bash
-   npm run build
-   ```
-
-## 🤖 Agent Configuration
+## Agent configuration
 
 Agent configuration is **not** vendored into this repository.
 
-- **Always-on contract**: root `AGENTS.md` (Architect↔Agent OS)
-- **Skills (global)**: Superpowers (Grok + OpenCode plugins) + OS skills only under `~/.agents/skills/`
-- **Commands**: none (skills + hooks only — no slash-command trees)
-- **Do not** recreate project `.agent/` or `.agents/` trees
+| Surface | Where |
+| ------- | ----- |
+| Always-on contract | root `AGENTS.md` (thin hub + **This Project**) |
+| Skills | machine-global only — `~/.agents/skills/` |
+| OpenCode runtime | `~/.config/opencode/` |
+| SDD memory | `openspec/` only |
 
-- **Rules**: `.agent/rules/` (Loaded automatically)
-- **Workflows**: `.agent/workflows/` (Available immediately)
-
-## Agent OS
-
-See root [`AGENTS.md`](AGENTS.md) for Architect↔Agent contract. One-sentence objectives are enough once OS is installed.
+**Do not** create project `.agents/`, `.agent/`, `opencode.json(c)`, or a second SDD tree.

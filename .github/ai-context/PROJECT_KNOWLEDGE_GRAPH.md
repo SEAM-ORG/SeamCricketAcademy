@@ -1,10 +1,11 @@
 # Project Knowledge Graph
 
-Agent context routing for SeamCricketAcademy. Load the relevant domain only.
+Agent context routing for SeamCricketAcademy. Load the relevant domain only.  
+**Last aligned:** 2026-07-19 · Repo root is app SoT · Live: https://www.seamcricketacademy.com
 
 ### Marketing site
 
-`src/pages/index.astro` · `src/layouts/Layout.astro` · `src/components/*` (Hero, Navbar, Programs, Gallery, ContactForm, FloatingWhatsApp, Coaches, …)
+`src/pages/index.astro` · `src/layouts/Layout.astro` · `src/components/*` (Hero, Navbar, Programs, Gallery, ContactForm, FloatingWhatsApp, Coaches, SummerCampPromo, …)
 
 ### Design system
 
@@ -16,20 +17,21 @@ Agent context routing for SeamCricketAcademy. Load the relevant domain only.
 
 ### Deploy
 
-`.github/workflows/release-tag-deploy.yml` · `.github/workflows/rebuild-site.yml` · `CNAME` · `DEPLOYMENT.md` · `docs/GITHUB_ACTIONS.md`
+`.github/workflows/release-tag-deploy.yml` · `.github/workflows/rebuild-site.yml` · `CNAME` · `DEPLOYMENT.md` · `docs/GITHUB_ACTIONS.md` · Node **22** (`.nvmrc`)
 
 ### Legacy (do not edit)
 
-`backup-legacy/` · root `assets/` (legacy)
+`backup-legacy/` · root `assets/` if present (legacy)
 
 ### Agent OS + OpenSpec
 
-`AGENTS.md` (This Project) · `openspec/` (sole SDD SoT) · `.github/ai-context/*` · `docs/INDEX.md` · `tasks/*`  
-Skills are **machine-global only** (`~/.agents/skills`) — no project `.agents/`.
+`AGENTS.md` (This Project) · `openspec/` (sole SDD SoT — five capabilities) · `.github/ai-context/*` · `docs/INDEX.md` · `docs/ROADMAP.md` · `docs/HISTORY.md` · `tasks/*`  
+Skills are **machine-global only** (`~/.agents/skills`) — no project `.agents/`.  
+`.opencode/README.md` is a pointer only; runtime config is `~/.config/opencode/`.
 
 ### Quality
 
-Gold standard: pre-commit=quality, pre-push=test+build. `.githooks/pre-commit` · `.githooks/pre-push` · `npm test` · `npm run build` · `bash scripts/smoke.sh` · Local CI: hooks (no GitHub PR CI)
+Gold standard: pre-commit=quality, pre-push=test+build. `.githooks/*` · `npm test` · `npm run build` · `bash scripts/smoke.sh` · Local CI only (no GitHub PR CI)
 
 ### Durable docs
 

@@ -1,18 +1,22 @@
 # Documentation Index
 
-> Master directory for Seam Cricket Academy docs. **Last updated:** 2026-07-18
+> Master directory for Seam Cricket Academy docs. **Last updated:** 2026-07-19
 
-## Product truth (repo root)
+## Product truth (repo root + phases)
 
-| Document                                    | Description                    |
-| ------------------------------------------- | ------------------------------ |
-| [PROJECT_CONTEXT.md](../PROJECT_CONTEXT.md) | Product context                |
-| [DESIGN_SYSTEM.md](../DESIGN_SYSTEM.md)     | Visual system (non-negotiable) |
-| [DEPLOYMENT.md](../DEPLOYMENT.md)           | Deploy / Pages                 |
-| [SETUP.md](../SETUP.md)                     | Setup notes                    |
-| [README.md](../README.md)                   | Overview                       |
-| [CHANGELOG.md](../CHANGELOG.md)             | Changelog                      |
-| [AGENTS.md](../AGENTS.md)                   | Agent OS + This Project        |
+| Document                                    | Description                                                    |
+| ------------------------------------------- | -------------------------------------------------------------- |
+| [PROJECT_CONTEXT.md](../PROJECT_CONTEXT.md) | Product context (current stack & mandates)                     |
+| [ROADMAP.md](ROADMAP.md)                    | Phase table — vision & progress SoT                            |
+| [HISTORY.md](HISTORY.md)                    | **Session journal** — inception → now, newest first; Session End append |
+| [DESIGN_SYSTEM.md](../DESIGN_SYSTEM.md)     | Visual system (non-negotiable)                                 |
+| [DEPLOYMENT.md](../DEPLOYMENT.md)           | Deploy / Pages                                                 |
+| [SETUP.md](../SETUP.md)                     | Setup notes                                                    |
+| [README.md](../README.md)                   | Overview                                                       |
+| [CHANGELOG.md](../CHANGELOG.md)             | Changelog                                                      |
+| [AGENTS.md](../AGENTS.md)                   | Agent OS + This Project                                        |
+
+**Wiki (GitHub):** thin human product surface only. Repo docs above are SoT — do not dual-write full manuals or Agent OS into the Wiki.
 
 ## Data & code entry points
 

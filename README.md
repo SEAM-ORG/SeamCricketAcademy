@@ -2,128 +2,126 @@
 
 > **Train Hard. Play Smart. Rise Higher.**
 
-Official website for Seam Cricket Academy, Bengaluru's premier cricket coaching academy with over 60 years of combined coaching experience.
+Official website for Seam Cricket Academy — Bengaluru cricket coaching marketing & lead generation (`www.seamcricketacademy.com`).
 
-![Astro](https://img.shields.io/badge/Astro-5.8-BC52EE?style=flat&logo=astro&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=flat&logo=tailwind-css&logoColor=white)
+![Astro](https://img.shields.io/badge/Astro-7-BC52EE?style=flat&logo=astro&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?style=flat&logo=tailwind-css&logoColor=white)
+![Node](https://img.shields.io/badge/Node-22-339933?style=flat&logo=node.js&logoColor=white)
 ![License](https://img.shields.io/badge/License-Private-red)
 
+**Live:** https://www.seamcricketacademy.com  
+**Repo:** [SEAM-ORG/SeamCricketAcademy](https://github.com/SEAM-ORG/SeamCricketAcademy)
 
-## Agent OS
+## Features
 
-Architect↔Agent operating contract: root [`AGENTS.md`](AGENTS.md).  
-Architect states product intent; agent owns technical execution, hooks, and GitOps.  
-Spec-driven memory: [`openspec/`](openspec/) (sole SDD SoT). Docs map: [`docs/INDEX.md`](docs/INDEX.md).
+- Dark glassmorphism “Weightless/Kinetic” aesthetic with neon accents
+- Responsive marketing home (programs, coaches, gallery, contact)
+- GSAP scroll-triggered reveals
+- WhatsApp deep links + contact form (Web3Forms dual-submit path)
+- Build-time SeamFusion public API with static data fallback
 
-## ✨ Features
+## Tech stack
 
-- **Modern Dark Theme** - Premium glassmorphism aesthetic with neon accents
-- **Responsive Design** - Optimized for all devices from mobile to desktop
-- **Auto-Scrolling Gallery** - Smooth carousel with fullscreen expand
-- **GSAP Animations** - Smooth scroll-triggered reveal effects
-- **Snap Scrolling** - Section-based navigation experience
-- **WhatsApp Integration** - Floating chat button for quick contact
-- **Christmas Theme** - Seasonal decorations (Dec 2024)
-
-## 🛠️ Tech Stack
-
-| Technology                                | Purpose               |
-| ----------------------------------------- | --------------------- |
-| [Astro 7](https://astro.build)            | Static site generator |
+| Technology | Purpose |
+| ---------- | ------- |
+| [Astro 7](https://astro.build) | Static site generator |
 | [Tailwind CSS 4](https://tailwindcss.com) | Utility-first styling |
-| [GSAP](https://greensock.com/gsap/)       | Animation library     |
-| [Web3Forms](https://web3forms.com)        | Form submission       |
+| [GSAP](https://greensock.com/gsap/) | Animation library |
+| [Biome](https://biomejs.dev) | Format + lint |
+| [Web3Forms](https://web3forms.com) | Form submission |
 
-## 📁 Project Structure
+## Project structure
 
 ```
-html-seamcricketacademy/
-├── astro-revamp/           # Main Astro project
-│   ├── src/
-│   │   ├── components/     # Reusable components
-│   │   │   ├── Navbar.astro
-│   │   │   ├── Hero.astro
-│   │   │   ├── Programs.astro
-│   │   │   ├── Coaches.astro
-│   │   │   ├── Gallery.astro
-│   │   │   ├── ContactForm.astro
-│   │   │   └── ...
-│   │   ├── layouts/        # Page layouts
-│   │   ├── pages/          # Route pages
-│   │   ├── styles/         # Global CSS
-│   │   └── data/           # JSON data files
-│   └── public/             # Static assets
-├── assets/                 # Legacy assets
-└── backup-legacy/          # Legacy HTML & Backups
+SeamCricketAcademy/          # repo root = active Astro app
+├── src/
+│   ├── components/          # Hero, Programs, Coaches, Gallery, Contact, …
+│   ├── layouts/
+│   ├── pages/               # index.astro
+│   ├── styles/
+│   ├── data/                # academy.json, programs.ts
+│   └── lib/                 # seamfusion-api, validation
+├── public/
+├── openspec/                # SDD memory (sole methodology tree)
+├── docs/                    # INDEX, ROADMAP, HISTORY, ops
+├── .github/workflows/       # Release Tag Deploy + rebuild-site
+├── CNAME
+└── backup-legacy/           # retired — do not edit
 ```
 
-## 🚀 Getting Started
+## Getting started
 
 ### Prerequisites
 
-- Node.js 18+
-- npm or pnpm
+- Node.js **22** (see `.nvmrc`)
+- npm
 
-### Installation
+### Install & develop
 
 ```bash
-# Clone the repository
-git clone https://github.com/seamcricketacademy/html-seamcricketacademy.git
-
-# Navigate to project
-cd html-seamcricketacademy/astro-revamp
-
-# Install dependencies
-npm install
-
-# Start development server
+git clone https://github.com/SEAM-ORG/SeamCricketAcademy.git
+cd SeamCricketAcademy
+npm ci
+bash scripts/install-githooks.sh
 npm run dev
 ```
 
-The site will be available at `http://localhost:4321`
+Dev server: http://localhost:4321
 
-### Build for Production
+### Build, test, quality
 
 ```bash
+npm test
 npm run build
+npm run lint
+npm run format
+bash scripts/smoke.sh
 ```
 
-Output will be in the `dist/` folder.
+## Deploy
 
-## 📝 Key Components
+GitHub Pages via **Release Tag Deploy** (versioned) or **rebuild-site** (data refresh).  
+See [`DEPLOYMENT.md`](DEPLOYMENT.md) and [`docs/GITHUB_ACTIONS.md`](docs/GITHUB_ACTIONS.md).
 
-| Component                | Description                                                                 |
-| ------------------------ | --------------------------------------------------------------------------- |
-| `Navbar.astro`           | Transparent navbar with Christmas theme, tagline, and smooth hide on scroll |
-| `Hero.astro`             | Full-screen hero with background image and CTA                              |
-| `Programs.astro`         | 2-column grid of all coaching programs                                      |
-| `Coaches.astro`          | 3-column grid of coach profiles with glass cards                            |
-| `Gallery.astro`          | Auto-scrolling media carousel with fullscreen expand                        |
-| `ContactForm.astro`      | Registration form with Web3Forms integration                                |
-| `FloatingWhatsApp.astro` | Context-aware WhatsApp button (shows on contact section)                    |
+## Key components
 
-## 🎨 Design System
+| Component | Description |
+| --------- | ----------- |
+| `Hero.astro` | Full-screen hero + CTA |
+| `Programs.astro` | Coaching programs grid |
+| `Coaches.astro` | Coach profiles |
+| `Gallery.astro` | Media carousel |
+| `ContactForm.astro` | Lead form (Web3Forms) |
+| `FloatingWhatsApp.astro` | WhatsApp entry |
 
-### Colors
+## Design system
 
-| Token     | Value                    | Usage          |
-| --------- | ------------------------ | -------------- |
-| `void`    | `#030305`                | Background     |
-| `depth`   | `#0A0A0F`                | Cards/Surfaces |
-| `neon`    | `#4285F4`                | Accent/CTAs    |
-| `surface` | `rgba(255,255,255,0.03)` | Glass panels   |
+Non-negotiable visual rules: [`DESIGN_SYSTEM.md`](DESIGN_SYSTEM.md).
 
-### Typography
+| Token | Value | Usage |
+| ----- | ----- | ----- |
+| `void` | `#030305` | Background |
+| `depth` | `#0A0A0F` | Cards/surfaces |
+| `neon` | `#4285F4` | Accent/CTAs |
+| `surface` | `rgba(255,255,255,0.03)` | Glass panels |
 
-- **Font**: Inter (Google Fonts)
-- **Weights**: 300 (Light), 400 (Regular), 600 (Semi-bold), 800 (Extra-bold)
+## Docs map
 
-## 📞 Contact
+| Doc | Role |
+| --- | ---- |
+| [`PROJECT_CONTEXT.md`](PROJECT_CONTEXT.md) | Product brief |
+| [`docs/INDEX.md`](docs/INDEX.md) | Master doc index |
+| [`docs/ROADMAP.md`](docs/ROADMAP.md) | Phase table |
+| [`docs/HISTORY.md`](docs/HISTORY.md) | Session journal |
+| [`AGENTS.md`](AGENTS.md) | Agent OS + This Project |
+| [`openspec/`](openspec/) | Spec-driven memory (SoT) |
 
-- **Website**: [seamcricketacademy.com](https://www.seamcricketacademy.com)
-- **WhatsApp**: +91 89511 91375
-- **Email**: seamcricketacademy@gmail.com
-- **Location**: Bengaluru, Karnataka
+## Contact
+
+- **Website:** [seamcricketacademy.com](https://www.seamcricketacademy.com)
+- **WhatsApp:** +91 89511 91375
+- **Email:** seamcricketacademy@gmail.com
+- **Location:** Bengaluru, Karnataka
 
 ---
 

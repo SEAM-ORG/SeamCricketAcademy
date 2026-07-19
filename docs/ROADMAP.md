@@ -10,7 +10,7 @@
 | **Live site** | https://www.seamcricketacademy.com |
 | **Stack** | Astro 7 · Tailwind CSS 4 · TypeScript · Biome · Node 22 |
 | **Release model** | Release Tag Deploy + non-release Pages rebuild |
-| **Current phase** | Phase 5 — continuous content & conversion ops |
+| **Current phase** | Phase 6 — content & conversion continuous improvement |
 | **Latest tag** | v2.4.0 (see GitHub Releases / `CHANGELOG.md`) |
 | **Project V2** | SEAM-ORG #8 (`SeamFusionProject`) — shared board with SeamFusionServices |
 

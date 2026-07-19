@@ -1,6 +1,6 @@
 # Documentation Index
 
-> Master directory for Seam Cricket Academy docs. **Last updated:** 2026-07-19
+> Master directory for Seam Cricket Academy docs. **Last updated:** 2026-07-19 (memory honesty)
 
 ## Product truth (repo root + phases)
 

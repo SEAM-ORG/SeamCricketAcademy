@@ -18,16 +18,16 @@ context: |
   - src/lib/seamfusion-api.ts · src/lib/validation.ts
   - scripts/ · docs/ · openspec/
 
-  Commands (see AGENTS This Project + DEVELOPMENT.md when present):
+  Commands (see AGENTS.md This Project):
   - Smoke: bash scripts/smoke.sh
   - Install: npm ci && bash scripts/install-githooks.sh
-  - Dev: npm run dev
-  - Build: npm run build
-  - Test: npm test
+  - Dev: npm run dev (localhost:4321)
+  - Build: npm run build · Test: npm test
   - Quality: npm run local-ci:quality · Correctness: npm run local-ci:correctness
   - Deploy: GitOps only — release-tag-deploy.yml / rebuild-site.yml
 
-  Product truth: PROJECT_CONTEXT.md · DESIGN_SYSTEM.md · DEPLOYMENT.md · docs/INDEX.md
+  Repo: SEAM-ORG/SeamCricketAcademy · package: seam-cricket-academy · Node 22 (.nvmrc)
+  Product truth: PROJECT_CONTEXT.md · DESIGN_SYSTEM.md · DEPLOYMENT.md · docs/INDEX.md · docs/ROADMAP.md
   SDD SoT: openspec/ only (specs + changes). No .kiro/.
 
   Board: SEAM-ORG GitHub Project #8 (SeamFusionProject) — shared with SeamFusionServices
@@ -39,6 +39,7 @@ context: |
   - Validate email/WhatsApp/URL before rendering dynamic links
   - Do not edit backup-legacy/ or commit huge media
   - No project .agents/, opencode.json(c), or second SDD tree
+  - Repo root is app SoT (never nested astro-revamp as active source)
 
 rules:
   Always:

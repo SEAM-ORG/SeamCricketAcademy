@@ -122,3 +122,7 @@ Migrated methodology from kiro/cc-sdd stubs to **OpenSpec** (`openspec/specs`, `
 ### 2026-07-18: Release Tag Deploy YAML — no raw multiline Markdown in run:|
 
 Multiline Markdown tables inside `run: |` (especially lines starting with `|`) break GitHub Actions YAML parse → 0s failed runs with no jobs. **Prevention:** use single-line `\n` escapes for release notes sections (see AGENTS Release Tag Deploy warning).
+
+### 2026-07-19: Product memory honesty — code/deploy beat docs
+
+README still advertised nested `astro-revamp/`, Astro 5.8 badge, and a non-SEAM-ORG clone path; DEPLOYMENT still had Windows paths, old org names, and a push-to-main deploy sample with Node 20. ROADMAP “current phase” disagreed with the phase table. **Prevention:** on memory refresh, verify package.json, workflows (Node pin + triggers), remote `SEAM-ORG/…`, and root layout before trusting human docs. Keep This Project concise; put long manuals in linked docs only.

@@ -10,6 +10,18 @@
 
 ---
 
+## 2026-07-19 — Product memory honesty + This Project refresh
+
+**Goal:** Re-ground agent-facing product facts from code and deploy truth; fix drifted human entry docs without bloating the OS hub.
+
+**Work completed:**
+- Health clear; thin AGENTS hub re-synced from portable gist with This Project preserved then rewritten from package/workflows/board reality.
+- Corrected README, SETUP, and DEPLOYMENT (wrong org/paths, nested revamp layout, push-to-main deploy sample, Astro 5 badge).
+- ROADMAP current-phase aligned to Phase 6; package name + `.nvmrc` (22); tasks/todo and knowledge graph honesty.
+- Thin Wiki Development/Deploy/Home pin Node 22 and root-as-SoT pointers only.
+
+**Status:** Completed this session (ship via PR).
+
 ## 2026-07-19 — Memory surfaces, roadmap, Project V2, and Wiki truth sync
 
 **Goal:** Establish a durable session journal and phase roadmap; align product context with current stack; wire a thin GitHub Wiki without duplicating repo docs.

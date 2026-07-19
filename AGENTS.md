@@ -209,7 +209,7 @@ Protected contracts (must remain available on demand — do not delete from gist
 - **Environment:** Node 22 (local Homebrew + CI) · no `.nvmrc` yet
 - **GitHub Project V2:** `SEAM-ORG` project **#8** (`SeamFusionProject`) — shared board with SeamFusionServices · `.github/agent-project.yml` · agents use `scripts/github/*` (no Actions card-movers)
 - **Relationship to SeamFusionServices:** **Shared board only** (SEAM-ORG/8) + **API consumer** of SeamFusion Cloud Functions (`PUBLIC_API_URL`, `PUBLIC_ACADEMY_ID`) for build-time public academy data. **No shared application code** — SCA is a standalone Astro marketing site.
-- **Product truth:** `PROJECT_CONTEXT.md` · `DESIGN_SYSTEM.md` · `DEPLOYMENT.md` · `src/data/academy.json` · `src/data/programs.ts` · `docs/INDEX.md`
+- **Product truth:** `PROJECT_CONTEXT.md` · `docs/ROADMAP.md` · `docs/HISTORY.md` · `DESIGN_SYSTEM.md` · `DEPLOYMENT.md` · `src/data/academy.json` · `src/data/programs.ts` · `docs/INDEX.md`
 - **SDD SoT:** **`openspec/`** only (`openspec/config.yaml`, `openspec/specs/`, `openspec/changes/`) · legacy `.kiro/` removed (migrated 2026-07-18)
 - **Canonical commands:**
   - Install: `npm ci` then `bash scripts/install-githooks.sh`

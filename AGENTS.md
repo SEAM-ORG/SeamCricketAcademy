@@ -17,9 +17,9 @@
 | **OpenSpec (SDD)** | Spec-driven product work | `openspec-*` · `using-openspec` · product **`openspec/`** |
 | **SWE Discipline** | Domain craft (load one at a time) | `~/.agents/skills/` |
 | **References / Personas** | Checklists · specialist prompts | `~/.agents/references/` · `~/.agents/personas/` |
-| **OpenCode harness** | Runtime + thin enforcement | gist `fa4d874…` → `~/.config/opencode/` |
+| **Hermes harness** | Primary agent runtime + thin always-on | gist `63515b95…` → `~/.hermes` machine kit; product hub = this file |
 
-No project `.agents/`, slash-command ceremony trees, or second always-on OS file beyond OpenCode’s enforcement pointer (same card text as `ALWAYS_ON.md`).
+No project `.agents/`, slash-command ceremony trees, or second always-on OS file beyond the always-on card (same text as `ALWAYS_ON.md` / Hermes `SOUL` supplements).
 
 ## Progressive load (anti-bloat)
 
@@ -44,11 +44,12 @@ No project `.agents/`, slash-command ceremony trees, or second always-on OS file
 | Gist | Role |
 |------|------|
 | `5828479245f786c80993b67a6f669aee` | Portable OS (this hub + segments) |
-| `fa4d874490158f7252ca2441227d3343` | OpenCode machine kit |
+| `63515b95a07195d149e3308998d18f77` | Hermes machine kit (auth/runtime glue) |
+| `63515b95a07195d149e3308998d18f77` | Hermes machine kit (**legacy**) |
 | `a81a271401b3cba04ef6f700dfc8d225` | Legal/business advisory (not OS) |
 | `f1c2ab293cf8996b787eedf94ec60029` | Product-ops status JSON (not OS) |
 
-**Pollution rule:** OS + OpenCode kit stay **portfolio-agnostic**. Product repos, orgs, board numbers live only in **This Project** / product docs / `.github/agent-project.yml`.
+**Pollution rule:** OS + machine kits stay **portfolio-agnostic**. Product repos, orgs, board numbers live only in **This Project** / product docs / `.github/agent-project.yml`.
 
 **Local kit trees are not second SoTs.** Promote universal harness/OS changes to the correct gist same session. Standing machine packs are listed in `CATALOG.md` with install paths.
 
@@ -56,115 +57,64 @@ No project `.agents/`, slash-command ceremony trees, or second always-on OS file
 
 # PROTOCOL ENFORCEMENT (ALWAYS-ON — non-skippable)
 
-**Canonical always-on SoT** for Architect↔Agent OS.
-Product root `AGENTS.md` embeds this card. OpenCode `AGENT_OS_ENFORCEMENT.md` **must match this file** — not a forked rulebook.
-Full contract (on demand): gist `saadev0/5828479245f786c80993b67a6f669aee` segments · skills `session-start` / `session-end` / `agent-os-bootstrap` / `using-openspec`.
-
-You operate under **Architect↔Agent OS**. These protocols override convenience, speed, and "quick one-liner" instincts. **Ignoring them is a contract failure.**
+**Canonical always-on SoT** for Architect↔Agent OS (root `AGENTS.md` & `ALWAYS_ON.md (product hub + Hermes SOUL)`).
+Full contract: gist `saadev0/5828479245f786c80993b67a6f669aee` segments & skills.
+You operate under **Architect↔Agent OS**. These protocols override convenience.
 
 ## Always-on card (every turn — keep this short)
 
-**Load order:** this card → skill for the task → segment / skill only when needed (session start, health, ship, bootstrap, unsure). Do **not** re-read the entire OS every message.
+**Load order:** this card → task skill → segment / skill only on demand (never re-read full OS).
+**Context load:** this card + task skill + **This Project** + relevant docs. No full segments.
+**Solo operator:** finish end-to-end this session. HOLD only if externally blocked.
+**Health blockers are this-turn work:** dispose open PRs, remote orphans, red CI, local WIP ahead, unconfigured Project V2 (`project_number: 0`) in the same turn. No inventory without disposition.
+**Standing authorization:** All agent actions (non-release PRs, merges, issues, boards, migrations, config, secrets, technical/taste/scope decisions) are pre-approved without approval pauses. ONLY initiating/executing production release/deployment or creating/pushing its release tag requires explicit Architect approval. ASK only for missing indispensable facts or external blockers, never permission for non-release work.
 
 | When | Do |
 |------|-----|
-| Product open / re-ground | **`session-start`**: preflight (exit 2 = dispose blockers) → **clean `main`** → Issue + **feature branch** for this session → smoke |
-| Non-trivial ask | **Proactive OpenSpec** (do not wait to be told): Explore → `openspec-explore` · Propose → `openspec-propose` · Apply → **`openspec-apply-change`** · Archive → `openspec-archive-change` |
-| Multi-step / multi-file / research-heavy | **Subagent-first** — Task/`task`/`spawn_subagent`; orchestrate + synthesize |
-| Writing code | On **feature branch only** (hooks refuse commits on `main`) · approved tasks → `openspec-apply-change` · trivial Path B with evidence |
-| JS/TS/JSON/CSS/HTML/Astro/Vue | **Biome** — `bash ~/.config/agent-quality/format.sh --changed` · `check.sh` |
-| Any change | Verify · same-branch memory (`openspec/`/docs/lessons) · local commit on feature branch · never bypass hooks |
-| Ship / end session | **`session-end`**: ship-unit (PR+labels+milestone+Project Status/Type) → close Issues → prune **local+remote** orphans → **return-to-main exit 0** |
-| Third-party APIs | **Context7** · UI evidence → **Chrome DevTools** |
+| Open/re-ground | **`session-start`**: preflight (exit 2 = dispose blockers) → **clean `main`** → Issue + **feature branch** → smoke |
+| Non-trivial ask | **Proactive OpenSpec**: Explore (`openspec-explore`) → Propose (`openspec-propose`) → Apply (`openspec-apply-change`) → Archive |
+| Multi-step/heavy | **Subagent-first**: Spawn tasks; orchestrate + synthesize. Primary never solo-monoliths |
+| Writing code | **Feature branch only** (hooks refuse main) · approved tasks → `openspec-apply-change` |
+| JS/TS/CSS/HTML | **Biome** — `format.sh --changed` · `check.sh` |
+| Any change | Verify · same-branch memory (`openspec/`/INDEX/lessons) · local commit · never bypass hooks |
+| Ship / end | **`session-end`**: ship-unit (PR+labels+Project status) → close Issues → prune orphans → **return-to-main exit 0** |
+| Third-party/UI | Live docs MCP (**Context7** or equiv.) · UI evidence via browser tools |
 | Non-trivial ship | Writer ≠ reviewer (fresh subagent / independent pass) |
-| Repeated mistake (2×) | Sensors ratchet: lesson → AGENTS line → hook/lint |
+| Repeated mistake | Sensors ratchet: lesson → AGENTS line → hook/lint |
 
-**Context load:** always-on card + skill + **This Project** + relevant docs only. Full segments on session start, health fight, ship, bootstrap, or when unsure — **not** every message. Progressive disclosure: map, not dump.
+### Context Budget & Delegation Policy
+- **Primary:** Orchestrates decisions, safety, validation, and synthesis.
+- **Workers:** Delegate non-trivial tool-heavy discovery, browser, test, and GitOps runs. Prefer repo scripts and batched commands. Workers write digests <=25 lines or 2KB. No raw DOM, build, test, or log dumps in primary.
+- **Phases:** Compress closed phases in memory.
 
-**Solo operator:** finish end-to-end this session. No "later." HOLD only if externally blocked, with **recovery** branch/PR/path. Remove only after rehome/replace with equal-or-better + justification.
+### Closeout Templates (fill briefly, no code blocks)
+- **Turn-end closeout:** Summary, Status, Evidence, Git (branch, hash, uncommitted), Health (clear/disposed), Memory (yes/no), Next.
+- **Session-end closeout:** Summary, Status, Evidence, PRs/Issues/Milestones, Project V2, Health, Main (clean/ff origin?), Branches pruned (local+remote), Next session.
 
-**Health blockers are this-turn work.** If preflight shows open PRs, **remote orphan branches** (no open PR), red protected CI, local WIP ahead of main, or **Project V2 unconfigured** (`project_number: 0`), **dispose in the same turn**. **Forbidden:** inventory without disposition.
-
-### Turn-end closeout (required template — fill briefly)
-
-```
-## Closeout
-- **Summary:** <1–3 lines what changed for the user/product>
-- **Status:** done | in-progress | blocked
-- **Evidence:** <test/build/runtime/read-back command or result>
-- **Git:** <branch · commit hash or "clean" · uncommitted if any>
-- **Health:** clear | blockers disposed: <PR#/action + disposition> | HOLD+recovery: <path>
-- **Memory:** INDEX/This Project/lessons/docs updated? yes/n/a
-- **Next:** <product next step — never "dispose health later">
-```
-
-### Session-end closeout (when `/end` / ship)
-
-```
-## Session End
-- **Summary:** …
-- **Status:** shipped | partial+HOLD
-- **Evidence:** …
-- **PRs / Issues / milestones:** merged/closed/updated …
-- **Project V2:** item Status/Type/Priority set; board not empty of this unit
-- **Health:** each open PR/CI/orphan disposed or HOLD+recovery
-- **Main:** on protected, clean, ff origin? yes/no
-- **Branches pruned:** local merged + remote orphans? yes/no
-- **Next session:** first step from clean main
-```
-
-## Hard rules (every turn)
-
+### Hard rules & Pointers (every turn)
 1. **Never commit or push on `main`** — feature branch only.
-2. **GitOps:** Session Start → dispose health → clean main → Issue + feature branch. Session End → ship-unit → prune → return-to-main exit 0.
-3. **Project V2:** `.github/agent-project.yml` has real `project_owner` + `project_number` (never `0`). Discover via `gh project list` — never invent; never hardcode product boards in portable OS.
-4. **Local hooks = CI.** GitHub Actions = **Release Tag Deploy** only. No PR lint/test Actions.
-5. **Subagent-first** for multi-step / multi-file / research-heavy work.
-6. **Memory same change** — `openspec/` · INDEX · This Project · lessons.
-7. **Evidence before done.** "Seems right" is never done.
-8. **Gist hygiene:** clone → edit → commit → push. Never one-shot overwrite. Never prepend gist description into file bodies. First non-empty line of product hub is `# Architect…`.
+2. **Standing authorization & Gating:** Non-release PRs/merges/issues/boards/migrations/config/secrets/scope pre-approved. ONLY production release/deploy/tag execution is gated. ASK only for missing indispensable facts/blockers.
+3. **GitOps:** Session Start → health clear → clean main → branch. Session End → ship-unit → prune → return-to-main.
+4. **Project V2:** `.github/agent-project.yml` has real `project_owner`/`project_number` (never `0`).
+5. **Local hooks = CI:** Release Tag Deploy only. No PR Actions.
+6. **Memory same change:** `openspec/` · INDEX · This Project · lessons.
+7. **Evidence before done:** "Seems right" is not done.
+8. **Gist hygiene:** clone → edit → commit → push. First line of hub must be `# Architect…`.
+9. **Project Isolation:** OS/kit stay portfolio-agnostic. No product names in gist.
+10. **Skill Routing:** Start (`session-start`), End (`session-end`), Bootstrap (`agent-os-bootstrap`), Router (`using-openspec`).
+11. **Project Map:** Root `AGENTS.md` (thin hub), `openspec/` (SoT), `docs/INDEX.md`, `tasks/lessons.md` (lessons), `scripts/github/*`.
 
-## Proactive skill routing (do not wait)
-
-| Need | Skill |
-|------|-------|
-| Session open / re-ground | `session-start` |
-| Ship / end | `session-end` |
-| OS install / repair / multi-repo sync | `agent-os-bootstrap` |
-| Vague / options | `openspec-explore` |
-| New work propose | `openspec-propose` |
-| Implement approved change | `openspec-apply-change` |
-| Land change | `openspec-sync-specs` / `openspec-archive-change` |
-| Intent → skill map | `using-openspec` |
-| Domain craft | matching SWE skill under `~/.agents/skills/` (one at a time) |
-
-**References** (on demand): `~/.agents/references/*.md`
-**Personas** (subagent prompts): `~/.agents/personas/*.md`
-
-## Project map (always-on memory)
-
-| Path | Role |
-|------|------|
-| Root `AGENTS.md` | **Thin hub** = always-on card + progressive map + **This Project** |
-| Gist segments | Full OS contract on demand (session/GitOps/bootstrap/…) |
-| `openspec/` | SDD product memory |
-| `docs/INDEX.md` | Doc index |
-| `tasks/lessons.md` · `tasks/todo.md` | Lessons · mid-flight |
-| `.github/agent-project.yml` | Project V2 (never `project_number: 0`) |
-| `scripts/github/*` | preflight · open-unit · ship-unit · hygiene · return-main |
-| `~/.agents/skills/` | OS + OpenSpec + SWE (machine-global only) |
-
-## Contract failures
-
-Skip closeout · skip Session Start · skip health gate · claim done without evidence · silent doc drift · hook bypass · commit on main · leave feature branch at session end · leave remote orphans · `project_number: 0` · open PR inventory without disposition · invent PR CI Actions · solo-monolith multi-step when subagents exist · wait for Architect to request skills/subagents · dump full OS monolith into product always-on · product names in portfolio-agnostic OS/kit gists.
+### Contract failures
+Skip closeout · skip Session Start · skip health gate · no evidence · doc drift · hook bypass · commit on main · leave branch at end · remote orphans · `project_number: 0` · open PR inventory without disposition · invent PR CI Actions · solo-monolith multi-step · dump OS monolith into product root · product names in portfolio-agnostic OS/kit · asking approval for pre-approved non-release work.
 
 ---
 ## Harness routing (Architect default)
 
 | Work | Where | Agent behavior |
 |------|-------|----------------|
-| **Product work** | OpenCode desktop, cwd = product repo | Session Start → ship; this hub + **This Project** |
-| **Agent OS / machine / portfolio** | Grok Build from `~/Projects` | OS/machine only unless Architect names a product |
+| **Product work** | **Hermes** desktop/CLI, cwd = product repo | Session Start → ship; this hub + **This Project** |
+| **IDE-native coding assist** | Google IDE (desktop), same repo | Optional worker surface; does not replace Session Start/End |
+| **Agent OS / machine / portfolio** | **Hermes** from `~/Projects` or home | OS/machine kits; gists; multi-repo sync |
 
 ## Intent over literalism
 
@@ -172,7 +122,7 @@ Enhance short prompts with repo evidence. Maximum effort end-to-end. Proactive a
 
 ## Extend existing first
 
-Find → extend → create only if no home. No duplicate OS skills, no mirror into `~/.grok/skills/`, no product skill trees.
+Find → extend → create only if no home. No duplicate OS skills, no mirror skill trees into harness-private folders, no product skill trees.
 
 ## Gist & hub hygiene (hard)
 
@@ -223,7 +173,7 @@ Protected contracts (must remain available on demand — do not delete from gist
 - **Hooks (local CI):** `.githooks/` + `scripts/install-githooks.sh` · pre-commit → Biome + `scripts/check-memory-drift.sh` · pre-push → `npm test && npm run build`
 - **GitHub Actions:** deploy/release only (`release-tag-deploy.yml`, `rebuild-site.yml`) · no PR lint/test Actions · Dependabot OK
 - **External services:** SeamFusion Cloud Functions · Web3Forms (contact dual-submit) · WhatsApp (`wa.me` / `api.whatsapp.com`)
-- **Harnesses:** OpenCode desktop (product) · Grok Build from `~/Projects` (OS/machine) · skills machine-global only (`~/.agents/skills`)
+- **Harnesses:** **Hermes** desktop/CLI (primary product + OS work) · Google IDE (Antigravity) design-only · skills machine-global only (`~/.agents/skills`)
 - **Durable docs:** `docs/INDEX.md` · `docs/specs/` · `docs/plans/` · `docs/archive/` · **`openspec/`** · thin GitHub Wiki (product index only; repo docs remain SoT)
 - **Invariants:**
   - Dark glassmorphism + neon “Weightless/Kinetic” (`DESIGN_SYSTEM.md`) — non-negotiable
@@ -233,4 +183,4 @@ Protected contracts (must remain available on demand — do not delete from gist
   - Deploy workflows run from **repo root**
   - SeamFusion API **fail soft** → static `academy.json` / `programs.ts`
   - Public git/docs = product voice (no AI/agent ceremony language)
-  - No project `.agents/`, `opencode.json(c)`, second SDD tree, or `project_number: 0`
+  - No project `.agents/`, second SDD tree, or `project_number: 0`

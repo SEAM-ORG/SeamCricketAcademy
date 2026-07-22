@@ -17,9 +17,9 @@
 | **OpenSpec (SDD)** | Spec-driven product work | `openspec-*` · `using-openspec` · product **`openspec/`** |
 | **SWE Discipline** | Domain craft (load one at a time) | `~/.agents/skills/` |
 | **References / Personas** | Checklists · specialist prompts | `~/.agents/references/` · `~/.agents/personas/` |
-| **Hermes harness** | Primary agent runtime + thin always-on | gist `63515b95…` → `~/.hermes` machine kit; product hub = this file |
+| **OpenCode harness** | Runtime + thin enforcement | gist `025f6984…` → `~/.config/opencode/` |
 
-No project `.agents/`, slash-command ceremony trees, or second always-on OS file beyond the always-on card (same text as `ALWAYS_ON.md` / Hermes `SOUL` supplements).
+No project `.agents/`, slash-command ceremony trees, or second always-on OS file beyond OpenCode’s enforcement pointer (same card text as `ALWAYS_ON.md`).
 
 ## Progressive load (anti-bloat)
 
@@ -44,12 +44,11 @@ No project `.agents/`, slash-command ceremony trees, or second always-on OS file
 | Gist | Role |
 |------|------|
 | `5828479245f786c80993b67a6f669aee` | Portable OS (this hub + segments) |
-| `63515b95a07195d149e3308998d18f77` | Hermes machine kit (auth/runtime glue) |
-| `63515b95a07195d149e3308998d18f77` | Hermes machine kit (**legacy**) |
+| `025f6984af9bfcf84bf5adfe5e2f69b8` | OpenCode machine kit |
 | `a81a271401b3cba04ef6f700dfc8d225` | Legal/business advisory (not OS) |
 | `f1c2ab293cf8996b787eedf94ec60029` | Product-ops status JSON (not OS) |
 
-**Pollution rule:** OS + machine kits stay **portfolio-agnostic**. Product repos, orgs, board numbers live only in **This Project** / product docs / `.github/agent-project.yml`.
+**Pollution rule:** OS + OpenCode kit stay **portfolio-agnostic**. Product repos, orgs, board numbers live only in **This Project** / product docs / `.github/agent-project.yml`.
 
 **Local kit trees are not second SoTs.** Promote universal harness/OS changes to the correct gist same session. Standing machine packs are listed in `CATALOG.md` with install paths.
 
@@ -57,7 +56,7 @@ No project `.agents/`, slash-command ceremony trees, or second always-on OS file
 
 # PROTOCOL ENFORCEMENT (ALWAYS-ON — non-skippable)
 
-**Canonical always-on SoT** for Architect↔Agent OS (root `AGENTS.md` & `ALWAYS_ON.md (product hub + Hermes SOUL)`).
+**Canonical always-on SoT** for Architect↔Agent OS (root `AGENTS.md` & `ALWAYS_ON.md / OpenCode AGENT_OS_ENFORCEMENT.md`).
 Full contract: gist `saadev0/5828479245f786c80993b67a6f669aee` segments & skills.
 You operate under **Architect↔Agent OS**. These protocols override convenience.
 
@@ -66,8 +65,10 @@ You operate under **Architect↔Agent OS**. These protocols override convenience
 **Load order:** this card → task skill → segment / skill only on demand (never re-read full OS).
 **Context load:** this card + task skill + **This Project** + relevant docs. No full segments.
 **Solo operator:** finish end-to-end this session. HOLD only if externally blocked.
+**No lazy work (hard):** Never half-ship, stub out, skip verification, stop at a plan when the ask is to build, or leave “someone else” to finish. **Plan the full path, then execute it end-to-end yourself** until done or externally blocked.
+**No time-budget compromises (hard):** Do **not** shrink scope, skip tests/evidence/GitOps/memory, omit subagents, or defer work because of perceived turn length, token cost, wall-clock time, context pressure, or model fatigue. **There is no session time limit that justifies incomplete or compromised work.** Prefer longer correct completion over fast partials. Plan and build without quality or completeness compromises.
 **Health blockers are this-turn work:** dispose open PRs, remote orphans, red CI, local WIP ahead, unconfigured Project V2 (`project_number: 0`) in the same turn. No inventory without disposition.
-**Standing authorization:** All agent actions (non-release PRs, merges, issues, boards, migrations, config, secrets, technical/taste/scope decisions) are pre-approved without approval pauses. ONLY initiating/executing production release/deployment or creating/pushing its release tag requires explicit Architect approval. ASK only for missing indispensable facts or external blockers, never permission for non-release work.
+**Standing authorization:*** All agent actions (non-release PRs, merges, issues, boards, migrations, config, secrets, technical/taste/scope decisions) are pre-approved without approval pauses. ONLY initiating/executing production release/deployment or creating/pushing its release tag requires explicit Architect approval. ASK only for missing indispensable facts or external blockers, never permission for non-release work.
 
 | When | Do |
 |------|-----|
@@ -86,6 +87,7 @@ You operate under **Architect↔Agent OS**. These protocols override convenience
 - **Primary:** Orchestrates decisions, safety, validation, and synthesis.
 - **Workers:** Delegate non-trivial tool-heavy discovery, browser, test, and GitOps runs. Prefer repo scripts and batched commands. Workers write digests <=25 lines or 2KB. No raw DOM, build, test, or log dumps in primary.
 - **Phases:** Compress closed phases in memory.
+- **Budget ≠ excuse:** Context/delegation policy protects reasoning quality — it is **not** permission to ship less. Use more turns, subagents, and background work instead of cutting the job.
 
 ### Closeout Templates (fill briefly, no code blocks)
 - **Turn-end closeout:** Summary, Status, Evidence, Git (branch, hash, uncommitted), Health (clear/disposed), Memory (yes/no), Next.
@@ -103,18 +105,21 @@ You operate under **Architect↔Agent OS**. These protocols override convenience
 9. **Project Isolation:** OS/kit stay portfolio-agnostic. No product names in gist.
 10. **Skill Routing:** Start (`session-start`), End (`session-end`), Bootstrap (`agent-os-bootstrap`), Router (`using-openspec`).
 11. **Project Map:** Root `AGENTS.md` (thin hub), `openspec/` (SoT), `docs/INDEX.md`, `tasks/lessons.md` (lessons), `scripts/github/*`.
+12. **No lazy work / no time-budget compromises:** Plan full path → execute end-to-end → verify with evidence. Never shrink quality or completeness for clock, tokens, or fatigue.
 
 ### Contract failures
-Skip closeout · skip Session Start · skip health gate · no evidence · doc drift · hook bypass · commit on main · leave branch at end · remote orphans · `project_number: 0` · open PR inventory without disposition · invent PR CI Actions · solo-monolith multi-step · dump OS monolith into product root · product names in portfolio-agnostic OS/kit · asking approval for pre-approved non-release work.
+Skip closeout · skip Session Start · skip health gate · no evidence · doc drift · hook bypass · commit on main · leave branch at end · remote orphans · `project_number: 0` · open PR inventory without disposition · invent PR CI Actions · solo-monolith multi-step · dump OS monolith into product root · product names in portfolio-agnostic OS/kit · asking approval for pre-approved non-release work · **lazy half-ship / stop-at-plan when build was asked · time-budget scope cuts · skip verify/GitOps/memory to “save time”**.
 
 ---
 ## Harness routing (Architect default)
 
 | Work | Where | Agent behavior |
 |------|-------|----------------|
-| **Product work** | **Hermes** desktop/CLI, cwd = product repo | Session Start → ship; this hub + **This Project** |
-| **IDE-native coding assist** | Google IDE (desktop), same repo | Optional worker surface; does not replace Session Start/End |
-| **Agent OS / machine / portfolio** | **Hermes** from `~/Projects` or home | OS/machine kits; gists; multi-repo sync |
+| **Product work** | **OpenCode** desktop/CLI, cwd = product repo | Session Start → ship; this hub + **This Project** |
+| **IDE-native coding assist** | **Google IDE** (optional) | Light IDE assist; same Google OAuth path as OpenCode plugin — not a second OS |
+| **Agent OS / machine / portfolio** | **Grok Build** from `~/Projects` | OS/machine only unless Architect names a product |
+
+**Retired:** Hermes Desktop/CLI — do not install or route work to Hermes.
 
 ## Intent over literalism
 
@@ -122,7 +127,7 @@ Enhance short prompts with repo evidence. Maximum effort end-to-end. Proactive a
 
 ## Extend existing first
 
-Find → extend → create only if no home. No duplicate OS skills, no mirror skill trees into harness-private folders, no product skill trees.
+Find → extend → create only if no home. No duplicate OS skills, no mirror into `~/.grok/skills/`, no product skill trees.
 
 ## Gist & hub hygiene (hard)
 

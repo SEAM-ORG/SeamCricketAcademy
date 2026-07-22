@@ -1,5 +1,8 @@
 # Development commands (Seam Cricket Academy)
 
+**Runtime:** Node **24** Active LTS (`.nvmrc`). Install via Homebrew `node@24` (linked) or nvm/fnm matching `.nvmrc`.
+
+
 ```bash
 npm ci
 bash scripts/install-githooks.sh

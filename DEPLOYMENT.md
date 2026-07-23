@@ -24,8 +24,7 @@ SeamCricketAcademy/                 # repo root = active source
 ├── CNAME                           # custom domain
 ├── package.json
 ├── astro.config.mjs
-├── dist/                           # build output (gitignored; produced by CI/local)
-└── backup-legacy/                  # retired — do not edit as active source
+└── dist/                           # build output (gitignored; produced by CI/local)
 ```
 
 ## Deploy model
@@ -37,7 +36,7 @@ Local hooks are **CI**. GitHub Actions are **deploy/release only**.
 | **Release Tag Deploy** | `workflow_dispatch` (tag/ref) · push tags `v*.*.*` | Authorized versioned release → build → GitHub Pages + Release |
 | **Rebuild Site** | `repository_dispatch` (`rebuild-site`) · weekly cron · manual | Data/gallery refresh **without** cutting a release |
 
-Both workflows use **Node 22** and build from the **repo root** (`npm ci` · `npm run build`).
+Both workflows use **Node 24** and build from the **repo root** (`npm ci` · `npm run build`).
 
 **Do not** reintroduce a `deploy.yml` that ships every `main` push as a “release.”
 
@@ -61,7 +60,6 @@ gh api repos/SEAM-ORG/SeamCricketAcademy/dispatches -f event_type=rebuild-site
 
 ```bash
 npm ci
-bash scripts/install-githooks.sh
 npm test
 npm run build
 # optional: cp CNAME dist/ when previewing Pages layout locally

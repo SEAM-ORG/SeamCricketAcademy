@@ -8,7 +8,7 @@
 | Metric | Value |
 | ------ | ----- |
 | **Live site** | https://www.seamcricketacademy.com |
-| **Stack** | Astro 7 · Tailwind CSS 4 · TypeScript · Biome · Node 22 |
+| **Stack** | Astro 7 · Tailwind CSS 4 · TypeScript · Biome · Node 24 |
 | **Release model** | Release Tag Deploy + non-release Pages rebuild |
 | **Current phase** | Phase 6 — content & conversion continuous improvement |
 | **Latest tag** | v2.4.0 (see GitHub Releases / `CHANGELOG.md`) |

@@ -18,7 +18,7 @@ Showcases programs/batches, coaches, gallery; converts visitors via contact form
 | Layer | Choice |
 | ----- | ------ |
 | Framework | Astro **7** · Tailwind CSS **4** · TypeScript · GSAP |
-| Quality | Biome **2.5.4** · Node **22** (`.nvmrc`) · local `.githooks` (quality → correctness) |
+| Quality | Biome **2.5.5** · Node **24** (`.nvmrc` · engines `>=24 <25`) · local Biome/test/build gates |
 | Hosting | GitHub Pages · CNAME → `www.seamcricketacademy.com` |
 | Release | **Release Tag Deploy** + non-release `rebuild-site` (see `DEPLOYMENT.md`) |
 | Integrations | SeamFusion public API (build-time) · Web3Forms · WhatsApp deep links |
@@ -50,9 +50,9 @@ Showcases programs/batches, coaches, gallery; converts visitors via contact form
 
 | Action | Command |
 | ------ | ------- |
-| Install | `npm ci` then `bash scripts/install-githooks.sh` |
+| Install | `npm ci` |
 | Dev | `npm run dev` → http://localhost:4321 |
-| Build / test / smoke | `npm run build` · `npm test` · `bash scripts/smoke.sh` |
+| Build / test / smoke | `npm run build` · `npm test` · `npm run smoke` |
 | Lint / format | `npm run lint` · `npm run format` (Biome) |
 
 ## 6. Relationship to SeamFusionServices

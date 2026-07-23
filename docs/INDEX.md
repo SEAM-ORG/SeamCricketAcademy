@@ -57,8 +57,9 @@ Machine skills: global `openspec-*` / `using-openspec` under `~/.agents/skills`.
 
 ## Agent context
 
-| Path                                          | Purpose                              |
-| --------------------------------------------- | ------------------------------------ |
-| [.github/ai-context/](../.github/ai-context/) | Knowledge graph, principles, journal |
-| [tasks/lessons.md](../tasks/lessons.md)       | Corrections                          |
-| [tasks/todo.md](../tasks/todo.md)             | Active checklist                     |
+| Path                                    | Purpose                                              |
+| --------------------------------------- | ---------------------------------------------------- |
+| [AGENTS.md](../AGENTS.md)               | Thin hub + This Project · full OS = master Gist      |
+| OpenSpec host adapters                  | `.opencode/commands/opsx-*` · `.gemini/commands/opsx/` · `.agent/workflows/opsx-*` |
+| [tasks/lessons.md](../tasks/lessons.md) | Corrections                                          |
+| [tasks/todo.md](../tasks/todo.md)       | Active checklist                                     |

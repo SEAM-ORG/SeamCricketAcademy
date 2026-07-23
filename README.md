@@ -6,7 +6,7 @@ Official website for Seam Cricket Academy — Bengaluru cricket coaching marketi
 
 ![Astro](https://img.shields.io/badge/Astro-7-BC52EE?style=flat&logo=astro&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?style=flat&logo=tailwind-css&logoColor=white)
-![Node](https://img.shields.io/badge/Node-22-339933?style=flat&logo=node.js&logoColor=white)
+![Node](https://img.shields.io/badge/Node-24-339933?style=flat&logo=node.js&logoColor=white)
 ![License](https://img.shields.io/badge/License-Private-red)
 
 **Live:** https://www.seamcricketacademy.com  
@@ -45,15 +45,14 @@ SeamCricketAcademy/          # repo root = active Astro app
 ├── openspec/                # SDD memory (sole methodology tree)
 ├── docs/                    # INDEX, ROADMAP, HISTORY, ops
 ├── .github/workflows/       # Release Tag Deploy + rebuild-site
-├── CNAME
-└── backup-legacy/           # retired — do not edit
+└── CNAME
 ```
 
 ## Getting started
 
 ### Prerequisites
 
-- Node.js **22** (see `.nvmrc`)
+- Node.js **24** (see `.nvmrc`)
 - npm
 
 ### Install & develop
@@ -62,7 +61,6 @@ SeamCricketAcademy/          # repo root = active Astro app
 git clone https://github.com/SEAM-ORG/SeamCricketAcademy.git
 cd SeamCricketAcademy
 npm ci
-bash scripts/install-githooks.sh
 npm run dev
 ```
 
@@ -75,7 +73,7 @@ npm test
 npm run build
 npm run lint
 npm run format
-bash scripts/smoke.sh
+npm run smoke
 ```
 
 ## Deploy

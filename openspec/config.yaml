@@ -8,8 +8,8 @@ context: |
   Users: prospective players/parents; academy staff receiving leads.
 
   Stack:
-  - Astro 7 · Tailwind CSS 4 · GSAP · TypeScript · Node 22
-  - Biome 2.5.4 (format + lint)
+  - Astro 7 · Tailwind CSS 4 · GSAP · TypeScript · Node 24
+  - Biome 2.5.5 (format + lint sole gate)
   - Static GitHub Pages deploy
 
   Layout:
@@ -19,16 +19,16 @@ context: |
   - scripts/ · docs/ · openspec/
 
   Commands (see AGENTS.md This Project):
-  - Smoke: bash scripts/smoke.sh
-  - Install: npm ci && bash scripts/install-githooks.sh
+  - Smoke: npm run smoke / bash scripts/smoke.sh
+  - Install: npm ci
   - Dev: npm run dev (localhost:4321)
   - Build: npm run build · Test: npm test
-  - Quality: npm run local-ci:quality · Correctness: npm run local-ci:correctness
+  - Quality: npm run lint · npm run format (Biome)
   - Deploy: GitOps only — release-tag-deploy.yml / rebuild-site.yml
 
-  Repo: SEAM-ORG/SeamCricketAcademy · package: seam-cricket-academy · Node 22 (.nvmrc)
+  Repo: SEAM-ORG/SeamCricketAcademy · package: seam-cricket-academy · Node 24 (.nvmrc)
   Product truth: PROJECT_CONTEXT.md · DESIGN_SYSTEM.md · DEPLOYMENT.md · docs/INDEX.md · docs/ROADMAP.md
-  SDD SoT: openspec/ only (specs + changes). No .kiro/.
+  SDD SoT: openspec/ only (specs + changes). No second SDD tree.
 
   Board: SEAM-ORG GitHub Project #8 (SeamFusionProject) — shared with SeamFusionServices
   SeamFusion relationship: API consumer + shared board only; no shared app code.
@@ -38,15 +38,16 @@ context: |
   - SeamFusion API fail-soft → static data fallbacks
   - Validate email/WhatsApp/URL before rendering dynamic links
   - Do not edit backup-legacy/ or commit huge media
-  - No project .agents/, opencode.json(c), or second SDD tree
-  - Repo root is app SoT (never nested astro-revamp as active source)
+  - No project .agents/ skill dumps or second SDD tree
+  - Repo root is app SoT (never nested revamp as active source)
+  - OpenSpec host adapters: gemini · opencode · antigravity only (commands delivery)
 
 rules:
   Always:
     - Stay on a feature branch; never commit on main
     - Prefer surgical changes; preserve working product language and design system
     - Update openspec/ and docs/INDEX.md (or This Project) when behavior or surfaces change
-    - Verify with smoke / test / build before claiming done
+    - Verify with lint / test / build before claiming done
     - Fail soft on SeamFusion API — never break the static site when API is down
     - Validate dynamic contact links (email, WhatsApp, URL)
   Ask first:
@@ -55,8 +56,8 @@ rules:
     - New paid third-party integrations or secrets
     - Removing lead-gen surfaces (contact form, WhatsApp)
   Never:
-    - Dual-run .kiro/ or invent a second SDD tree
-    - Commit secrets or bypass git hooks
+    - Invent a second SDD tree outside openspec/
+    - Commit secrets or bypass real quality gates with --no-verify
     - Edit backup-legacy/ as active source
     - Put product facts into the portable OS gist
     - Invent vapor features not evidenced in code / openspec/specs

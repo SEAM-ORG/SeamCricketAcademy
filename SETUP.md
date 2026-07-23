@@ -1,11 +1,11 @@
 # Setup — Seam Cricket Academy
 
-> Get the marketing site running locally. **Last aligned:** 2026-07-19  
+> Get the marketing site running locally.  
 > Product brief: `PROJECT_CONTEXT.md` · Deploy: `DEPLOYMENT.md` · Agent contract: `AGENTS.md`
 
 ## Prerequisites
 
-- **Node.js 22** (see `.nvmrc`) — Homebrew `brew install node@22` or [nodejs.org](https://nodejs.org/)
+- **Node.js 24** (see `.nvmrc` · `package.json` engines `>=24 <25`)
 - **npm** (bundled with Node)
 - **Git**
 
@@ -15,7 +15,6 @@
 git clone https://github.com/SEAM-ORG/SeamCricketAcademy.git
 cd SeamCricketAcademy
 npm ci
-bash scripts/install-githooks.sh
 ```
 
 Optional env (SeamFusion build-time public data): copy `.env.example` → `.env`.  
@@ -34,14 +33,15 @@ npm run dev
 npm test
 npm run build
 npm run lint
-bash scripts/smoke.sh
+npm run smoke
 ```
 
 | Action | Command |
 | ------ | ------- |
 | Format | `npm run format` |
-| Local CI quality | `npm run local-ci:quality` |
-| Local CI correctness | `npm run local-ci:correctness` |
+| Format check | `npm run format:check` |
+| Biome CI gate | `npm run biome:ci` |
+| OpenSpec | `openspec validate --all` |
 
 ## Deploy
 
@@ -54,13 +54,12 @@ Details: `DEPLOYMENT.md` · `docs/GITHUB_ACTIONS.md`.
 
 ## Agent configuration
 
-Agent configuration is **not** vendored into this repository.
-
 | Surface | Where |
 | ------- | ----- |
-| Always-on contract | root `AGENTS.md` (thin hub + **This Project**) |
+| Always-on contract | root `AGENTS.md` (thin hub + **This Project**) · full OS = master Gist |
 | Skills | machine-global only — `~/.agents/skills/` |
 | OpenCode runtime | `~/.config/opencode/` |
 | SDD memory | `openspec/` only |
+| Host adapters | `.opencode/commands/opsx-*` · `.gemini/commands/opsx/` · `.agent/workflows/opsx-*` |
 
-**Do not** create project `.agents/`, `.agent/`, `opencode.json(c)`, or a second SDD tree.
+**Do not** vendor portable Agent OS skill bodies into this repo or invent a second SDD tree outside `openspec/`.

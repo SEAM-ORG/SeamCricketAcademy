@@ -27,13 +27,19 @@ pnpm-debug.log*
 # OpenCode runtime config is global (~/.config/opencode/); ignore accidental local copies
 opencode.json
 opencode.jsonc
-.agents/
-.agent/
 tui.json
 tui.jsonc
 
+# Machine/agent skill dumps — not product source
+.agents/
 
-
-# Agent surfaces: track skills/commands; ignore vendor runtime if any
+# OpenSpec host adapters (commands delivery) — track opsx only; ignore other harness junk
 .opencode/*
-!.opencode/README.md
+!.opencode/commands/
+!.opencode/commands/**
+.gemini/*
+!.gemini/commands/
+!.gemini/commands/**
+.agent/*
+!.agent/workflows/
+!.agent/workflows/**

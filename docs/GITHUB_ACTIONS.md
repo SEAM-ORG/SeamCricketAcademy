@@ -1,15 +1,16 @@
 # GitHub Actions inventory — Seam Cricket Academy
 
-**Policy (Agent OS / Gist §2b):** Local gates = CI (`npm run lint` · `npm test` · `npm run build`). GitHub Actions = **deploy/release** only. Merge ≠ deploy.
+**Policy (Agent OS / Gist §2b):** Local gates = CI (`npm run lint` · `npm test` · `npm run build`). GitHub Actions = **deploy/release** only. Merge ≠ deploy.  
+All workflows below apply to **this repository only** (`SEAM-ORG/SeamCricketAcademy`).
 
 ## Tracked workflows
 
 | Workflow | Path | Triggers | Verdict |
 |----------|------|----------|---------|
-| **Release Tag Deploy** | `.github/workflows/release-tag-deploy.yml` | `workflow_dispatch` (tag/ref) · `push` tags `v*.*.*` | **Keep** — authorized versioned release (SFS Universal Release Pattern) |
+| **Release Tag Deploy** | `.github/workflows/release-tag-deploy.yml` | `workflow_dispatch` (tag/ref) · `push` tags `v*.*.*` | **Keep** — authorized versioned release to GitHub Pages |
 | **Rebuild Site (non-release)** | `.github/workflows/rebuild-site.yml` | `repository_dispatch` (`rebuild-site`), weekly cron, manual | **Keep** — data/gallery refresh without cutting a release |
 
-## Universal Release Pattern (aligned with SeamFusionServices)
+## Release job flow
 
 ```
 resolve → deploy-web (GitHub Pages + Deployments API env "Web") → finalize
@@ -37,10 +38,9 @@ gh run list -R SEAM-ORG/SeamCricketAcademy --workflow "Release Tag Deploy" --lim
 
 ## Non-release rebuild
 
-Used when CMS/gallery data changes without a product version:
+Used when academy data/gallery changes without a product version bump:
 
 ```bash
-# From SeamFusion or manual:
 gh api repos/SEAM-ORG/SeamCricketAcademy/dispatches \
   -f event_type=rebuild-site
 ```

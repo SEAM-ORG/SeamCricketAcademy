@@ -25,7 +25,7 @@
 | `src/data/academy.json`     | Academy content data  |
 | `src/data/programs.ts`      | Programs              |
 | `src/pages/index.astro`     | Home                  |
-| `src/lib/seamfusion-api.ts` | SeamFusion API client |
+| `src/lib/seamfusion-api.ts` | Public academy API client (build-time) |
 | `src/lib/validation.ts`     | Email / WhatsApp / URL safety |
 
 ## Spec-Driven Development (OpenSpec)

@@ -32,8 +32,8 @@
 - **Runtime:** Node **24** (`.nvmrc` · `engines: >=24 <25` · CI `node-version: 24`)
 - **Deploy:** GitHub Pages · root `CNAME` → `www.seamcricketacademy.com`
 - **Release:** **Release Tag Deploy** (tag/`workflow_dispatch`) · non-release **Rebuild Site** (dispatch/cron/manual) — see `DEPLOYMENT.md`
-- **Integrations:** SeamFusion public API (build-time) · Web3Forms · WhatsApp deep links
-- **Board:** SEAM-ORG Project V2 **#8** (shared with SeamFusionServices) — API consumer + shared board only; **no shared app code**
+- **Integrations:** build-time public academy API (`PUBLIC_API_URL` / `PUBLIC_ACADEMY_ID`) · Web3Forms · WhatsApp deep links
+- **Board:** SEAM-ORG Project V2 **#8** (tracking only — not deploy coupling)
 
 ## Canonical Commands
 
@@ -87,7 +87,7 @@ gh api repos/SEAM-ORG/SeamCricketAcademy/dispatches -f event_type=rebuild-site
 | `src/layouts/Layout.astro` | Shell |
 | `src/components/*` | Hero, Programs, Coaches, Gallery, ContactForm, FloatingWhatsApp, … |
 | `src/data/academy.json` · `programs.ts` | Static content + API fallback |
-| `src/lib/seamfusion-api.ts` | Build-time SeamFusion client (never throws) |
+| `src/lib/seamfusion-api.ts` | Build-time public academy API client (never throws) |
 | `src/lib/validation.ts` | Email / WhatsApp / URL safety |
 | `src/styles/{global,base}.css` | Theme tokens |
 | `openspec/` | SDD memory SoT (`config.yaml`, `specs/`, `changes/`) |
@@ -101,7 +101,7 @@ gh api repos/SEAM-ORG/SeamCricketAcademy/dispatches -f event_type=rebuild-site
 ## Invariants
 
 1. **Design:** Weightless/Kinetic dark glassmorphism + neon — `DESIGN_SYSTEM.md` non-negotiable. Feature icons: 3D/transparent PNG, `w-16 h-16 object-contain`.
-2. **SeamFusion fail-soft:** API down/missing env → static `academy.json` / `programs.ts`; never break the static site.
+2. **API fail-soft:** public academy API down/missing env → static `academy.json` / `programs.ts`; never break the static site.
 3. **Link safety:** Validate dynamic email/WhatsApp/URL via `src/lib/validation.ts` before emit.
 4. **Root is SoT:** Do not treat nested legacy / `backup-legacy/` as active source. Do not commit media ≳50–90MB or secrets.
 5. **Local gates = CI:** run `npm run lint` · `npm test` · `npm run build` before ship. No PR lint/test Actions. GHA = deploy/release only (`release-tag-deploy.yml`, `rebuild-site.yml`).

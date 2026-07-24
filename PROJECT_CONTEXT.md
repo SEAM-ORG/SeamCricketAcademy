@@ -21,7 +21,7 @@ Showcases programs/batches, coaches, gallery; converts visitors via contact form
 | Quality | Biome **2.5.5** · Node **24** (`.nvmrc` · engines `>=24 <25`) · local Biome/test/build gates |
 | Hosting | GitHub Pages · CNAME → `www.seamcricketacademy.com` |
 | Release | **Release Tag Deploy** + non-release `rebuild-site` (see `DEPLOYMENT.md`) |
-| Integrations | SeamFusion public API (build-time) · Web3Forms · WhatsApp deep links |
+| Integrations | Public academy API (build-time) · Web3Forms · WhatsApp deep links |
 | Package | `seam-cricket-academy` · app at **repo root** |
 
 ## 3. Mandates (non-negotiable)
@@ -30,7 +30,7 @@ Showcases programs/batches, coaches, gallery; converts visitors via contact form
 - Feature icons: 3D emoji / transparent PNG, `w-16 h-16 object-contain`.
 - **Repo root** is the source of truth — do not edit retired `backup-legacy/` or nested revamp paths.
 - Validate dynamic email / WhatsApp / URL links before emit.
-- SeamFusion API must **fail soft** → static `academy.json` / `programs.ts` fallback.
+- Public academy API must **fail soft** → static `academy.json` / `programs.ts` fallback.
 - Public git and docs = **product voice** (no agent ceremony language).
 
 ## 4. Key surfaces
@@ -44,7 +44,7 @@ Showcases programs/batches, coaches, gallery; converts visitors via contact form
 | `openspec/` | Sole SDD memory |
 | `docs/INDEX.md` | Doc map |
 | `docs/ROADMAP.md` · `docs/HISTORY.md` | Phases · session journal |
-| GitHub Project V2 | SEAM-ORG **#8** (shared with SeamFusionServices) |
+| GitHub Project V2 | SEAM-ORG **#8** (issue tracking only) |
 
 ## 5. Canonical commands
 
@@ -55,7 +55,7 @@ Showcases programs/batches, coaches, gallery; converts visitors via contact form
 | Build / test / smoke | `npm run build` · `npm test` · `npm run smoke` |
 | Lint / format | `npm run lint` · `npm run format` (Biome) |
 
-## 6. Relationship to SeamFusionServices
+## 6. External data (optional)
 
-- **Shared GitHub Project board only** (SEAM-ORG #8) and **API consumer** of SeamFusion Cloud Functions for public academy data.
-- **No shared application code** — this repo is a standalone Astro marketing site.
+- Build-time fetch of public academy content via `PUBLIC_API_URL` + `PUBLIC_ACADEMY_ID` (`src/lib/seamfusion-api.ts`).
+- **Standalone product:** no shared app code or deploy pipeline with other repos. API down → static `src/data/*` fallback.

@@ -18,7 +18,7 @@ Official website for Seam Cricket Academy — Bengaluru cricket coaching marketi
 - Responsive marketing home (programs, coaches, gallery, contact)
 - GSAP scroll-triggered reveals
 - WhatsApp deep links + contact form (Web3Forms dual-submit path)
-- Build-time SeamFusion public API with static data fallback
+- Build-time public academy API with static data fallback
 
 ## Tech stack
 

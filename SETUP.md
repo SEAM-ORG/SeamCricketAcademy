@@ -17,7 +17,7 @@ cd SeamCricketAcademy
 npm ci
 ```
 
-Optional env (SeamFusion build-time public data): copy `.env.example` → `.env`.  
+Optional env (build-time public academy data): copy `.env.example` → `.env`.  
 Build **fails soft** to static `src/data/*` when the API is unavailable.
 
 ## Develop

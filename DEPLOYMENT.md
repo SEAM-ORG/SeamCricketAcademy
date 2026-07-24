@@ -1,6 +1,6 @@
 # Deployment — Seam Cricket Academy
 
-> **Last aligned:** 2026-07-19 · Workflow inventory: `docs/GITHUB_ACTIONS.md` · Product context: `PROJECT_CONTEXT.md`
+> **Last aligned:** 2026-07-24 · Workflow inventory: `docs/GITHUB_ACTIONS.md` · Product context: `PROJECT_CONTEXT.md`
 
 ## Repository & live site
 
@@ -29,7 +29,7 @@ SeamCricketAcademy/                 # repo root = active source
 
 ## Deploy model
 
-Local hooks are **CI**. GitHub Actions are **deploy/release only**.
+**Local gates = CI** (`npm run lint` · `npm test` · `npm run build`). GitHub Actions are **deploy/release only**. No tracked git hooks in this repo.
 
 | Workflow | When | Role |
 | -------- | ---- | ---- |

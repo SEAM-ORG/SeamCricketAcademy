@@ -1,6 +1,6 @@
 # GitHub Actions inventory — Seam Cricket Academy
 
-**Policy (Agent OS):** Local hooks = CI. GitHub Actions = **deploy/release** only.
+**Policy (Agent OS / Gist §2b):** Local gates = CI (`npm run lint` · `npm test` · `npm run build`). GitHub Actions = **deploy/release** only. Merge ≠ deploy.
 
 ## Tracked workflows
 
@@ -22,7 +22,7 @@ resolve → deploy-web (GitHub Pages + Deployments API env "Web") → finalize
 | `deploy-web` | Build Astro · Pages artifact · `deploy-pages` · Deployment status |
 | `finalize` | Tag push · `gh release` · platform status markers |
 
-**Not PR CI.** Local pre-push already runs `npm test` + `npm run build`.
+**Not PR CI.** Agents run local gates before ship; do not invent PR lint/test Actions.
 
 ## How to release (Architect-approved)
 
@@ -52,9 +52,10 @@ gh api repos/SEAM-ORG/SeamCricketAcademy/dispatches \
 | pages-build-deployment | Platform Pages helper |
 | CodeQL / Dependabot / Copilot | Security/deps — not product CI |
 
-## Agent duty
+## Agent duty (GitOps)
 
-1. Session Start: preflight failed Actions + bot PRs.
+1. Session re-ground: dispose open PRs + red latest workflow runs same turn.
 2. After Architect release approval: run/monitor **Release Tag Deploy**; never claim ship without run evidence.
 3. Do **not** reintroduce `deploy.yml` that ships every `main` push as a “release.”
-4. Do **not** add PR lint/test Actions that duplicate hooks.
+4. Do **not** add PR lint/test Actions that duplicate local gates.
+5. Full portable protocol: master Gist **§2b** · product hub: root `AGENTS.md`.

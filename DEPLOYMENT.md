@@ -71,7 +71,7 @@ npm run build
 - [ ] Visual check via `npm run dev` when UI changed
 - [ ] No media ≳50–90MB committed
 - [ ] Root `CNAME` present and correct
-- [ ] SeamFusion env optional — build must fail soft to static data
+- [ ] Public academy API env optional — build must fail soft to static data
 
 ## Critical notes
 

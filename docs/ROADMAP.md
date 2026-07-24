@@ -12,7 +12,7 @@
 | **Release model** | Release Tag Deploy + non-release Pages rebuild |
 | **Current phase** | Phase 6 — content & conversion continuous improvement |
 | **Latest tag** | v2.4.0 (see GitHub Releases / `CHANGELOG.md`) |
-| **Project V2** | SEAM-ORG #8 (`SeamFusionProject`) — shared board with SeamFusionServices |
+| **Project V2** | SEAM-ORG #8 (issue tracking only) |
 
 ## Phase table
 

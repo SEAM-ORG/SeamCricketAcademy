@@ -30,17 +30,18 @@ context: |
   Product truth: PROJECT_CONTEXT.md · DESIGN_SYSTEM.md · DEPLOYMENT.md · docs/INDEX.md · docs/ROADMAP.md
   SDD SoT: openspec/ only (specs + changes). No second SDD tree.
 
-  Board: SEAM-ORG GitHub Project #8 (SeamFusionProject) — shared with SeamFusionServices
-  SeamFusion relationship: API consumer + shared board only; no shared app code.
+  Board: SEAM-ORG GitHub Project #8 (issue tracking only — not deploy coupling)
+  External data: optional build-time public academy API; standalone site; no shared deploy with other repos.
 
   Boundaries:
   - Preserve Weightless/Kinetic dark glassmorphism design system
-  - SeamFusion API fail-soft → static data fallbacks
+  - Public academy API fail-soft → static data fallbacks
   - Validate email/WhatsApp/URL before rendering dynamic links
   - Do not edit backup-legacy/ or commit huge media
   - No project .agents/ skill dumps or second SDD tree
   - Repo root is app SoT (never nested revamp as active source)
   - OpenSpec host adapters: gemini · opencode · antigravity only (commands delivery)
+  - Release/deploy docs describe this repo only — never couple to other products
 
 rules:
   Always:
@@ -48,7 +49,7 @@ rules:
     - Prefer surgical changes; preserve working product language and design system
     - Update openspec/ and docs/INDEX.md (or This Project) when behavior or surfaces change
     - Verify with lint / test / build before claiming done
-    - Fail soft on SeamFusion API — never break the static site when API is down
+    - Fail soft on public academy API — never break the static site when API is down
     - Validate dynamic contact links (email, WhatsApp, URL)
   Ask first:
     - Brand / design-system pivots away from DESIGN_SYSTEM.md

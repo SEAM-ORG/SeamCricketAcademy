@@ -30,7 +30,7 @@ context: |
   Product truth: PROJECT_CONTEXT.md · DESIGN_SYSTEM.md · DEPLOYMENT.md · docs/INDEX.md · docs/ROADMAP.md
   SDD SoT: openspec/ only (specs + changes). No second SDD tree.
 
-  Board: SEAM-ORG GitHub Project #8 (issue tracking only — not deploy coupling)
+  Tracking: GitHub Issues + PRs only (no GitHub Projects board).
   External data: optional build-time public academy API; standalone site; no shared deploy with other repos.
 
   Boundaries:

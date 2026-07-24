@@ -130,3 +130,7 @@ README still advertised nested `astro-revamp/`, Astro 5.8 badge, and a non-SEAM-
 ### 2026-07-24: Local gates without tracked githooks
 
 Tracked `.githooks/` and `scripts/github/*` ship helpers were removed. **Local gates = CI** means agents run `npm run lint` · `npm test` · `npm run build` before ship — not that hooks auto-run. GitOps E2E lives in master Gist **§2b**; product hub `AGENTS.md` carries ship path + product release cmds only. **Prevention:** do not reintroduce husky/hooks or claim “pre-push already ran tests” unless automation is restored.
+
+### 2026-07-24: No GitHub Projects board
+
+Architect removed Project V2. Tracking = **GitHub Issues + PRs** only. Do not require `project_number`, board sync scripts, or SEAM-ORG #8. **Prevention:** never reintroduce board fields into AGENTS This Project or claim card-movers as duty.

@@ -10,6 +10,17 @@
 
 ---
 
+## 2026-07-24 — Rip Project V2 · Wiki truth · Gist OpenCode tools
+
+**Goal:** Drop GitHub Projects board coupling; sync thin Wiki to current product truth; document OpenCode global MCP/env in portable Agent OS Gist.
+
+**Work completed:**
+- Removed Project V2 / board #8 from AGENTS This Project, product context, roadmap, OpenSpec config.
+- Wiki Home/Development/Deploy/Roadmap aligned to Node 24, local gates, Release Tag Deploy, Issues/PRs only.
+- Master Gist §6 expanded with OpenCode `~/.config/opencode/` MCP wiring and env var names (no secrets).
+
+**Status:** Completed this session (ship via PR + gist push + wiki push).
+
 ## 2026-07-19 — Product memory honesty + This Project refresh
 
 **Goal:** Re-ground agent-facing product facts from code and deploy truth; fix drifted human entry docs without bloating the OS hub.

@@ -33,7 +33,7 @@
 - **Deploy:** GitHub Pages · root `CNAME` → `www.seamcricketacademy.com`
 - **Release:** **Release Tag Deploy** (tag/`workflow_dispatch`) · non-release **Rebuild Site** (dispatch/cron/manual) — see `DEPLOYMENT.md`
 - **Integrations:** build-time public academy API (`PUBLIC_API_URL` / `PUBLIC_ACADEMY_ID`) · Web3Forms · WhatsApp deep links
-- **Board:** SEAM-ORG Project V2 **#8** (tracking only — not deploy coupling)
+- **Tracking:** GitHub Issues + PRs only (no GitHub Projects board)
 
 ## Canonical Commands
 

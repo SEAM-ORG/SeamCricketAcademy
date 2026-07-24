@@ -1,6 +1,6 @@
 # Documentation Index
 
-> Master directory for Seam Cricket Academy docs. **Last updated:** 2026-07-19 (memory honesty)
+> Master directory for Seam Cricket Academy docs. **Last updated:** 2026-07-24
 
 ## Product truth (repo root + phases)
 
@@ -16,7 +16,7 @@
 | [CHANGELOG.md](../CHANGELOG.md)             | Changelog                                                      |
 | [AGENTS.md](../AGENTS.md)                   | Agent OS + This Project                                        |
 
-**Wiki (GitHub):** thin human product surface only. Repo docs above are SoT — do not dual-write full manuals or Agent OS into the Wiki.
+**Wiki (GitHub):** thin human product index only (Home / Development / Deploy / Roadmap). Repo docs above are SoT — do not dual-write full manuals or Agent OS into the Wiki. No Projects board.
 
 ## Data & code entry points
 

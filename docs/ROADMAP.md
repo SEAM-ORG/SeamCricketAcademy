@@ -1,7 +1,7 @@
 # Seam Cricket Academy — Roadmap
 
 > **Master phase plan** for the academy marketing & lead-generation site.  
-> **Last aligned:** 2026-07-19 · **Session journal:** `docs/HISTORY.md` · **Product context:** `PROJECT_CONTEXT.md`
+> **Last aligned:** 2026-07-24 · **Session journal:** `docs/HISTORY.md` · **Product context:** `PROJECT_CONTEXT.md`
 
 ## Current status
 
@@ -12,7 +12,7 @@
 | **Release model** | Release Tag Deploy + non-release Pages rebuild |
 | **Current phase** | Phase 6 — content & conversion continuous improvement |
 | **Latest tag** | v2.4.0 (see GitHub Releases / `CHANGELOG.md`) |
-| **Project V2** | SEAM-ORG #8 (issue tracking only) |
+| **Tracking** | GitHub Issues + PRs (no Projects board) |
 
 ## Phase table
 
@@ -49,7 +49,7 @@ Initial academy website and domain presence for Bengaluru cricket coaching brand
 
 ### Phase 5: Agent OS, OpenSpec, release hygiene ✅ (maintain)
 
-- Portable Architect↔Agent OS; local Biome CI; Project V2 on SEAM-ORG #8.
+- Portable Architect↔Agent OS; local Biome gates; Issues/PRs for tracking (no Projects board).
 - OpenSpec living capabilities for marketing UX, catalog, coaches, leads, API sync.
 - Release Tag Deploy standard; session journal + thin Wiki as continuous surfaces.
 

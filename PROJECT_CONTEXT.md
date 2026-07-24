@@ -44,7 +44,7 @@ Showcases programs/batches, coaches, gallery; converts visitors via contact form
 | `openspec/` | Sole SDD memory |
 | `docs/INDEX.md` | Doc map |
 | `docs/ROADMAP.md` · `docs/HISTORY.md` | Phases · session journal |
-| GitHub Project V2 | SEAM-ORG **#8** (issue tracking only) |
+| Tracking | GitHub Issues + PRs (no Projects board) |
 
 ## 5. Canonical commands
 

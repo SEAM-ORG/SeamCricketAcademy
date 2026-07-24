@@ -126,3 +126,7 @@ Multiline Markdown tables inside `run: |` (especially lines starting with `|`) b
 ### 2026-07-19: Product memory honesty — code/deploy beat docs
 
 README still advertised nested `astro-revamp/`, Astro 5.8 badge, and a non-SEAM-ORG clone path; DEPLOYMENT still had Windows paths, old org names, and a push-to-main deploy sample with Node 20. ROADMAP “current phase” disagreed with the phase table. **Prevention:** on memory refresh, verify package.json, workflows (Node pin + triggers), remote `SEAM-ORG/…`, and root layout before trusting human docs. Keep This Project concise; put long manuals in linked docs only.
+
+### 2026-07-24: Local gates without tracked githooks
+
+Tracked `.githooks/` and `scripts/github/*` ship helpers were removed. **Local gates = CI** means agents run `npm run lint` · `npm test` · `npm run build` before ship — not that hooks auto-run. GitOps E2E lives in master Gist **§2b**; product hub `AGENTS.md` carries ship path + product release cmds only. **Prevention:** do not reintroduce husky/hooks or claim “pre-push already ran tests” unless automation is restored.

@@ -2,17 +2,21 @@
 
 > **Canonical master Gist (full contract):** https://gist.github.com/saadev0/5828479245f786c80993b67a6f669aee  
 > **Raw:** https://gist.githubusercontent.com/saadev0/5828479245f786c80993b67a6f669aee/raw/AGENTS.md  
-> This file is the **product hub**: always-on pointers + **This Project**. Load the gist for full OS protocol.
+> This file is the **product hub**: always-on pointers + **This Project**. Full GitOps E2E = Gist **§2b**. Load the gist for full OS protocol.
 
 ## Always-on (product repo)
 
-- **Feature branch only** — never commit/push on `main`.
-- **Standing auth:** non-release PRs/merges/issues/refactors/deps pre-approved. **Only** production release/tag needs Architect approval.
-- **GitOps:** open PRs are this-turn work → squash-merge or close+rehome. Merge ≠ deploy.
-- **Verify before done:** Biome → test → build (and `openspec validate --all` when specs change). Evidence, not vibes.
+- **Feature branch only** — never commit/push on `main`. Branches: `feat|fix|chore|docs|refactor|test|perf|security/<issue-or-topic>-<slug>`.
+- **Standing auth:** non-release PRs, merges, issues, refactors, deps, technical scope pre-approved. **Only** production release/deploy/tag needs Architect approval.
+- **GitOps E2E (Gist §2b):** open PRs are this-turn work → review → **squash-merge** or close+rehome. One concern → one PR. Merge ≠ deploy.
+- **Session re-ground:** `git status -sb` · `git fetch origin --prune` · `gh pr list --state open` → dispose blockers → sync `main` → feature branch.
+- **Ship path:** feature branch → Issue (non-trivial) → implement + verify → `git push -u origin HEAD` → `gh pr create` with `Fixes #N` → squash-merge → delete branch → return clean `main`.
+- **Local-first:** verify + commit on feature branch; push/PR when slice ready (or session end). Use `gh` + `git` directly (no `scripts/github/*` helpers in this repo).
+- **Verify before done:** Biome → test → build (and `openspec validate --all` when specs change). Evidence, not vibes. Never `--no-verify` to skip real gates.
 - **Biome** is sole JS/TS/CSS/JSON lint+format gate (`biome.json`).
 - **OpenSpec** for non-trivial work: `/opsx-explore` → `/opsx-propose` → `/opsx-apply` → `/opsx-archive` (delivery: `commands`).
-- **Stakeholder firewall:** no AI/agent/LLM language in commits, PRs, public issues, or `CHANGELOG.md`.
+- **Stakeholder firewall:** no AI/agent/LLM language in commits, PR titles/bodies, public issues, or `CHANGELOG.md`.
+- **Session closeout:** SHA · PR URL · branch · summary · status (`Completed` / `Blocked` / `Handoff-Only`) · next step. Open PRs disposed; no release/tag without Architect approval.
 - **Skills:** machine-global only (`~/.agents/skills`). Do not vendor Agent OS skill trees into this repo.
 - **Hosts:** OpenSpec adapters for **gemini · opencode · antigravity** only. Runtime config stays global (`~/.config/opencode/`).
 
@@ -45,12 +49,30 @@ npm run biome:ci     # biome ci .
 npm run smoke        # bash scripts/smoke.sh (fast known-good)
 openspec validate --all
 openspec list --specs
+# GitOps hygiene (dispose same turn):
+gh pr list --state open
+git fetch origin --prune
+```
+
+**PR ship:** feature branch → `gh pr create` with `Fixes #N` (+ Summary + Test plan) → squash-merge → delete remote branch → clean `main`.
+
+**PR body minimum:**
+
+```markdown
+## Summary
+- <what changed and why>
+
+## Test plan
+- [ ] <commands / evidence>
+
+Fixes #<issue>
 ```
 
 **Release (Architect-approved only):**
 
 ```bash
 gh workflow run "Release Tag Deploy" -R SEAM-ORG/SeamCricketAcademy -f tag=vX.Y.Z -f ref=main
+gh run list -R SEAM-ORG/SeamCricketAcademy --workflow "Release Tag Deploy" --limit 3
 # non-release data refresh:
 gh api repos/SEAM-ORG/SeamCricketAcademy/dispatches -f event_type=rebuild-site
 ```
@@ -70,6 +92,7 @@ gh api repos/SEAM-ORG/SeamCricketAcademy/dispatches -f event_type=rebuild-site
 | `src/styles/{global,base}.css` | Theme tokens |
 | `openspec/` | SDD memory SoT (`config.yaml`, `specs/`, `changes/`) |
 | `docs/INDEX.md` | Doc map · `PROJECT_CONTEXT.md` product brief · `DESIGN_SYSTEM.md` visual rules |
+| `DEPLOYMENT.md` · `docs/GITHUB_ACTIONS.md` | Release / deploy GitOps entrypoints |
 
 **OpenSpec capabilities:** `academy-marketing-ux` · `program-catalog` · `coach-profiles` · `lead-generation` · `seamfusion-api-sync`
 
@@ -81,7 +104,8 @@ gh api repos/SEAM-ORG/SeamCricketAcademy/dispatches -f event_type=rebuild-site
 2. **SeamFusion fail-soft:** API down/missing env → static `academy.json` / `programs.ts`; never break the static site.
 3. **Link safety:** Validate dynamic email/WhatsApp/URL via `src/lib/validation.ts` before emit.
 4. **Root is SoT:** Do not treat nested legacy / `backup-legacy/` as active source. Do not commit media ≳50–90MB or secrets.
-5. **Local gates = CI:** No PR lint/test Actions. GitHub Actions = deploy/release only (`release-tag-deploy.yml`, `rebuild-site.yml`).
-6. **No freestyle prod deploy:** No manual `gh-pages` upload; follow `DEPLOYMENT.md`.
-7. **Public voice:** Product language only in git/docs facing stakeholders.
-8. **No second skill/SDD tree:** No project `.agents/` skill dumps; SDD lives only under `openspec/`.
+5. **Local gates = CI:** run `npm run lint` · `npm test` · `npm run build` before ship. No PR lint/test Actions. GHA = deploy/release only (`release-tag-deploy.yml`, `rebuild-site.yml`).
+6. **GitOps E2E (Gist §2b):** feature branch only; open PRs this-turn; squash-merge; merge ≠ deploy; production release/tag only with Architect approval.
+7. **No freestyle prod deploy:** No manual `gh-pages` upload; follow `DEPLOYMENT.md` / Release Tag Deploy only.
+8. **Public voice:** Product language only in git/docs facing stakeholders.
+9. **No second skill/SDD tree:** No project `.agents/` skill dumps; SDD lives only under `openspec/`.

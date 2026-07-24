@@ -2,7 +2,7 @@ name: Release Tag Deploy
 
 # Universal Release Pattern (Agent OS / SFS-aligned):
 #   resolve → deploy-web (GitHub Pages) → finalize (tag + GitHub Release + platform table)
-# Local hooks remain CI. This workflow is deploy/release only.
+# Local gates (lint/test/build) remain CI. This workflow is deploy/release only.
 
 on:
   workflow_dispatch:
